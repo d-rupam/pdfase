@@ -53,7 +53,7 @@
         .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
 
         /* Force zero gap between Dropzone and Action Container */
-        .action-container { margin-top: 4px !important; margin-bottom: 3rem; display: none; gap: 0.5rem; justify-content: center; flex-direction: column; align-items: center; }
+        .action-container { margin-top: 1.5rem !important; margin-bottom: 3rem; display: none; gap: 0.5rem; justify-content: center; flex-direction: column; align-items: center; }
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
