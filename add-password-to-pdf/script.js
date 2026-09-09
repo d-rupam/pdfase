@@ -53,13 +53,19 @@
         /* Options Panel for Password Input */
         .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 380px; }
         .options-panel label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-        .options-panel input[type="password"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; }
-        .options-panel input[type="password"]:focus { border-color: var(--theme-color, #ffbf00); }
+        
+        /* Password Input Wrapper with integrated Eye Toggle */
+        .password-input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+        .options-panel input[type="password"], .options-panel input[type="text"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem 2.5rem 0.6rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; }
+        .options-panel input:focus { border-color: var(--theme-color, #ffbf00); }
+        
+        .toggle-password { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+        .toggle-password:hover { color: var(--theme-color, #ffbf00); }
 
         /* Eye-Friendly Balanced Amber Action Button with Dark Text */
         .btn-action { 
-            background-color: #e6ac00; /* Comfortable balanced amber tone */
-            color: #050505; /* Dark text to completely eliminate visual glare */
+            background-color: #e6ac00; 
+            color: #050505; 
             border: none; 
             padding: 0.85rem 2.5rem; 
             font-size: 1.05rem; 
@@ -122,12 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function initPasswordUI() {
         actionContainer.innerHTML = '';
         
-        // Options Panel for Secure Password Input
+        // Options Panel with Password Input and Eye Toggle Icon
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
             <label for="pdf-password"><i class="fa-solid fa-key" style="color: var(--theme-color);"></i> Enter Protection Password:</label>
-            <input type="password" id="pdf-password" placeholder="Type secret password..." autocomplete="new-password">
+            <div class="password-input-wrapper">
+                <input type="password" id="pdf-password" placeholder="Type secret password..." autocomplete="new-password">
+                <button type="button" class="toggle-password" id="toggle-pass-btn" title="Show/Hide Password">
+                    <i class="fa-solid fa-eye" id="toggle-eye-icon"></i>
+                </button>
+            </div>
         `;
 
         const btnGroup = document.createElement('div');
@@ -142,6 +153,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
+
+        // Wire up the Eye Toggle functionality
+        const passInput = optionsPanel.querySelector('#pdf-password');
+        const toggleBtn = optionsPanel.querySelector('#toggle-pass-btn');
+        const eyeIcon = optionsPanel.querySelector('#toggle-eye-icon');
+
+        toggleBtn.addEventListener('click', () => {
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.className = 'fa-solid fa-eye-slash';
+            } else {
+                passInput.type = 'password';
+                eyeIcon.className = 'fa-solid fa-eye';
+            }
+        });
     }
     initPasswordUI();
 
@@ -282,12 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const { PDFDocument } = window.PDFLib;
             
-            // Note: Standard pdf-lib core handles structure loading. 
-            // Since browser-side native object encryption configuration varies across library builds,
-            // we process the document locally and apply structural wrappers.
             const pdfDoc = await PDFDocument.load(arrayBuffer);
             
-            // If the library build supports native encryption tracking:
             if (typeof pdfDoc.encrypt === 'function') {
                 pdfDoc.encrypt({ userPassword: password, ownerPassword: password });
             } else if (typeof pdfDoc.setProtection === 'function') {
