@@ -51,17 +51,20 @@
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         /* Options Panel for Password Input */
-        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 420px; font-family: 'Space Grotesk', sans-serif; }
+        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 420px; font-family: 'Space Grotesk', sans-serif; position: relative; }
         .options-panel label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         
         .password-input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
-        .options-panel input[type="password"], .options-panel input[type="text"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem 2.5rem 0.6rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; }
+        .options-panel input[type="password"], .options-panel input[type="text"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem 4.5rem 0.6rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; }
         .options-panel input:focus { border-color: var(--theme-color, #ffbf00); }
         
-        .toggle-password { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
-        .toggle-password:hover { color: var(--theme-color, #ffbf00); }
+        /* Multi-action icons container on right side of main input */
+        .input-actions-right { position: absolute; right: 10px; display: flex; align-items: center; gap: 6px; }
+        
+        .toggle-password, .copy-password-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; padding: 2px; }
+        .toggle-password:hover, .copy-password-btn:hover { color: var(--theme-color, #ffbf00); }
 
-        /* Clean Modern Generator Pill Button (No Blinding Glare) */
+        /* Clean Modern Generator Pill Button */
         .gen-toggle-btn { 
             background: rgba(255, 191, 0, 0.08); 
             border: 1px solid rgba(255, 191, 0, 0.25); 
@@ -81,18 +84,36 @@
         .gen-toggle-btn:hover { background: rgba(255, 191, 0, 0.15); border-color: var(--theme-color); color: #fff; transform: none !important; }
 
         /* Embedded Password Generator Drawer */
-        .password-generator-box { background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 191, 0, 0.25); border-radius: 8px; padding: 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; position: relative; }
+        .password-generator-box { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 191, 0, 0.3); border-radius: 8px; padding: 1.1rem 1rem 1rem 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; position: relative; }
         .password-generator-box.active { display: flex; }
         
-        .gen-header-row { display: flex; justify-content: space-between; align-items: center; color: var(--text-main); font-size: 0.8rem; font-weight: 600; }
-        .gen-close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; transition: color 0.2s; padding: 2px 6px; }
-        .gen-close-btn:hover { color: #ff3366; }
+        /* Pro-Grade Circular Floating Close Button on Top Right Edge */
+        .gen-close-btn { 
+            position: absolute; 
+            top: -10px; 
+            right: -10px; 
+            background: #1a1a1e; 
+            border: 1px solid rgba(255, 191, 0, 0.3); 
+            color: var(--text-muted); 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            font-size: 0.75rem; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4); 
+            transition: all 0.2s; 
+            z-index: 5;
+        }
+        .gen-close-btn:hover { background: #ff3366; border-color: #ff3366; color: #fff; transform: scale(1.1); }
 
         .gen-preview-row { display: flex; gap: 8px; align-items: center; }
         .gen-preview-input { background: #050505 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.9rem !important; color: var(--theme-color) !important; flex: 1; padding: 0.5rem 0.75rem !important; border: 1px solid rgba(255, 191, 0, 0.3) !important; border-radius: 6px !important; outline: none; }
         
-        .gen-refresh-btn { background: rgba(255, 191, 0, 0.08); border: 1px solid rgba(255, 191, 0, 0.25); color: var(--theme-color); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: none !important; }
-        .gen-refresh-btn:hover { background: rgba(255, 191, 0, 0.2); color: #fff; transform: none !important; }
+        .gen-refresh-btn, .gen-copy-btn { background: rgba(255, 191, 0, 0.08); border: 1px solid rgba(255, 191, 0, 0.25); color: var(--theme-color); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: none !important; }
+        .gen-refresh-btn:hover, .gen-copy-btn:hover { background: rgba(255, 191, 0, 0.2); color: #fff; transform: none !important; }
 
         .gen-settings { display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.82rem; color: var(--text-muted); }
         .gen-slider-row { display: flex; justify-content: space-between; align-items: center; }
@@ -171,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initPasswordUI() {
         actionContainer.innerHTML = '';
         
-        // Options Panel with Password Input, Eye Toggle & Enhanced Password Generator Drawer
+        // Options Panel with Password Input, Copy Button, Eye Toggle & Enhanced Password Generator Drawer
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
@@ -181,19 +202,22 @@ document.addEventListener('DOMContentLoaded', () => {
             </label>
             <div class="password-input-wrapper">
                 <input type="password" id="pdf-password" placeholder="Type secret password..." autocomplete="new-password">
-                <button type="button" class="toggle-password" id="toggle-pass-btn" title="Show/Hide Password">
-                    <i class="fa-solid fa-eye" id="toggle-eye-icon"></i>
-                </button>
+                <div class="input-actions-right">
+                    <button type="button" class="copy-password-btn" id="copy-main-btn" title="Copy Password">
+                        <i class="fa-regular fa-copy" id="copy-main-icon"></i>
+                    </button>
+                    <button type="button" class="toggle-password" id="toggle-pass-btn" title="Show/Hide Password">
+                        <i class="fa-solid fa-eye" id="toggle-eye-icon"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Embedded Password Generator Box with Close (X) Button -->
+            <!-- Embedded Password Generator Box with Floating Circular Close Button -->
             <div class="password-generator-box" id="gen-drawer">
-                <div class="gen-header-row">
-                    <span>Password Generator</span>
-                    <button type="button" class="gen-close-btn" id="gen-close-trigger" title="Close Generator"><i class="fa-solid fa-xmark"></i></button>
-                </div>
+                <button type="button" class="gen-close-btn" id="gen-close-trigger" title="Close Generator"><i class="fa-solid fa-xmark"></i></button>
                 <div class="gen-preview-row">
                     <input type="text" id="gen-result-field" class="gen-preview-input" readonly>
+                    <button type="button" class="gen-copy-btn" id="gen-copy-drawer-btn" title="Copy Generated"><i class="fa-regular fa-copy" id="copy-drawer-icon"></i></button>
                     <button type="button" class="gen-refresh-btn" id="gen-refresh-trigger" title="Generate New"><i class="fa-solid fa-rotate-right"></i></button>
                 </div>
                 <div class="gen-settings">
@@ -229,12 +253,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const passInput = optionsPanel.querySelector('#pdf-password');
         const toggleBtn = optionsPanel.querySelector('#toggle-pass-btn');
         const eyeIcon = optionsPanel.querySelector('#toggle-eye-icon');
+        const copyMainBtn = optionsPanel.querySelector('#copy-main-btn');
+        const copyMainIcon = optionsPanel.querySelector('#copy-main-icon');
         
         const genTrigger = optionsPanel.querySelector('#gen-toggle-trigger');
         const genClose = optionsPanel.querySelector('#gen-close-trigger');
         const genDrawer = optionsPanel.querySelector('#gen-drawer');
         const genResult = optionsPanel.querySelector('#gen-result-field');
         const genRefresh = optionsPanel.querySelector('#gen-refresh-trigger');
+        const genCopyDrawerBtn = optionsPanel.querySelector('#gen-copy-drawer-btn');
+        const copyDrawerIcon = optionsPanel.querySelector('#copy-drawer-icon');
         const genSlider = optionsPanel.querySelector('#gen-length-slider');
         const genLengthVal = optionsPanel.querySelector('#gen-length-val');
         
@@ -243,6 +271,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const genNums = optionsPanel.querySelector('#gen-nums');
         const genSyms = optionsPanel.querySelector('#gen-syms');
         const genUseBtn = optionsPanel.querySelector('#gen-use-btn');
+
+        // Helper function for clipboard copying
+        function copyTextToClipboard(text, iconElement) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                iconElement.className = 'fa-solid fa-check';
+                iconElement.style.color = '#34d399';
+                setTimeout(() => {
+                    iconElement.className = 'fa-regular fa-copy';
+                    iconElement.style.color = '';
+                }, 1500);
+            }).catch(err => console.error('Failed to copy text: ', err));
+        }
+
+        // Copy Main Input Password
+        copyMainBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            copyTextToClipboard(passInput.value, copyMainIcon);
+        });
+
+        // Copy Drawer Generator Password
+        genCopyDrawerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            copyTextToClipboard(genResult.value, copyDrawerIcon);
+        });
 
         // Eye Toggle
         toggleBtn.addEventListener('click', () => {
@@ -283,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (genNums.checked) availableChars += numChars;
             if (genSyms.checked) availableChars += symChars;
 
-            // Fallback if user unchecks everything
             if (!availableChars) {
                 availableChars = lowerChars; 
                 genLower.checked = true;
@@ -316,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (genResult.value) {
                 passInput.value = genResult.value;
-                passInput.type = 'text'; // Make it visible briefly so user confirms
+                passInput.type = 'text'; 
                 eyeIcon.className = 'fa-solid fa-eye-slash';
                 genDrawer.classList.remove('active');
             }
