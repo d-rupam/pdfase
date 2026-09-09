@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDFase | Client-Side Document Enzymes</title>
+    <meta name="description" content="Privacy-first, client-side PDF utilities. Merge, split, and compress PDFs locally in your browser with zero server uploads.">
+    
+    <!-- Space Grotesk Font Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-surface: #121212;
+            --bg-card: #1a1a1a;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --cyber-cyan: #00ffcc;
+            --cyber-purple: #b829ff;
+            --glow-cyan: 0 0 10px rgba(0, 255, 204, 0.3);
+            --glow-purple: 0 0 15px rgba(184, 41, 255, 0.4);
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            /* Applied Space Grotesk */
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR STYLES --- */
+        .navbar {
+            background-color: var(--bg-surface);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+            box-shadow: var(--glow-cyan);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand-highlight { color: var(--cyber-cyan); }
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--cyber-cyan); }
+
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .hero { text-align: center; margin-bottom: 4rem; }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.2rem; font-weight: 300; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+        /* --- CARD GRID --- */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .tool-card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cyber-purple);
+            box-shadow: var(--glow-purple);
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 0.5rem;
+        }
+        .tool-card h2 { font-size: 1.5rem; font-weight: 600; color: #fff; }
+        .tool-card p { color: var(--text-muted); font-weight: 400; font-size: 0.95rem; }
+
+        /* --- FOOTER STYLES --- */
+        .footer {
+            background-color: var(--bg-surface);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(184, 41, 255, 0.2);
+            margin-top: auto;
+        }
+        .footer-links { margin-bottom: 1rem; }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--cyber-purple); }
+        .footer-social { margin-top: 1rem; }
+        .footer-social a {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .footer-social a:hover {
+            color: var(--cyber-purple);
+            text-shadow: var(--glow-purple);
+        }
+        .footer-text { margin-top: 1rem; color: var(--text-muted); font-weight: 300; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- NAVBAR START (Copy this to other pages)    -->
+    <!-- ========================================== -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/merge-pdf/">Merge</a>
+            <a href="/split-pdf/">Split</a>
+        </div>
+    </nav>
+    <!-- ========================================== -->
+    <!-- NAVBAR END                                 -->
+    <!-- ========================================== -->
+
+    <main>
+        <section class="hero">
+            <h1>The Digital Enzyme Hub</h1>
+            <p>High-speed, client-side PDF modification. Absolute Data Sovereignty—your files never leave your browser memory.</p>
+        </section>
+
+        <section class="tools-grid">
+            
+            <!-- ========================================== -->
+            <!-- CARD TEMPLATE START (Copy to add new tools)-->
+            <!-- ========================================== -->
+            <a href="/merge-pdf/" class="tool-card">
+                <i class="fa-solid fa-layer-group card-icon"></i>
+                <h2>Merge PDF</h2>
+                <p>Act as the digital ligase. Instantly stitch separate PDF structural fragments together into one continuous, unified document.</p>
+            </a>
+            <!-- ========================================== -->
+            <!-- CARD TEMPLATE END                          -->
+            <!-- ========================================== -->
+
+            <a href="/split-pdf/" class="tool-card">
+                <i class="fa-solid fa-scissors card-icon"></i>
+                <h2>Split PDF</h2>
+                <p>Deploy molecular scissors to cleave your PDF substrate. Extract specific pages or separate a large file into precise individual fragments.</p>
+            </a>
+
+            <a href="/compress-pdf/" class="tool-card">
+                <i class="fa-solid fa-minimize card-icon"></i>
+                <h2>Compress PDF</h2>
+                <p>Optimize the structural morphology. Reduce file mass and compress data density without compromising the visual integrity of the sequence.</p>
+            </a>
+
+            <a href="/rotate-pdf/" class="tool-card">
+                <i class="fa-solid fa-rotate card-icon"></i>
+                <h2>Rotate PDF</h2>
+                <p>Re-align the spatial orientation of your document fragments. Instantly pivot pages to their correct functional conformation.</p>
+            </a>
+
+        </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- FOOTER START (Copy this to other pages)    -->
+    <!-- ========================================== -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/about/">About</a>
+            <a href="/contact/">Contact</a>
+            <a href="/privacy-policy/">Privacy Policy</a>
+            <a href="/terms/">Terms of Service</a>
+        </div>
+        <div class="footer-social">
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+        <div class="footer-text">
+            &copy; 2026 PDFase | Built with discipline. Initiated by The Primer.
+        </div>
+    </footer>
+    <!-- ========================================== -->
+    <!-- FOOTER END                                 -->
+    <!-- ========================================== -->
+
+</body>
+</html>
