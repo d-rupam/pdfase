@@ -4,33 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDFase | Client-Side Document Enzymes</title>
-    <meta name="description" content="Privacy-first, client-side PDF utilities. Merge, split, and compress PDFs locally in your browser with zero server uploads.">
+    <meta name="description" content="Origin terminal of Rupam Das, Microbiology Student at Dum Dum Motijheel College (WBSU) & Systems Architect building the TETRAD and Operon ecosystems.">
     
-    <!-- Space Grotesk Font Import -->
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <!-- Space Grotesk Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Google Analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0KYK0PKV9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J0KYK0PKV9');
+    </script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Rupam Das",
+      "url": "https://rupamdas.in",
+      "jobTitle": "Undergraduate Microbiology Researcher",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Department of Microbiology, Dum Dum Motijheel College",
+        "url": "https://dumdummotijheelcollege.ac.in/"
+      },
+      "alumniOf": [
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Dum Dum Motijheel College",
+          "url": "https://dumdummotijheelcollege.ac.in/",
+          "location": "Dum Dum, Kolkata, West Bengal"
+        },
+        {
+          "@type": "HighSchool",
+          "name": "PM SHRI Kendriya Vidyalaya Ordnance Factory Dum Dum",
+          "url": "https://ofdumdum.kvs.ac.in/",
+          "location": "Dum Dum, Kolkata, West Bengal"
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Dum Dum, Kolkata",
+        "addressRegion": "West Bengal",
+        "addressCountry": "IN"
+      }
+    }
+    </script>
+
     <style>
         :root {
             --bg-base: #050505;
-            --bg-surface: #121212;
-            --bg-card: #1a1a1a;
+            --bg-surface: #0a0a0c;
+            --bg-card: #121215;
             --text-main: #e0e0e0;
             --text-muted: #888888;
             --cyber-cyan: #00ffcc;
-            --cyber-purple: #b829ff;
-            --glow-cyan: 0 0 10px rgba(0, 255, 204, 0.3);
-            --glow-purple: 0 0 15px rgba(184, 41, 255, 0.4);
+            --border-subtle: rgba(255, 255, 255, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            /* Applied Space Grotesk */
             font-family: 'Space Grotesk', sans-serif;
             background-color: var(--bg-base);
             color: var(--text-main);
@@ -40,15 +90,14 @@
             min-height: 100vh;
         }
 
-        /* --- NAVBAR STYLES --- */
+        /* --- NAVBAR --- */
         .navbar {
             background-color: var(--bg-surface);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
-            box-shadow: var(--glow-cyan);
+            border-bottom: 1px solid var(--border-subtle);
         }
         .navbar-brand {
             font-size: 1.5rem;
@@ -61,154 +110,291 @@
         }
         .brand-highlight { color: var(--cyber-cyan); }
         .nav-links a {
-            color: var(--text-main);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--cyber-cyan); }
-
-        /* --- MAIN CONTENT --- */
-        main { flex: 1; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-        
-        .hero { text-align: center; margin-bottom: 4rem; }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero p { font-size: 1.2rem; font-weight: 300; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
-
-        /* --- CARD GRID --- */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .tool-card {
-            background-color: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 2rem;
-            text-decoration: none;
-            color: var(--text-main);
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .tool-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--cyber-purple);
-            box-shadow: var(--glow-purple);
-        }
-        .card-icon {
-            font-size: 2.5rem;
-            color: var(--cyber-cyan);
-            margin-bottom: 0.5rem;
-        }
-        .tool-card h2 { font-size: 1.5rem; font-weight: 600; color: #fff; }
-        .tool-card p { color: var(--text-muted); font-weight: 400; font-size: 0.95rem; }
-
-        /* --- FOOTER STYLES --- */
-        .footer {
-            background-color: var(--bg-surface);
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(184, 41, 255, 0.2);
-            margin-top: auto;
-        }
-        .footer-links { margin-bottom: 1rem; }
-        .footer-links a {
             color: var(--text-muted);
             text-decoration: none;
-            margin: 0 1rem;
+            margin-left: 1.5rem;
             font-weight: 500;
             font-size: 0.9rem;
             transition: color 0.3s;
         }
-        .footer-links a:hover { color: var(--cyber-purple); }
-        .footer-social { margin-top: 1rem; }
-        .footer-social a {
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        /* --- METAPHOR BLOCK (Modeled after transcript.jpg) --- */
+        .metaphor-box {
+            background-color: #0b0b10;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 3px solid var(--cyber-cyan);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 4rem;
+        }
+        .meta-tag {
+            font-size: 0.75rem;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        .metaphor-box h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        .metaphor-box p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            max-width: 900px;
+        }
+        .highlight-red {
+            color: #ff3366;
+            font-weight: 600;
+        }
+
+        /* --- CATEGORY LAYOUT (Modeled after pdfux.jpg) --- */
+        .category-group {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
             color: var(--text-main);
-            font-size: 1.5rem;
-            transition: color 0.3s, text-shadow 0.3s;
         }
-        .footer-social a:hover {
-            color: var(--cyber-purple);
-            text-shadow: var(--glow-purple);
+        .category-header i {
+            color: var(--theme-color);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.6rem;
+            border-radius: 8px;
         }
-        .footer-text { margin-top: 1rem; color: var(--text-muted); font-weight: 300; font-size: 0.85rem; }
+
+        /* Grid for cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Tool Card - Side Icon Layout */
+        .tool-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .tool-card:hover {
+            border-color: var(--theme-color);
+            background-color: rgba(255, 255, 255, 0.02);
+            transform: translateY(-2px);
+        }
+        .card-icon {
+            font-size: 1.4rem;
+            color: var(--theme-color);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+        .card-content h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+        .card-content p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* --- THEMES --- */
+        .theme-cyan { --theme-color: #00ffcc; }   /* Organize */
+        .theme-purple { --theme-color: #b829ff; } /* Convert */
+        .theme-green { --theme-color: #39ff14; }  /* Edit */
+        .theme-amber { --theme-color: #ffbf00; }  /* Protect */
+
+        /* --- FOOTER --- */
+        .footer {
+            background-color: var(--bg-surface);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: auto;
+        }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-social { margin: 1.5rem 0; }
+        .footer-social a {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .footer-social a:hover { color: var(--cyber-cyan); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-text a { color: var(--cyber-cyan); text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- NAVBAR START (Copy this to other pages)    -->
-    <!-- ========================================== -->
+    <!-- /* NAVBAR START */ -->
     <nav class="navbar">
         <a href="/" class="navbar-brand">
             <i class="fa-solid fa-dna brand-highlight"></i>
             <span>PDF<span class="brand-highlight">ase</span></span>
         </a>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/merge-pdf/">Merge</a>
-            <a href="/split-pdf/">Split</a>
+            <a href="/">All Tools</a>
+            <a href="/about/">About</a>
         </div>
     </nav>
-    <!-- ========================================== -->
-    <!-- NAVBAR END                                 -->
-    <!-- ========================================== -->
+    <!-- /* NAVBAR END */ -->
 
     <main>
-        <section class="hero">
-            <h1>The Digital Enzyme Hub</h1>
-            <p>High-speed, client-side PDF modification. Absolute Data Sovereignty—your files never leave your browser memory.</p>
-        </section>
+        
+        <!-- /* METAPHOR SECTION (Based on transcript.jpg) */ -->
+        <div class="metaphor-box">
+            <span class="meta-tag">// THE BIOLOGICAL CATALYST MATRIX</span>
+            <h1>PDFASE</h1>
+            <p><span class="highlight-red">[ THE METAPHOR ]</span> In cellular biochemistry, an enzyme (identified by the suffix "-ase") is a high-speed, specialized molecular machine that binds directly to a raw substrate to cut, synthesize, or structurally modify it in real-time.</p>
+            <p>This terminal serves as the active digital enzyme of the ecosystem. It hosts a suite of high-precision, serverless scripts engineered to cleave, ligate, and compress PDF substrates locally. Your document data is parsed 100% inside your browser memory—maintaining absolute Data Sovereignty.</p>
+        </div>
 
-        <section class="tools-grid">
-            
-            <!-- ========================================== -->
-            <!-- CARD TEMPLATE START (Copy to add new tools)-->
-            <!-- ========================================== -->
-            <a href="/merge-pdf/" class="tool-card">
-                <i class="fa-solid fa-layer-group card-icon"></i>
-                <h2>Merge PDF</h2>
-                <p>Act as the digital ligase. Instantly stitch separate PDF structural fragments together into one continuous, unified document.</p>
-            </a>
-            <!-- ========================================== -->
-            <!-- CARD TEMPLATE END                          -->
-            <!-- ========================================== -->
+        <!-- /* CATEGORY: ORGANIZE (Based on pdfux.jpg structure) */ -->
+        <div class="category-group theme-cyan">
+            <div class="category-header">
+                <i class="fa-solid fa-layer-group"></i> Organize PDF
+            </div>
+            <div class="tools-grid">
+                
+                <a href="/merge-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-object-group"></i></div>
+                    <div class="card-content">
+                        <h3>Merge PDF</h3>
+                        <p>Combine several PDF files into one continuous sequence.</p>
+                    </div>
+                </a>
 
-            <a href="/split-pdf/" class="tool-card">
-                <i class="fa-solid fa-scissors card-icon"></i>
-                <h2>Split PDF</h2>
-                <p>Deploy molecular scissors to cleave your PDF substrate. Extract specific pages or separate a large file into precise individual fragments.</p>
-            </a>
+                <a href="/split-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-scissors"></i></div>
+                    <div class="card-content">
+                        <h3>Split PDF</h3>
+                        <p>Extract specific pages and create isolated fragments.</p>
+                    </div>
+                </a>
 
-            <a href="/compress-pdf/" class="tool-card">
-                <i class="fa-solid fa-minimize card-icon"></i>
-                <h2>Compress PDF</h2>
-                <p>Optimize the structural morphology. Reduce file mass and compress data density without compromising the visual integrity of the sequence.</p>
-            </a>
+                <a href="/remove-pages/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-trash"></i></div>
+                    <div class="card-content">
+                        <h3>Delete Pages</h3>
+                        <p>Select and cleave unwanted pages from the substrate.</p>
+                    </div>
+                </a>
+                
+                <a href="/reorder-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                    <div class="card-content">
+                        <h3>Reorder Pages</h3>
+                        <p>Modify the structural sequence of the pages.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
 
-            <a href="/rotate-pdf/" class="tool-card">
-                <i class="fa-solid fa-rotate card-icon"></i>
-                <h2>Rotate PDF</h2>
-                <p>Re-align the spatial orientation of your document fragments. Instantly pivot pages to their correct functional conformation.</p>
-            </a>
+        <!-- /* CATEGORY: EDIT */ -->
+        <div class="category-group theme-green">
+            <div class="category-header">
+                <i class="fa-solid fa-pen-ruler"></i> Edit PDF
+            </div>
+            <div class="tools-grid">
+                
+                <a href="/rotate-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-rotate"></i></div>
+                    <div class="card-content">
+                        <h3>Rotate PDF</h3>
+                        <p>Re-align the spatial orientation of individual pages.</p>
+                    </div>
+                </a>
 
-        </section>
+                <a href="/watermark-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-stamp"></i></div>
+                    <div class="card-content">
+                        <h3>Add Watermark</h3>
+                        <p>Stamp an immutable text watermark across the document.</p>
+                    </div>
+                </a>
+
+                <a href="/page-numbers/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-list-ol"></i></div>
+                    <div class="card-content">
+                        <h3>Number Pages</h3>
+                        <p>Inject sequential numbering markers into the file.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- /* CATEGORY: PROTECT & OPTIMIZE */ -->
+        <div class="category-group theme-amber">
+            <div class="category-header">
+                <i class="fa-solid fa-shield-halved"></i> Protect & Optimize
+            </div>
+            <div class="tools-grid">
+                
+                <a href="/compress-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-minimize"></i></div>
+                    <div class="card-content">
+                        <h3>Compress PDF</h3>
+                        <p>Reduce file mass and optimize structural density.</p>
+                    </div>
+                </a>
+
+                <a href="/protect-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-lock"></i></div>
+                    <div class="card-content">
+                        <h3>Protect PDF</h3>
+                        <p>Lock the document utilizing AES encryption passwords.</p>
+                    </div>
+                </a>
+
+                <a href="/unlock-pdf/" class="tool-card">
+                    <div class="card-icon"><i class="fa-solid fa-unlock"></i></div>
+                    <div class="card-content">
+                        <h3>Unlock PDF</h3>
+                        <p>Remove security passwords from owned documents.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
     </main>
 
-    <!-- ========================================== -->
-    <!-- FOOTER START (Copy this to other pages)    -->
-    <!-- ========================================== -->
+    <!-- /* FOOTER START */ -->
     <footer class="footer">
         <div class="footer-links">
             <a href="/about/">About</a>
@@ -222,12 +408,10 @@
             </a>
         </div>
         <div class="footer-text">
-            &copy; 2026 PDFase | Built with discipline. Initiated by The Primer.
+            &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
         </div>
     </footer>
-    <!-- ========================================== -->
-    <!-- FOOTER END                                 -->
-    <!-- ========================================== -->
+    <!-- /* FOOTER END */ -->
 
 </body>
 </html>
