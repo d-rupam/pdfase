@@ -52,7 +52,7 @@
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         /* Options Panel */
-        .options-panel { background: rgba(57, 255, 20, 0.03); border: 1px solid rgba(57, 255, 20, 0.2); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%; max-width: 380px; }
+        .options-panel { background: rgba(57, 255, 20, 0.02); border: 1px solid rgba(57, 255, 20, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%; max-width: 380px; }
         .options-row { display: flex; gap: 0.75rem; align-items: center; justify-content: center; width: 100%; }
         .options-panel label { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
         .options-panel select { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; transition: border-color 0.2s; flex: 1; }
@@ -64,9 +64,30 @@
         .demo-indicator { position: absolute; width: 10px; height: 10px; background-color: var(--theme-color, #39ff14); border-radius: 50%; box-shadow: 0 0 8px var(--theme-color, #39ff14); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translate(-50%, -50%); }
         .demo-label { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
 
-        .btn-action { background-color: var(--theme-color, #39ff14); color: #000; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(57, 255, 20, 0.4); }
-        .btn-action:disabled { background-color: #333; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+        /* Eye-Friendly Balanced Solid Green Action Button */
+        .btn-action { 
+            background-color: #2ee310; /* Slightly dialed back, comfortable neon green */
+            color: #0b1121; /* Deep dark navy text for zero glare contrast */
+            border: none; 
+            padding: 0.85rem 2.5rem; 
+            font-size: 1.05rem; 
+            font-weight: 700; 
+            font-family: 'Space Grotesk', sans-serif; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(46, 227, 16, 0.2); 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .btn-action:hover { 
+            background-color: #34fa14;
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(46, 227, 16, 0.35); 
+        }
+        .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-secondary:hover { border-color: var(--theme-color, #39ff14); color: var(--theme-color, #39ff14); background-color: rgba(57, 255, 20, 0.05); }
