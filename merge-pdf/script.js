@@ -9,7 +9,7 @@
         document.head.appendChild(script);
     }
 
-    // Inject dynamic CSS for the file list & merge button
+    // Inject dynamic CSS for the file list & buttons
     const style = document.createElement('style');
     style.innerHTML = `
         .file-list-container { margin-top: 2rem; text-align: left; }
@@ -22,10 +22,19 @@
         .file-size { color: var(--text-muted); font-size: 0.8rem; }
         .remove-btn { background: none; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem; transition: transform 0.2s; }
         .remove-btn:hover { transform: scale(1.1); }
-        .action-container { text-align: center; margin-top: 2rem; display: none; }
-        .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
+        
+        /* Fixed Overlap and Flex Layout for multiple buttons */
+        .action-container { margin-top: 2rem; margin-bottom: 5rem; display: none; gap: 1rem; justify-content: center; flex-wrap: wrap; align-items: center; }
+        
+        .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-merge:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0, 255, 204, 0.4); }
-        .btn-merge:disabled { background-color: #555; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-merge:disabled { background-color: #333; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        /* Secondary Buttons UX */
+        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 1rem 2rem; font-size: 1rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary:hover { border-color: var(--cyber-cyan); color: var(--cyber-cyan); background-color: rgba(0, 255, 204, 0.05); }
+        
+        .success-message { width: 100%; text-align: center; color: var(--cyber-cyan); font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; }
     `;
     document.head.appendChild(style);
 })();
@@ -45,27 +54,29 @@ listContainer.className = 'file-list-container';
 const actionContainer = document.createElement('div');
 actionContainer.className = 'action-container';
 
-const mergeBtn = document.createElement('button');
-mergeBtn.className = 'btn-merge';
-mergeBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Merge PDFs';
-actionContainer.appendChild(mergeBtn);
-
 // Insert after dropzone
 dropzone.parentNode.insertBefore(listContainer, dropzone.nextSibling);
 listContainer.parentNode.insertBefore(actionContainer, listContainer.nextSibling);
 
+// Initialize Default Merge Button
+function initMergeButton() {
+    actionContainer.innerHTML = '';
+    const mergeBtn = document.createElement('button');
+    mergeBtn.className = 'btn-merge';
+    mergeBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Merge PDFs';
+    mergeBtn.addEventListener('click', executeMerge);
+    actionContainer.appendChild(mergeBtn);
+}
+initMergeButton();
+
 // ==========================================
 // 3. EVENT LISTENERS
 // ==========================================
-// Click to upload
 dropzone.addEventListener('click', (e) => {
     if (e.target.tagName !== 'BUTTON') fileInput.click();
 });
-
-// File Input Change
 fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-// Drag & Drop Handling
 dropzone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropzone.classList.add('dragover');
@@ -76,16 +87,9 @@ dropzone.addEventListener('drop', (e) => {
     dropzone.classList.remove('dragover');
     handleFiles(e.dataTransfer.files);
 });
-
-// Paste Handling (Ctrl+V)
 window.addEventListener('paste', (e) => {
-    if (e.clipboardData && e.clipboardData.files.length > 0) {
-        handleFiles(e.clipboardData.files);
-    }
+    if (e.clipboardData && e.clipboardData.files.length > 0) handleFiles(e.clipboardData.files);
 });
-
-// Merge Button Click
-mergeBtn.addEventListener('click', executeMerge);
 
 // ==========================================
 // 4. FILE HANDLING & UI RENDERING
@@ -96,7 +100,6 @@ function handleFiles(files) {
         alert('Invalid format. Please select PDF substrates only.');
         return;
     }
-    
     pdfFiles = [...pdfFiles, ...newFiles];
     renderFileList();
 }
@@ -118,7 +121,7 @@ function renderFileList() {
         return;
     }
     
-    actionContainer.style.display = 'block';
+    actionContainer.style.display = 'flex'; // Changed from block to flex for proper centering
 
     pdfFiles.forEach((file, index) => {
         const item = document.createElement('div');
@@ -132,19 +135,17 @@ function renderFileList() {
                 <div class="file-name">${file.name}</div>
                 <div class="file-size">${formatBytes(file.size)}</div>
             </div>
-            <button class="remove-btn" onclick="removeFile(${index})" title="Cleave Sequence">
+            <button class="remove-btn" onclick="removeFile(${index})" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         `;
 
         // Reordering Drag Events
-        item.addEventListener('dragstart', (e) => {
+        item.addEventListener('dragstart', () => {
             draggedItemIndex = index;
             setTimeout(() => item.classList.add('dragging'), 0);
         });
-
         item.addEventListener('dragend', () => item.classList.remove('dragging'));
-
         item.addEventListener('dragover', (e) => {
             e.preventDefault();
             const draggingEl = document.querySelector('.dragging');
@@ -154,14 +155,11 @@ function renderFileList() {
             });
             listContainer.insertBefore(draggingEl, nextSibling);
         });
-
         item.addEventListener('drop', (e) => {
             e.preventDefault();
-            // Reconstruct array based on DOM order
             const newOrderNodes = [...listContainer.querySelectorAll('.file-item')];
-            const newPdfFiles = newOrderNodes.map(node => pdfFiles[node.dataset.index]);
-            pdfFiles = newPdfFiles;
-            renderFileList(); // Re-render to fix indices
+            pdfFiles = newOrderNodes.map(node => pdfFiles[node.dataset.index]);
+            renderFileList(); 
         });
 
         listContainer.appendChild(item);
@@ -173,23 +171,35 @@ window.removeFile = function(index) {
     renderFileList();
 };
 
+// Reset Tool Function
+window.resetTool = function() {
+    pdfFiles = [];
+    document.getElementById('pdf-dropzone').style.display = 'block';
+    listContainer.style.display = 'block';
+    renderFileList();
+    initMergeButton();
+};
+
 // ==========================================
 // 5. CLIENT-SIDE MERGE LOGIC (pdf-lib)
 // ==========================================
 async function executeMerge() {
     if (pdfFiles.length < 2) {
-        alert('Synthesis requires at least two PDF substrates to merge.');
+        alert('Synthesis requires at least two PDF files to merge.');
         return;
     }
 
     if (!window.PDFLib) {
-        alert('Enzyme engine (pdf-lib) is still loading. Please wait a moment.');
+        alert('Engine is still loading. Please wait a moment.');
         return;
     }
 
+    const mergeBtn = actionContainer.querySelector('.btn-merge');
+    
     try {
+        // UI Loading State
         mergeBtn.disabled = true;
-        mergeBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synthesizing Sequence...';
+        mergeBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synthesizing...';
 
         const { PDFDocument } = window.PDFLib;
         const mergedPdf = await PDFDocument.create();
@@ -198,34 +208,39 @@ async function executeMerge() {
             const arrayBuffer = await file.arrayBuffer();
             const pdfToMerge = await PDFDocument.load(arrayBuffer);
             const copiedPages = await mergedPdf.copyPages(pdfToMerge, pdfToMerge.getPageIndices());
-            
-            copiedPages.forEach((page) => {
-                mergedPdf.addPage(page);
-            });
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
         }
 
         const mergedPdfBytes = await mergedPdf.save();
-        
-        // Trigger Download
         const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'PDFase_Merged_Sequence.pdf';
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
+        // Artificial delay for smooth UX transition
         setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
+            // Hide upload UI
+            document.getElementById('pdf-dropzone').style.display = 'none';
+            listContainer.style.display = 'none';
+            
+            // Render Post-Merge UI
+            actionContainer.innerHTML = `
+                <div class="success-message">
+                    <i class="fa-solid fa-circle-check"></i> Synthesis Complete!
+                </div>
+                <a href="${url}" download="PDFase_Merged.pdf" class="btn-merge">
+                    <i class="fa-solid fa-download"></i> Download PDF
+                </a>
+                <button class="btn-secondary" onclick="resetTool()">
+                    <i class="fa-solid fa-rotate-right"></i> Merge More
+                </button>
+                <a href="/" class="btn-secondary">
+                    <i class="fa-solid fa-toolbox"></i> Other Tools
+                </a>
+            `;
+        }, 800);
 
     } catch (error) {
         console.error('Synthesis Error:', error);
-        alert('A critical error occurred during structural synthesis. Check console for details.');
-    } finally {
+        alert('A critical error occurred. Make sure your PDFs are not encrypted with passwords.');
         mergeBtn.disabled = false;
         mergeBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Merge PDFs';
     }
