@@ -335,14 +335,14 @@
             <p>Combine several PDF files into one continuous document.</p>
         </div>
 
-        <!-- UPLOAD DROPZONE -->
+      <!-- UPLOAD DROPZONE -->
         <div class="dropzone" id="pdf-dropzone">
             <i class="fa-solid fa-file-pdf dropzone-icon"></i>
             <div class="dropzone-text">Drop your PDF files here (or paste using Ctrl+V)</div>
             
             <!-- Hidden file input linked to JS -->
             <input type="file" id="file-input" multiple accept=".pdf" style="display: none;">
-            <button class="btn-upload" onclick="document.getElementById('file-input').click()">Select files</button>
+            <button class="btn-upload" id="select-files-btn">Select files</button>
             
             <br>
             <div class="privacy-badge">
