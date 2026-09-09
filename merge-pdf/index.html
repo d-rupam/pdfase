@@ -214,29 +214,42 @@
         .info-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem; font-weight: 600; }
         .info-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
 
-        /* --- LONG-FORM CONTENT SECTION (For SEO & AdSense) --- */
+        /* --- LONG-FORM CONTENT SECTION (Beautiful Cards) --- */
         .content-section {
             margin-bottom: 4rem;
         }
         .content-block {
-            margin-bottom: 2.5rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--cyber-cyan); /* Theme colored accent border */
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .content-block:hover {
+            border-color: rgba(0, 255, 204, 0.3);
+            background-color: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         .content-block h2 {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             color: #fff;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        .content-block h2 i { color: var(--cyber-cyan); font-size: 1.2rem; }
+        .content-block h2 i { color: var(--cyber-cyan); font-size: 1.3rem; }
         .content-block p {
             color: var(--text-muted);
             font-size: 1rem;
-            line-height: 1.8;
+            line-height: 1.7;
             margin-bottom: 1rem;
         }
+        .content-block p:last-child { margin-bottom: 0; }
+        
         .step-list {
             list-style: none;
             padding: 0;
@@ -259,6 +272,10 @@
             top: 2px;
             color: var(--cyber-cyan);
             font-size: 1.2rem;
+        }
+        .step-list strong {
+            color: #fff;
+            font-weight: 600;
         }
 
         /* --- FAQ SECTION --- */
@@ -292,6 +309,7 @@
             .footer-links, .footer-social { justify-content: center; }
             .tool-header h1 { font-size: 1.8rem; }
             .dropzone { padding: 3rem 1.5rem; }
+            .content-block { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -314,7 +332,7 @@
         <!-- TOOL HEADER -->
         <div class="tool-header">
             <h1><i class="fa-solid fa-object-group" style="color: var(--cyber-cyan);"></i> Merge PDF Files</h1>
-            <p>Combine several PDF files into one continuous sequence.</p>
+            <p>Combine several PDF files into one continuous document.</p>
         </div>
 
         <!-- UPLOAD DROPZONE -->
@@ -337,45 +355,45 @@
             <div class="info-card">
                 <i class="fa-solid fa-bolt"></i>
                 <h3>Lightning Fast</h3>
-                <p>No more waiting for bulky files to upload to a remote server. By processing the structural sequence directly in your browser, merging thousands of pages takes only seconds.</p>
+                <p>No more waiting for bulky files to upload to a remote server. By processing the files directly in your browser, merging thousands of pages takes only seconds.</p>
             </div>
 
             <div class="info-card">
                 <i class="fa-solid fa-lock"></i>
                 <h3>Absolute Privacy</h3>
-                <p>Absolute Data Sovereignty is guaranteed. Your raw documents are parsed within your local machine's memory and are entirely invisible to external servers.</p>
+                <p>Your privacy is guaranteed. Your raw documents are processed within your local computer or phone's memory and are completely invisible to the internet.</p>
             </div>
 
             <div class="info-card">
                 <i class="fa-solid fa-infinity"></i>
                 <h3>100% Free & No Limits</h3>
-                <p>There are no artificial constraints. Merge massive sequences or hundreds of individual files completely free of charge, with no daily usage limits.</p>
+                <p>There are no hidden costs or limits. Merge large files or hundreds of individual pages completely free of charge, with no daily usage caps.</p>
             </div>
         </div>
 
-        <!-- LONG-FORM CONTENT (AdSense / SEO Buffer) -->
+        <!-- LONG-FORM CONTENT (Beautiful Cards for SEO & AdSense) -->
         <div class="content-section">
             
             <div class="content-block">
                 <h2><i class="fa-solid fa-microscope"></i> About the Merge PDF Tool</h2>
-                <p>The PDFase Merge tool acts as your digital ligase, engineered to seamlessly combine multiple PDF structural fragments into a single, continuous document. Whether you are compiling vast research papers, organizing financial invoices, or preparing a master academic presentation, this utility ensures that your document's original formatting, image resolution, and critical metadata remain perfectly intact.</p>
-                <p>Because the synthesis is performed entirely on the client side using high-speed JavaScript architecture, you bypass the traditional risks and wait times associated with cloud-based PDF editors. Your private data is never transmitted, stored, or processed on an external server.</p>
+                <p>The PDFase Merge tool is designed to easily combine multiple PDF files into one single document. Whether you are putting together research papers, organizing business invoices, or preparing a large presentation, this tool ensures your original formatting and image quality stay exactly the same.</p>
+                <p>Because everything happens directly inside your web browser, you completely skip the long upload times associated with traditional cloud editors. Your private files are completely secure because they are never sent to or stored on any external servers.</p>
             </div>
 
             <div class="content-block">
                 <h2><i class="fa-solid fa-list-check"></i> Step-by-Step Guide to Merging PDFs Locally</h2>
-                <p>Our interface is designed for rapid execution. Follow these exact steps to synthesize your documents locally:</p>
+                <p>Our tool is designed to be simple and fast. Follow these easy steps to combine your documents:</p>
                 <ul class="step-list">
-                    <li><strong>Select your PDF substrates:</strong> Drag and drop your files directly into the active upload matrix above, or click 'Select files' to browse your local device storage.</li>
-                    <li><strong>Rearrange the sequence:</strong> Once the files are loaded into your browser's active memory, visually drag and drop the individual document thumbnails to establish the precise order of your final sequence.</li>
-                    <li><strong>Execute the synthesis:</strong> Click the 'Merge PDFs' button. Our client-side algorithms will instantly act as a catalyst, binding the PDF fragments together natively.</li>
-                    <li><strong>Download the final output:</strong> Save the newly unified PDF sequence directly back to your local machine instantly.</li>
+                    <li><strong>Select your files:</strong> Drag and drop your PDFs into the upload box above, or click the 'Select files' button to choose them from your computer or phone.</li>
+                    <li><strong>Rearrange the order:</strong> Once your files appear on the screen, simply click and drag the document images to put them in the exact order you want.</li>
+                    <li><strong>Merge the PDFs:</strong> Click the 'Merge PDFs' button. Our tool will instantly combine all the files together right inside your browser.</li>
+                    <li><strong>Download your file:</strong> Save your newly merged, single PDF document directly to your device instantly.</li>
                 </ul>
             </div>
 
             <div class="content-block">
                 <h2><i class="fa-solid fa-dna"></i> Why Name it PDFase?</h2>
-                <p>In molecular biochemistry, an enzyme (identified by the suffix "-ase") is a highly specialized molecular machine engineered to bind to a raw substrate to cut, synthesize, or structurally modify it in real-time. We applied this exact biological principle to our digital infrastructure. PDFase tools act as active digital enzymes—modifying your document substrates locally, instantly, and securely, without ever transferring your private data to a remote backend.</p>
+                <p>In biology, an enzyme (which usually ends in "-ase") is a tiny, high-speed machine that attaches to raw materials to cut, build, or change them instantly. We applied this exact same idea to our digital tools. PDFase acts like a fast digital enzyme for your documents—modifying your files locally, instantly, and securely, without ever sending your private data over the internet.</p>
             </div>
 
         </div>
@@ -386,27 +404,27 @@
             
             <div class="faq-item">
                 <h3><i class="fa-solid fa-circle-question"></i> Are my PDF files uploaded to a server when merging?</h3>
-                <p>No. The Merge PDF tool processes all documents locally inside your web browser. Absolute data sovereignty is maintained, and your files never leave your device.</p>
+                <p>No. The Merge PDF tool processes all documents locally inside your web browser. Absolute privacy is maintained, and your files never leave your device.</p>
             </div>
 
             <div class="faq-item">
                 <h3><i class="fa-solid fa-circle-question"></i> Is there a limit to how many PDFs I can merge?</h3>
-                <p>Because processing happens directly on your device hardware, there are no artificial file limits. You can merge as many files as your device memory can handle.</p>
+                <p>Because processing happens directly on your device, there are no artificial file limits. You can merge as many files as your device memory can handle.</p>
             </div>
 
             <div class="faq-item">
                 <h3><i class="fa-solid fa-circle-question"></i> Does merging PDFs reduce the quality of the documents?</h3>
-                <p>No. Our digital ligase scripts perfectly stitch the structural fragments together without altering the resolution or formatting of the original pages.</p>
+                <p>No. Our tool perfectly stitches the pages together without lowering the resolution or changing the formatting of the original files.</p>
             </div>
 
             <div class="faq-item">
                 <h3><i class="fa-solid fa-circle-question"></i> Can I reorder the PDF files before merging?</h3>
-                <p>Yes. Once you upload your files into the local matrix, you can drag and drop them to rearrange the exact sequence before finalizing the merge.</p>
+                <p>Yes. Once you upload your files into the box, you can drag and drop them to rearrange the exact order before you hit merge.</p>
             </div>
 
             <div class="faq-item">
                 <h3><i class="fa-solid fa-circle-question"></i> Does this tool work offline?</h3>
-                <p>Yes. Once the web application is loaded in your browser, the client-side JavaScript operates independently of an internet connection.</p>
+                <p>Yes. Once the web page is fully loaded in your browser, the tool operates entirely offline without needing an active internet connection.</p>
             </div>
         </div>
 
@@ -433,7 +451,6 @@
     </footer>
 
     <!-- EXTERNAL TOOL LOGIC -->
-    <!-- The actual functionality is isolated here to keep HTML clean -->
     <script src="script.js"></script>
 
 </body>
