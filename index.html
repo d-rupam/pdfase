@@ -123,20 +123,15 @@
 
         main { flex: 1; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        /* --- EXACT MATCH METAPHOR BOX (From your PHP) --- */
-        .custom-header-module { width: 100%; background: #0F172A; border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; padding: 24px; margin-bottom: 35px; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
-        .custom-tag-top { color: #F59E0B; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
-        .custom-title { color: #F1F5F9; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 28px !important; font-weight: 800; margin: 0 0 20px 0 !important; border-bottom: 1px solid rgba(6, 182, 212, 0.2); padding-bottom: 12px; line-height: 1.2; text-transform: none; }
-        .custom-bio-def { background: rgba(6, 182, 212, 0.05); border-left: 3px solid #06B6D4; padding: 14px 18px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+        /* --- EXACT MATCH METAPHOR BOX (UNIQUE ELECTRIC BLUE THEME) --- */
+        .custom-header-module { width: 100%; background: #0F172A; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 24px; margin-bottom: 35px; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+        .custom-tag-top { color: #60A5FA; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+        .custom-title { color: #F1F5F9; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 28px !important; font-weight: 800; margin: 0 0 20px 0 !important; border-bottom: 1px solid rgba(59, 130, 246, 0.2); padding-bottom: 12px; line-height: 1.2; text-transform: none; }
+        .custom-bio-def { background: rgba(59, 130, 246, 0.05); border-left: 3px solid #3B82F6; padding: 14px 18px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
         .custom-bio-def p { color: #94A3B8; font-family: 'Space Grotesk', sans-serif; font-size: 14px; line-height: 1.6; margin: 0; }
-        .custom-bio-def strong { color: #06B6D4; }
+        .custom-bio-def strong { color: #3B82F6; }
         .custom-desc-text { color: #E2E8F0; font-family: 'Space Grotesk', sans-serif; font-size: 15px; line-height: 1.7; margin-bottom: 15px; }
         .custom-desc-text:last-child { margin-bottom: 0; }
-
-        @media (max-width: 768px) { 
-            .custom-header-module { padding: 18px; } 
-            .custom-title { font-size: 22px !important; } 
-        }
 
         /* --- CATEGORY LAYOUT --- */
         .category-group {
@@ -162,6 +157,7 @@
             border-radius: 8px;
         }
 
+        /* Desktop Grid */
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -214,6 +210,17 @@
         .theme-green { --theme-color: #39ff14; }  /* Edit */
         .theme-amber { --theme-color: #ffbf00; }  /* Protect */
 
+        /* --- MOBILE RESPONSIVE FIXES --- */
+        @media (max-width: 768px) { 
+            main { padding: 1.5rem 1rem; }
+            .custom-header-module { padding: 18px; } 
+            .custom-title { font-size: 22px !important; } 
+            .category-group { padding: 1.25rem; }
+            /* Forces cards to stack exactly 1 per row on mobile */
+            .tools-grid { grid-template-columns: 1fr; }
+            .tool-card { padding: 1rem; gap: 1rem; }
+        }
+
         /* --- FOOTER --- */
         .footer {
             background-color: var(--bg-surface);
@@ -258,15 +265,15 @@
 
     <main>
         
-        <!-- THE METAPHOR BLOCK (Exact match to your PHP design) -->
-        <div class="custom-header-module theme-plasmid">
+        <!-- THE METAPHOR BLOCK (ELECTRIC BLUE) -->
+        <div class="custom-header-module">
             <span class="custom-tag-top">// THE BIOLOGICAL CATALYST MATRIX</span>
-            <h1 class="custom-title">PDFase</h1>
+            <h1 class="custom-title">🧬 PDFase: The Digital Enzyme Hub</h1>
             <div class="custom-bio-def">
                 <p><strong>[ THE METAPHOR ]</strong> In cellular biochemistry, an enzyme (identified by the suffix "-ase") is a high-speed, specialized molecular machine that binds directly to a raw substrate to cut, synthesize, or structurally modify it in real-time.</p>
             </div>
-            <p class="custom-desc-text">This terminal serves as the active digital enzyme of the ecosystem. It hosts a suite of high-precision, serverless scripts engineered to cleave, ligate, and compress PDF substrates locally.</p>
-            <p class="custom-desc-text">Your document data is parsed 100% inside your browser memory—maintaining absolute Data Sovereignty.</p>
+            <p class="custom-desc-text">This subdomain functions as the active digital enzyme of the ecosystem. It hosts a suite of high-precision, serverless scripts engineered to cleave, ligate, and compress PDF substrates locally.</p>
+            <p class="custom-desc-text">Because these reactions execute entirely within the local browser memory, absolute Data Sovereignty is maintained—the raw document never leaves your machine, and the structural mutation is instantaneous.</p>
         </div>
 
         <!-- CATEGORY: ORGANIZE -->
