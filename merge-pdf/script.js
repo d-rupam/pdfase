@@ -12,27 +12,28 @@
     style.innerHTML = `
         /* Dynamic Dropzone Shrinking */
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; }
-        .dropzone.has-files { padding: 2rem 1rem; }
+        .dropzone.has-files { padding: 1.5rem 1rem; }
 
         /* A4 Grid Layout inside Dropzone */
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; width: 100%; padding: 0; }
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; padding: 0; }
         
-        /* Uniform Fixed-Height Cards */
-        .a4-card { width: 110px; height: 165px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px 10px 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        /* Rigid Fixed-Height Cards */
+        .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
         .a4-card.dragging { opacity: 0.4; border-color: var(--cyber-cyan); transform: scale(1.05); }
         
-        .a4-icon-wrapper { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .a4-icon { font-size: 2.5rem; color: var(--text-muted); transition: color 0.2s; }
         .a4-card:hover .a4-icon { color: var(--cyber-cyan); }
         
-        /* 2-line truncated text fixed to prevent crushing */
         .a4-name { 
             font-size: 0.75rem; 
             color: var(--text-main); 
             font-weight: 500; 
             width: 100%; 
-            padding-top: 8px; 
+            height: 38px; 
+            margin-top: 5px;
+            padding-top: 6px; 
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -40,38 +41,34 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
-            line-height: 1.4;
-            min-height: 38px; /* Guarantees space for exactly 2 lines + padding */
-            flex-shrink: 0; /* Stops the text area from being squished by flexbox */
+            line-height: 1.3;
             word-break: break-word;
         }
         
         .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
         .a4-remove:hover { transform: scale(1.15); background: #ff0044; }
         
-        /* Add More Button (Dashed A4) */
-        .a4-add { border: 2px dashed rgba(0, 255, 204, 0.3); background: rgba(0, 255, 204, 0.02); color: var(--cyber-cyan); cursor: pointer; box-shadow: none; }
+        .a4-add { border: 2px dashed rgba(0, 255, 204, 0.3); background: rgba(0, 255, 204, 0.02); color: var(--cyber-cyan); cursor: pointer; box-shadow: none; display: flex; flex-direction: column; justify-content: center; }
         .a4-add:hover { border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.05); transform: translateY(-3px); }
-        .a4-add .a4-icon { color: var(--cyber-cyan); font-size: 2rem; }
-        .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; display: flex; align-items: center; justify-content: center; }
+        .a4-add .a4-icon { color: var(--cyber-cyan); font-size: 2rem; margin-bottom: 5px; }
+        .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
 
-        /* Action Buttons */
-        .action-container { margin-top: 1rem; margin-bottom: 4rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; }
+        /* Tighter Action Container Spacing (Pulling button up into view) */
+        .action-container { margin-top: 1.25rem; margin-bottom: 2.5rem; display: none; gap: 0.75rem; justify-content: center; flex-direction: column; align-items: center; }
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
-        .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-merge:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0, 255, 204, 0.4); }
         .btn-merge:disabled { background-color: #333; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
         
-        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 1rem 2rem; font-size: 1rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-secondary:hover { border-color: var(--cyber-cyan); color: var(--cyber-cyan); background-color: rgba(0, 255, 204, 0.05); }
         
-        .success-message { width: 100%; text-align: center; color: var(--cyber-cyan); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .success-message { width: 100%; text-align: center; color: var(--cyber-cyan); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
         
-        /* The Final Visual Flow Design */
-        .file-flow { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(0, 255, 204, 0.03); padding: 12px 24px; border-radius: 8px; border: 1px solid rgba(0, 255, 204, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
-        .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
-        .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--cyber-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+        .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(0, 255, 204, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(0, 255, 204, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
+        .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--cyber-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
     `;
     document.head.appendChild(style);
 })();
@@ -85,16 +82,13 @@ let draggedItemIndex = null;
 const dropzone = document.getElementById('pdf-dropzone');
 const fileInput = document.getElementById('file-input');
 
-// Cache default dropzone elements so we can hide/show them
 const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
 
-// Create the A4 Grid Container inside the dropzone
 const a4Grid = document.createElement('div');
 a4Grid.className = 'a4-grid';
 a4Grid.style.display = 'none';
 dropzone.appendChild(a4Grid);
 
-// Create Action Container (Merge Button) below dropzone
 const actionContainer = document.createElement('div');
 actionContainer.className = 'action-container';
 dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
@@ -118,7 +112,6 @@ initMergeUI();
 // 3. EVENT LISTENERS
 // ==========================================
 dropzone.addEventListener('click', (e) => {
-    // Only trigger input if clicking the default empty dropzone area or specifically the "Add More" card
     if (pdfFiles.length === 0 && e.target.tagName !== 'BUTTON') {
         fileInput.click();
     }
@@ -154,7 +147,6 @@ function handleFiles(files) {
 function renderFileList() {
     a4Grid.innerHTML = '';
     
-    // Toggle UI States
     if (pdfFiles.length === 0) {
         dropzone.classList.remove('has-files');
         defaultDropzoneElements.forEach(el => el.style.display = '');
@@ -170,7 +162,6 @@ function renderFileList() {
     actionContainer.style.display = 'flex';
     dropzone.style.cursor = 'default';
 
-    // Render A4 Cards
     pdfFiles.forEach((file, index) => {
         const item = document.createElement('div');
         item.className = 'a4-card';
@@ -187,8 +178,7 @@ function renderFileList() {
             <div class="a4-name" title="${file.name}">${file.name}</div>
         `;
 
-        // HTML5 Drag & Drop Reordering Logic
-        item.addEventListener('dragstart', (e) => { 
+        item.addEventListener('dragstart', () => { 
             draggedItemIndex = index; 
             setTimeout(() => item.classList.add('dragging'), 0); 
         });
@@ -217,12 +207,11 @@ function renderFileList() {
         a4Grid.appendChild(item);
     });
 
-    // Render "Add More" Dashed A4 Card at the end
     const addMoreCard = document.createElement('div');
     addMoreCard.className = 'a4-card a4-add';
     addMoreCard.onclick = () => fileInput.click();
     addMoreCard.innerHTML = `
-        <div class="a4-icon-wrapper">
+        <div class="a4-icon-wrapper" style="height: auto;">
             <i class="fa-solid fa-plus a4-icon"></i>
         </div>
         <div class="a4-name">Add More</div>
@@ -256,7 +245,6 @@ async function executeMerge() {
 
     const mergeBtn = actionContainer.querySelector('.btn-merge');
     
-    // Build the visual text flow for the success screen BEFORE clearing the array
     let flowHtml = '';
     if (pdfFiles.length <= 3) {
         flowHtml = pdfFiles.map(f => `<span class="file-flow-name">${f.name}</span>`).join(' <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--cyber-cyan);"></i> ');
@@ -283,7 +271,6 @@ async function executeMerge() {
         const url = URL.createObjectURL(blob);
         const finalFileName = 'PDFase_Merged.pdf';
         
-        // Hide Dropzone and Show Success Screen
         setTimeout(() => {
             document.getElementById('pdf-dropzone').style.display = 'none';
             
