@@ -2,36 +2,56 @@
 // 1. INJECT DEPENDENCIES & STYLES
 // ==========================================
 (function initEnvironment() {
-    // Dynamically load pdf-lib for client-side processing
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
     }
 
-    // Inject dynamic CSS for the A4 grid and buttons
     const style = document.createElement('style');
     style.innerHTML = `
+        /* Dynamic Dropzone Shrinking */
+        .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; }
+        .dropzone.has-files { padding: 2rem 1rem; }
+
         /* A4 Grid Layout inside Dropzone */
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; width: 100%; align-items: stretch; min-height: 200px; padding: 1rem 0; }
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; width: 100%; padding: 0; }
         
-        .a4-card { width: 120px; height: 170px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        /* Uniform Fixed-Height Cards */
+        .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px 10px 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
         .a4-card.dragging { opacity: 0.4; border-color: var(--cyber-cyan); transform: scale(1.05); }
         
-        .a4-icon { font-size: 2.5rem; color: var(--text-muted); margin-bottom: 10px; transition: color 0.2s; }
+        .a4-icon-wrapper { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .a4-icon { font-size: 2.5rem; color: var(--text-muted); transition: color 0.2s; }
         .a4-card:hover .a4-icon { color: var(--cyber-cyan); }
         
-        .a4-name { font-size: 0.75rem; color: var(--text-main); font-weight: 500; word-break: break-all; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; width: 100%; line-height: 1.3; }
+        /* 2-line truncated text with fixed height to prevent grid bouncing */
+        .a4-name { 
+            font-size: 0.75rem; 
+            color: var(--text-main); 
+            font-weight: 500; 
+            width: 100%; 
+            padding-top: 8px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            line-height: 1.3em;
+            height: 2.6em; /* Strictly reserves space for 2 lines */
+        }
         
-        .a4-remove { position: absolute; top: -10px; right: -10px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
+        .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
         .a4-remove:hover { transform: scale(1.15); background: #ff0044; }
         
         /* Add More Button (Dashed A4) */
         .a4-add { border: 2px dashed rgba(0, 255, 204, 0.3); background: rgba(0, 255, 204, 0.02); color: var(--cyber-cyan); cursor: pointer; box-shadow: none; }
         .a4-add:hover { border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.05); transform: translateY(-3px); }
-        .a4-add i { font-size: 2.5rem; margin-bottom: 5px; }
-        .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; font-size: 0.85rem; }
+        .a4-add .a4-icon { color: var(--cyber-cyan); font-size: 2rem; }
+        .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; display: flex; align-items: center; justify-content: center; }
 
         /* Action Buttons */
         .action-container { margin-top: 1rem; margin-bottom: 4rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; }
@@ -134,6 +154,7 @@ function renderFileList() {
     
     // Toggle UI States
     if (pdfFiles.length === 0) {
+        dropzone.classList.remove('has-files');
         defaultDropzoneElements.forEach(el => el.style.display = '');
         a4Grid.style.display = 'none';
         actionContainer.style.display = 'none';
@@ -141,6 +162,7 @@ function renderFileList() {
         return;
     }
     
+    dropzone.classList.add('has-files');
     defaultDropzoneElements.forEach(el => el.style.display = 'none');
     a4Grid.style.display = 'flex';
     actionContainer.style.display = 'flex';
@@ -157,7 +179,9 @@ function renderFileList() {
             <button class="a4-remove" onclick="removeFile(event, ${index})" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <i class="fa-solid fa-file-pdf a4-icon"></i>
+            <div class="a4-icon-wrapper">
+                <i class="fa-solid fa-file-pdf a4-icon"></i>
+            </div>
             <div class="a4-name" title="${file.name}">${file.name}</div>
         `;
 
@@ -174,7 +198,6 @@ function renderFileList() {
             if (!draggingEl) return;
             
             const bounding = item.getBoundingClientRect();
-            // Swap threshold based on horizontal center of the card
             if (e.clientX > bounding.left + bounding.width / 2) {
                 item.parentNode.insertBefore(draggingEl, item.nextSibling);
             } else {
@@ -197,14 +220,16 @@ function renderFileList() {
     addMoreCard.className = 'a4-card a4-add';
     addMoreCard.onclick = () => fileInput.click();
     addMoreCard.innerHTML = `
-        <i class="fa-solid fa-plus"></i>
+        <div class="a4-icon-wrapper">
+            <i class="fa-solid fa-plus a4-icon"></i>
+        </div>
         <div class="a4-name">Add More</div>
     `;
     a4Grid.appendChild(addMoreCard);
 }
 
 window.removeFile = function(event, index) {
-    event.stopPropagation(); // Prevent triggering dropzone click
+    event.stopPropagation(); 
     pdfFiles.splice(index, 1);
     renderFileList();
 };
