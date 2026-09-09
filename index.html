@@ -123,13 +123,13 @@
 
         main { flex: 1; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        /* --- EXACT MATCH METAPHOR BOX (CYBER INDIGO THEME) --- */
-        .custom-header-module { width: 100%; background: #0F172A; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; padding: 24px; margin-bottom: 35px; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
-        .custom-tag-top { color: #818CF8; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
-        .custom-title { display: flex; align-items: center; color: #F1F5F9; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 28px !important; font-weight: 800; margin: 0 0 20px 0 !important; border-bottom: 1px solid rgba(99, 102, 241, 0.2); padding-bottom: 12px; line-height: 1.2; text-transform: none; }
-        .custom-bio-def { background: rgba(99, 102, 241, 0.05); border-left: 3px solid #6366F1; padding: 14px 18px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+        /* --- EXACT MATCH METAPHOR BOX (CYBER FUCHSIA THEME) --- */
+        .custom-header-module { width: 100%; background: #0F172A; border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 8px; padding: 24px; margin-bottom: 35px; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+        .custom-tag-top { color: #F472B6; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+        .custom-title { display: flex; align-items: center; color: #F1F5F9; font-family: 'JetBrains Mono', monospace, sans-serif; font-size: 28px !important; font-weight: 800; margin: 0 0 20px 0 !important; border-bottom: 1px solid rgba(236, 72, 153, 0.2); padding-bottom: 12px; line-height: 1.2; text-transform: none; }
+        .custom-bio-def { background: rgba(236, 72, 153, 0.05); border-left: 3px solid #EC4899; padding: 14px 18px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
         .custom-bio-def p { color: #94A3B8; font-family: 'Space Grotesk', sans-serif; font-size: 14px; line-height: 1.6; margin: 0; }
-        .custom-bio-def strong { color: #6366F1; }
+        .custom-bio-def strong { color: #EC4899; }
         .custom-desc-text { color: #E2E8F0; font-family: 'Space Grotesk', sans-serif; font-size: 15px; line-height: 1.7; margin-bottom: 15px; }
         .custom-desc-text:last-child { margin-bottom: 0; }
 
@@ -210,10 +210,10 @@
         .theme-green { --theme-color: #39ff14; }  /* Edit */
         .theme-amber { --theme-color: #ffbf00; }  /* Protect */
 
-        /* --- 3-COLUMN FOOTER DESIGN --- */
+        /* --- 3-COLUMN COMPACT FOOTER DESIGN --- */
         .footer {
             background-color: var(--bg-header-footer);
-            padding: 2.5rem 2rem;
+            padding: 1.25rem 2rem; /* Reduced padding for PC */
             border-top: 1px solid var(--border-subtle);
             margin-top: auto;
         }
@@ -270,7 +270,7 @@
             .footer-container {
                 grid-template-columns: 1fr;
                 text-align: center;
-                gap: 1.5rem;
+                gap: 1rem; /* Reduced mobile gap slightly */
             }
             .footer-links, .footer-social {
                 justify-content: center;
@@ -297,11 +297,11 @@
 
     <main>
         
-        <!-- THE METAPHOR BLOCK (CYBER INDIGO) -->
+        <!-- THE METAPHOR BLOCK (CYBER FUCHSIA) -->
         <div class="custom-header-module">
             <span class="custom-tag-top">// THE BIOLOGICAL CATALYST MATRIX</span>
             <h1 class="custom-title">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px;">
                     <path d="M10 2v7.31M14 9.3V1.99M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/>
                     <path d="M5.5 16.5 9 13M15 13l3.5 3.5"/>
                 </svg>
@@ -334,49 +334,49 @@
                         <p>Extract pages and create several files.</p>
                     </div>
                 </a>
-                <a href="/extract-pages/" class="tool-card">
+                <a href="/extract-pages-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-file-export"></i></div>
                     <div class="card-content">
                         <h3>Extract pages from PDF</h3>
                         <p>Select the pages you want to keep.</p>
                     </div>
                 </a>
-                <a href="/delete-pages/" class="tool-card">
+                <a href="/delete-pages-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-trash"></i></div>
                     <div class="card-content">
                         <h3>Delete pages from PDF</h3>
                         <p>Select the pages you want to remove.</p>
                     </div>
                 </a>
-                <a href="/reorder-pages/" class="tool-card">
+                <a href="/reorder-pages-in-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
                     <div class="card-content">
                         <h3>Reorder pages in PDF file</h3>
                         <p>Choose the order of the pages.</p>
                     </div>
                 </a>
-                <a href="/reverse-pages/" class="tool-card">
+                <a href="/reverse-pages-in-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                     <div class="card-content">
                         <h3>Reverse pages in PDF file</h3>
                         <p>Order the pages in reverse order.</p>
                     </div>
                 </a>
-                <a href="/interweave-pdf/" class="tool-card">
+                <a href="/interweave-pdf-files/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-shuffle"></i></div>
                     <div class="card-content">
                         <h3>Interweave PDF files</h3>
                         <p>Mix several PDF files to one.</p>
                     </div>
                 </a>
-                <a href="/repeat-pdf/" class="tool-card">
+                <a href="/repeat-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-repeat"></i></div>
                     <div class="card-content">
                         <h3>Repeat PDF file</h3>
                         <p>Repeat the contents in a PDF file a number of times.</p>
                     </div>
                 </a>
-                <a href="/add-blank-pages/" class="tool-card">
+                <a href="/add-blank-pages-to-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-file"></i></div>
                     <div class="card-content">
                         <h3>Add blank pages to PDF file</h3>
@@ -434,7 +434,7 @@
                         <p>Create a PDF from TIFF images.</p>
                     </div>
                 </a>
-                <a href="/extract-images/" class="tool-card">
+                <a href="/extract-images-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-file-export"></i></div>
                     <div class="card-content">
                         <h3>Extract images from PDF</h3>
@@ -457,28 +457,28 @@
                 <i class="fa-solid fa-pen-ruler"></i> Edit PDF
             </div>
             <div class="tools-grid">
-                <a href="/rotate-pdf/" class="tool-card">
+                <a href="/rotate-pages-in-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-rotate"></i></div>
                     <div class="card-content">
                         <h3>Rotate pages in PDF file</h3>
                         <p>Rotate individual pages or the whole file.</p>
                     </div>
                 </a>
-                <a href="/number-pages/" class="tool-card">
+                <a href="/number-pages-in-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-list-ol"></i></div>
                     <div class="card-content">
                         <h3>Number pages in PDF file</h3>
                         <p>Add page numbering.</p>
                     </div>
                 </a>
-                <a href="/bates-numbering/" class="tool-card">
+                <a href="/add-bates-numbering-to-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-arrow-down-1-9"></i></div>
                     <div class="card-content">
                         <h3>Add Bates numbering to PDF</h3>
                         <p>Stamp fixed-width Bates IDs on every page.</p>
                     </div>
                 </a>
-                <a href="/add-watermark/" class="tool-card">
+                <a href="/add-watermark-to-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-stamp"></i></div>
                     <div class="card-content">
                         <h3>Add watermark to PDF</h3>
@@ -492,11 +492,11 @@
                         <p>Type or draw your signature.</p>
                     </div>
                 </a>
-                <a href="/remove-watermark/" class="tool-card">
+                <a href="/remove-watermark-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-eraser"></i></div>
                     <div class="card-content">
                         <h3>Remove watermark from PDF</h3>
-                        <p>Remove watermarks added with pdfux.</p>
+                        <p>Remove watermarks added to the PDF.</p>
                     </div>
                 </a>
                 <a href="/redact-pdf/" class="tool-card">
@@ -506,7 +506,7 @@
                         <p>Permanently remove sensitive content.</p>
                     </div>
                 </a>
-                <a href="/resize-pages/" class="tool-card">
+                <a href="/resize-pages-in-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
                     <div class="card-content">
                         <h3>Resize pages in PDF</h3>
@@ -520,28 +520,28 @@
                         <p>Select the visible page area.</p>
                     </div>
                 </a>
-                <a href="/booklet-layout/" class="tool-card">
+                <a href="/n-up-and-booklet-pdf-layout/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
                     <div class="card-content">
                         <h3>N-up and booklet PDF layout</h3>
                         <p>Place multiple pages on each sheet.</p>
                     </div>
                 </a>
-                <a href="/flip-pages/" class="tool-card">
+                <a href="/flip-pages-in-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-arrows-left-right"></i></div>
                     <div class="card-content">
                         <h3>Flip pages in PDF</h3>
                         <p>Mirror the pages vertically or horizontally.</p>
                     </div>
                 </a>
-                <a href="/make-text-black/" class="tool-card">
+                <a href="/make-pdf-text-black/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-droplet"></i></div>
                     <div class="card-content">
                         <h3>Make PDF text black</h3>
                         <p>Convert colored text to pure black for printing.</p>
                     </div>
                 </a>
-                <a href="/add-comments/" class="tool-card">
+                <a href="/add-comments-to-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-regular fa-comment-dots"></i></div>
                     <div class="card-content">
                         <h3>Add comments to PDF file</h3>
@@ -557,7 +557,7 @@
                 <i class="fa-solid fa-shield-halved"></i> Protect and optimize
             </div>
             <div class="tools-grid">
-                <a href="/inspect-pdf/" class="tool-card">
+                <a href="/inspect-pdf-file/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
                     <div class="card-content">
                         <h3>Inspect PDF file</h3>
@@ -571,7 +571,7 @@
                         <p>Create a zip archive of one or more PDF files.</p>
                     </div>
                 </a>
-                <a href="/add-attachments/" class="tool-card">
+                <a href="/add-attachments-to-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-paperclip"></i></div>
                     <div class="card-content">
                         <h3>Add attachments to PDF</h3>
@@ -585,28 +585,28 @@
                         <p>Reduce PDF file size with adjustable compression.</p>
                     </div>
                 </a>
-                <a href="/edit-metadata/" class="tool-card">
+                <a href="/edit-metadata-in-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-file-pen"></i></div>
                     <div class="card-content">
                         <h3>Edit metadata in PDF</h3>
                         <p>Modify the metadata fields like title, author etc.</p>
                     </div>
                 </a>
-                <a href="/remove-metadata/" class="tool-card">
+                <a href="/remove-metadata-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-file-circle-xmark"></i></div>
                     <div class="card-content">
                         <h3>Remove metadata from PDF</h3>
                         <p>Delete document information and hidden metadata.</p>
                     </div>
                 </a>
-                <a href="/add-password/" class="tool-card">
+                <a href="/add-password-to-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-lock"></i></div>
                     <div class="card-content">
                         <h3>Add password to PDF</h3>
                         <p>Protect a PDF file with a password.</p>
                     </div>
                 </a>
-                <a href="/remove-password/" class="tool-card">
+                <a href="/remove-password-from-pdf/" class="tool-card">
                     <div class="card-icon"><i class="fa-solid fa-unlock"></i></div>
                     <div class="card-content">
                         <h3>Remove password from PDF</h3>
