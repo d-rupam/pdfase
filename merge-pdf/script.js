@@ -18,7 +18,7 @@
         .a4-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; width: 100%; padding: 0; }
         
         /* Uniform Fixed-Height Cards */
-        .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px 10px 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .a4-card { width: 110px; height: 165px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px 10px 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
         .a4-card.dragging { opacity: 0.4; border-color: var(--cyber-cyan); transform: scale(1.05); }
         
@@ -26,7 +26,7 @@
         .a4-icon { font-size: 2.5rem; color: var(--text-muted); transition: color 0.2s; }
         .a4-card:hover .a4-icon { color: var(--cyber-cyan); }
         
-        /* 2-line truncated text with fixed height to prevent grid bouncing */
+        /* 2-line truncated text fixed to prevent crushing */
         .a4-name { 
             font-size: 0.75rem; 
             color: var(--text-main); 
@@ -40,8 +40,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
-            line-height: 1.3em;
-            height: 2.6em; /* Strictly reserves space for 2 lines */
+            line-height: 1.4;
+            min-height: 38px; /* Guarantees space for exactly 2 lines + padding */
+            flex-shrink: 0; /* Stops the text area from being squished by flexbox */
+            word-break: break-word;
         }
         
         .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
