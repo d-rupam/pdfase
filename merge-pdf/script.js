@@ -11,9 +11,9 @@
     const style = document.createElement('style');
     style.innerHTML = `
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; }
-        .dropzone.has-files { padding: 1.5rem 1rem; }
+        .dropzone.has-files { padding: 1.25rem 1rem 0.75rem 1rem !important; }
 
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; padding: 0; }
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; }
         
         .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
@@ -49,7 +49,8 @@
         .a4-add .a4-icon { color: var(--cyber-cyan); font-size: 2rem; margin-bottom: 5px; }
         .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
 
-        .action-container { margin-top: 1.25rem; margin-bottom: 2.5rem; display: none; gap: 0.75rem; justify-content: center; flex-direction: column; align-items: center; }
+        /* Locked minimal gap directly under the dropzone box */
+        .action-container { margin-top: 0.5rem !important; margin-bottom: 3rem; display: none; gap: 0.5rem; justify-content: center; flex-direction: column; align-items: center; }
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -67,7 +68,6 @@
     `;
     document.head.appendChild(style);
 })();
-
 // ==========================================
 // 2. STATE MANAGEMENT & DOM SETUP
 // ==========================================
