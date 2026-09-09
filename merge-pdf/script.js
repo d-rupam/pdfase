@@ -10,15 +10,12 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Dynamic Dropzone Shrinking */
-        .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; }
+        .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; }
         .dropzone.has-files { padding: 1.5rem 1rem; }
 
-        /* A4 Grid Layout inside Dropzone */
         .a4-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; padding: 0; }
         
-        /* Rigid Fixed-Height Cards */
-        .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .a4-card { width: 110px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
         .a4-card.dragging { opacity: 0.4; border-color: var(--cyber-cyan); transform: scale(1.05); }
         
@@ -45,15 +42,13 @@
             word-break: break-word;
         }
         
-        .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
-        .a4-remove:hover { transform: scale(1.15); background: #ff0044; }
+        .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; }
         
         .a4-add { border: 2px dashed rgba(0, 255, 204, 0.3); background: rgba(0, 255, 204, 0.02); color: var(--cyber-cyan); cursor: pointer; box-shadow: none; display: flex; flex-direction: column; justify-content: center; }
         .a4-add:hover { border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.05); transform: translateY(-3px); }
         .a4-add .a4-icon { color: var(--cyber-cyan); font-size: 2rem; margin-bottom: 5px; }
         .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
 
-        /* Tighter Action Container Spacing (Pulling button up into view) */
         .action-container { margin-top: 1.25rem; margin-bottom: 2.5rem; display: none; gap: 0.75rem; justify-content: center; flex-direction: column; align-items: center; }
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
@@ -109,22 +104,31 @@ function initMergeUI() {
 initMergeUI();
 
 // ==========================================
-// 3. EVENT LISTENERS
+// 3. EVENT LISTENERS (Cross-Platform Mobile Support)
 // ==========================================
 dropzone.addEventListener('click', (e) => {
-    if (pdfFiles.length === 0 && e.target.tagName !== 'BUTTON') {
+    // Prevent double triggering if clicking remove button or add more card directly
+    if (e.target.closest('.a4-remove') || e.target.closest('.a4-add')) return;
+    if (pdfFiles.length === 0) {
         fileInput.click();
     }
 });
 
-fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+        handleFiles(e.target.files);
+        fileInput.value = ''; // Reset input so selecting the same file twice works on mobile
+    }
+});
 
 dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
 dropzone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropzone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+    }
 });
 
 window.addEventListener('paste', (e) => {
@@ -135,7 +139,7 @@ window.addEventListener('paste', (e) => {
 // 4. FILE HANDLING & UI RENDERING
 // ==========================================
 function handleFiles(files) {
-    const newFiles = Array.from(files).filter(file => file.type === 'application/pdf');
+    const newFiles = Array.from(files).filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
     if (newFiles.length === 0) {
         alert('Invalid format. Please select PDF substrates only.');
         return;
@@ -209,7 +213,10 @@ function renderFileList() {
 
     const addMoreCard = document.createElement('div');
     addMoreCard.className = 'a4-card a4-add';
-    addMoreCard.onclick = () => fileInput.click();
+    addMoreCard.onclick = (e) => {
+        e.stopPropagation();
+        fileInput.click();
+    };
     addMoreCard.innerHTML = `
         <div class="a4-icon-wrapper" style="height: auto;">
             <i class="fa-solid fa-plus a4-icon"></i>
