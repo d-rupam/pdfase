@@ -9,21 +9,32 @@
         document.head.appendChild(script);
     }
 
-    // Inject dynamic CSS for the file list & buttons
+    // Inject dynamic CSS for the A4 grid and buttons
     const style = document.createElement('style');
     style.innerHTML = `
-        .file-list-container { margin-top: 2rem; text-align: left; }
-        .file-item { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; display: flex; align-items: center; gap: 1rem; cursor: grab; transition: border-color 0.2s; }
-        .file-item.dragging { opacity: 0.5; border-color: var(--cyber-cyan); }
-        .file-item:hover { border-color: rgba(0, 255, 204, 0.5); }
-        .drag-handle { color: var(--text-muted); cursor: grab; font-size: 1.2rem; }
-        .file-info { flex-grow: 1; overflow: hidden; }
-        .file-name { color: var(--text-main); font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .file-size { color: var(--text-muted); font-size: 0.8rem; }
-        .remove-btn { background: none; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem; transition: transform 0.2s; }
-        .remove-btn:hover { transform: scale(1.1); }
+        /* A4 Grid Layout inside Dropzone */
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; width: 100%; align-items: stretch; min-height: 200px; padding: 1rem 0; }
         
-        .action-container { margin-top: 2rem; margin-bottom: 5rem; display: none; gap: 1rem; justify-content: center; flex-wrap: wrap; align-items: center; flex-direction: column; }
+        .a4-card { width: 120px; height: 170px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .a4-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
+        .a4-card.dragging { opacity: 0.4; border-color: var(--cyber-cyan); transform: scale(1.05); }
+        
+        .a4-icon { font-size: 2.5rem; color: var(--text-muted); margin-bottom: 10px; transition: color 0.2s; }
+        .a4-card:hover .a4-icon { color: var(--cyber-cyan); }
+        
+        .a4-name { font-size: 0.75rem; color: var(--text-main); font-weight: 500; word-break: break-all; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; width: 100%; line-height: 1.3; }
+        
+        .a4-remove { position: absolute; top: -10px; right: -10px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); transition: transform 0.2s, background 0.2s; z-index: 10; }
+        .a4-remove:hover { transform: scale(1.15); background: #ff0044; }
+        
+        /* Add More Button (Dashed A4) */
+        .a4-add { border: 2px dashed rgba(0, 255, 204, 0.3); background: rgba(0, 255, 204, 0.02); color: var(--cyber-cyan); cursor: pointer; box-shadow: none; }
+        .a4-add:hover { border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.05); transform: translateY(-3px); }
+        .a4-add i { font-size: 2.5rem; margin-bottom: 5px; }
+        .a4-add .a4-name { color: var(--cyber-cyan); font-weight: 600; font-size: 0.85rem; }
+
+        /* Action Buttons */
+        .action-container { margin-top: 1rem; margin-bottom: 4rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; }
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         .btn-merge { background-color: var(--cyber-cyan); color: #000; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -34,15 +45,17 @@
         .btn-secondary:hover { border-color: var(--cyber-cyan); color: var(--cyber-cyan); background-color: rgba(0, 255, 204, 0.05); }
         
         .success-message { width: 100%; text-align: center; color: var(--cyber-cyan); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .file-flow { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-subtle); }
-        .file-flow-name { color: var(--text-main); }
-        .file-flow-final { color: #fff; font-weight: 600; border-bottom: 1px dashed var(--cyber-cyan); }
+        
+        /* The Final Visual Flow Design */
+        .file-flow { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(0, 255, 204, 0.03); padding: 12px 24px; border-radius: 8px; border: 1px solid rgba(0, 255, 204, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
+        .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+        .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--cyber-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
     `;
     document.head.appendChild(style);
 })();
 
 // ==========================================
-// 2. STATE MANAGEMENT
+// 2. STATE MANAGEMENT & DOM SETUP
 // ==========================================
 let pdfFiles = []; 
 let draggedItemIndex = null;
@@ -50,15 +63,21 @@ let draggedItemIndex = null;
 const dropzone = document.getElementById('pdf-dropzone');
 const fileInput = document.getElementById('file-input');
 
-const listContainer = document.createElement('div');
-listContainer.className = 'file-list-container';
+// Cache default dropzone elements so we can hide/show them
+const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
+
+// Create the A4 Grid Container inside the dropzone
+const a4Grid = document.createElement('div');
+a4Grid.className = 'a4-grid';
+a4Grid.style.display = 'none';
+dropzone.appendChild(a4Grid);
+
+// Create Action Container (Merge Button) below dropzone
 const actionContainer = document.createElement('div');
 actionContainer.className = 'action-container';
+dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
 
-dropzone.parentNode.insertBefore(listContainer, dropzone.nextSibling);
-listContainer.parentNode.insertBefore(actionContainer, listContainer.nextSibling);
-
-function initMergeButton() {
+function initMergeUI() {
     actionContainer.innerHTML = '';
     const btnGroup = document.createElement('div');
     btnGroup.className = 'button-group';
@@ -71,14 +90,18 @@ function initMergeButton() {
     btnGroup.appendChild(mergeBtn);
     actionContainer.appendChild(btnGroup);
 }
-initMergeButton();
+initMergeUI();
 
 // ==========================================
 // 3. EVENT LISTENERS
 // ==========================================
 dropzone.addEventListener('click', (e) => {
-    if (e.target.tagName !== 'BUTTON') fileInput.click();
+    // Only trigger input if clicking the default empty dropzone area or specifically the "Add More" card
+    if (pdfFiles.length === 0 && e.target.tagName !== 'BUTTON') {
+        fileInput.click();
+    }
 });
+
 fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
 dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
@@ -88,6 +111,7 @@ dropzone.addEventListener('drop', (e) => {
     dropzone.classList.remove('dragover');
     handleFiles(e.dataTransfer.files);
 });
+
 window.addEventListener('paste', (e) => {
     if (e.clipboardData && e.clipboardData.files.length > 0) handleFiles(e.clipboardData.files);
 });
@@ -105,70 +129,88 @@ function handleFiles(files) {
     renderFileList();
 }
 
-function formatBytes(bytes) {
-    if (!+bytes) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-}
-
 function renderFileList() {
-    listContainer.innerHTML = '';
+    a4Grid.innerHTML = '';
     
+    // Toggle UI States
     if (pdfFiles.length === 0) {
+        defaultDropzoneElements.forEach(el => el.style.display = '');
+        a4Grid.style.display = 'none';
         actionContainer.style.display = 'none';
+        dropzone.style.cursor = 'pointer';
         return;
     }
     
+    defaultDropzoneElements.forEach(el => el.style.display = 'none');
+    a4Grid.style.display = 'flex';
     actionContainer.style.display = 'flex';
+    dropzone.style.cursor = 'default';
 
+    // Render A4 Cards
     pdfFiles.forEach((file, index) => {
         const item = document.createElement('div');
-        item.className = 'file-item';
+        item.className = 'a4-card';
         item.draggable = true;
         item.dataset.index = index;
 
         item.innerHTML = `
-            <i class="fa-solid fa-grip-vertical drag-handle"></i>
-            <div class="file-info">
-                <div class="file-name">${file.name}</div>
-                <div class="file-size">${formatBytes(file.size)}</div>
-            </div>
-            <button class="remove-btn" onclick="removeFile(${index})" title="Remove File">
+            <button class="a4-remove" onclick="removeFile(event, ${index})" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
             </button>
+            <i class="fa-solid fa-file-pdf a4-icon"></i>
+            <div class="a4-name" title="${file.name}">${file.name}</div>
         `;
 
-        item.addEventListener('dragstart', () => { draggedItemIndex = index; setTimeout(() => item.classList.add('dragging'), 0); });
+        // HTML5 Drag & Drop Reordering Logic
+        item.addEventListener('dragstart', (e) => { 
+            draggedItemIndex = index; 
+            setTimeout(() => item.classList.add('dragging'), 0); 
+        });
         item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        
         item.addEventListener('dragover', (e) => {
             e.preventDefault();
             const draggingEl = document.querySelector('.dragging');
-            const siblings = [...listContainer.querySelectorAll('.file-item:not(.dragging)')];
-            let nextSibling = siblings.find(sibling => {
-                return e.clientY <= sibling.getBoundingClientRect().top + sibling.offsetHeight / 2;
-            });
-            listContainer.insertBefore(draggingEl, nextSibling);
+            if (!draggingEl) return;
+            
+            const bounding = item.getBoundingClientRect();
+            // Swap threshold based on horizontal center of the card
+            if (e.clientX > bounding.left + bounding.width / 2) {
+                item.parentNode.insertBefore(draggingEl, item.nextSibling);
+            } else {
+                item.parentNode.insertBefore(draggingEl, item);
+            }
         });
+        
         item.addEventListener('drop', (e) => {
             e.preventDefault();
-            const newOrderNodes = [...listContainer.querySelectorAll('.file-item')];
+            const newOrderNodes = [...a4Grid.querySelectorAll('.a4-card:not(.a4-add)')];
             pdfFiles = newOrderNodes.map(node => pdfFiles[node.dataset.index]);
             renderFileList(); 
         });
 
-        listContainer.appendChild(item);
+        a4Grid.appendChild(item);
     });
+
+    // Render "Add More" Dashed A4 Card at the end
+    const addMoreCard = document.createElement('div');
+    addMoreCard.className = 'a4-card a4-add';
+    addMoreCard.onclick = () => fileInput.click();
+    addMoreCard.innerHTML = `
+        <i class="fa-solid fa-plus"></i>
+        <div class="a4-name">Add More</div>
+    `;
+    a4Grid.appendChild(addMoreCard);
 }
 
-window.removeFile = function(index) {
+window.removeFile = function(event, index) {
+    event.stopPropagation(); // Prevent triggering dropzone click
     pdfFiles.splice(index, 1);
     renderFileList();
 };
 
 window.resetTool = function() {
-    window.location.reload(); // Cleanest memory reset
+    window.location.reload(); 
 };
 
 // ==========================================
@@ -187,6 +229,14 @@ async function executeMerge() {
 
     const mergeBtn = actionContainer.querySelector('.btn-merge');
     
+    // Build the visual text flow for the success screen BEFORE clearing the array
+    let flowHtml = '';
+    if (pdfFiles.length <= 3) {
+        flowHtml = pdfFiles.map(f => `<span class="file-flow-name">${f.name}</span>`).join(' <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--cyber-cyan);"></i> ');
+    } else {
+        flowHtml = `<span class="file-flow-name">${pdfFiles[0].name}</span> <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--cyber-cyan);"></i> <span class="file-flow-name">${pdfFiles.length - 1} other files</span>`;
+    }
+
     try {
         mergeBtn.disabled = true;
         mergeBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synthesizing...';
@@ -206,17 +256,9 @@ async function executeMerge() {
         const url = URL.createObjectURL(blob);
         const finalFileName = 'PDFase_Merged.pdf';
         
-        // Build the dynamic file flow visual
-        let flowHtml = '';
-        if (pdfFiles.length <= 3) {
-            flowHtml = pdfFiles.map(f => `<span class="file-flow-name">${f.name}</span>`).join(' <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--cyber-cyan);"></i> ');
-        } else {
-            flowHtml = `<span class="file-flow-name">${pdfFiles[0].name}</span> <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--cyber-cyan);"></i> <span class="file-flow-name">${pdfFiles.length - 1} other files</span>`;
-        }
-        
+        // Hide Dropzone and Show Success Screen
         setTimeout(() => {
             document.getElementById('pdf-dropzone').style.display = 'none';
-            listContainer.style.display = 'none';
             
             actionContainer.innerHTML = `
                 <div class="success-message">
@@ -224,7 +266,7 @@ async function executeMerge() {
                 </div>
                 <div class="file-flow">
                     ${flowHtml}
-                    <i class="fa-solid fa-arrow-right" style="color: var(--cyber-cyan); margin: 0 5px;"></i>
+                    <i class="fa-solid fa-arrow-right" style="color: var(--cyber-cyan); margin: 0 10px;"></i>
                     <span class="file-flow-final">${finalFileName}</span>
                 </div>
                 <div class="button-group">
