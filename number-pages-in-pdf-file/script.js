@@ -52,11 +52,18 @@
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         /* Options Panel */
-        .options-panel { background: rgba(57, 255, 20, 0.03); border: 1px solid rgba(57, 255, 20, 0.2); padding: 1rem 1.5rem; border-radius: 8px; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .options-panel { background: rgba(57, 255, 20, 0.03); border: 1px solid rgba(57, 255, 20, 0.2); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%; max-width: 380px; }
+        .options-row { display: flex; gap: 0.75rem; align-items: center; justify-content: center; width: 100%; }
         .options-panel label { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
-        .options-panel select { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; transition: border-color 0.2s; }
+        .options-panel select { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; transition: border-color 0.2s; flex: 1; }
         .options-panel select:focus, .options-panel select:hover { border-color: var(--theme-color, #39ff14); }
         
+        /* Live Demo Page Widget */
+        .demo-page-container { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .demo-page { width: 75px; height: 100px; background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 4px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .demo-indicator { position: absolute; width: 10px; height: 10px; background-color: var(--theme-color, #39ff14); border-radius: 50%; box-shadow: 0 0 8px var(--theme-color, #39ff14); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translate(-50%, -50%); }
+        .demo-label { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
         .btn-action { background-color: var(--theme-color, #39ff14); color: #000; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-action:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(57, 255, 20, 0.4); }
         .btn-action:disabled { background-color: #333; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -102,17 +109,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function initConvertUI() {
         actionContainer.innerHTML = '';
         
-        // Options Panel for Position Selection
+        // Options Panel for Position Selection + Live Demo Widget
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
-            <label for="pos-select"><i class="fa-solid fa-arrows-to-dot" style="margin-right: 5px;"></i> Position:</label>
-            <select id="pos-select">
-                <option value="bottom-center">Bottom Center</option>
-                <option value="bottom-right">Bottom Right</option>
-                <option value="top-center">Top Center</option>
-                <option value="top-right">Top Right</option>
-            </select>
+            <div class="options-row">
+                <label for="pos-select"><i class="fa-solid fa-arrows-to-dot" style="margin-right: 5px;"></i> Position:</label>
+                <select id="pos-select">
+                    <option value="bottom-center">Bottom Center</option>
+                    <option value="bottom-left">Bottom Left</option>
+                    <option value="bottom-right">Bottom Right</option>
+                    <option value="top-center">Top Center</option>
+                    <option value="top-left">Top Left</option>
+                    <option value="top-right">Top Right</option>
+                </select>
+            </div>
+            <div class="demo-page-container">
+                <div class="demo-page" id="demo-page-box">
+                    <div class="demo-indicator" id="demo-dot"></div>
+                </div>
+                <span class="demo-label">Live Preview</span>
+            </div>
         `;
 
         const btnGroup = document.createElement('div');
@@ -127,6 +144,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
+
+        // Wire up live demo visual movement
+        const posSelect = optionsPanel.querySelector('#pos-select');
+        const demoDot = optionsPanel.querySelector('#demo-dot');
+
+        function updateDemoIndicator(val) {
+            switch(val) {
+                case 'bottom-center': demoDot.style.top = '85%'; demoDot.style.left = '50%'; break;
+                case 'bottom-left':   demoDot.style.top = '85%'; demoDot.style.left = '18%'; break;
+                case 'bottom-right':  demoDot.style.top = '85%'; demoDot.style.left = '82%'; break;
+                case 'top-center':    demoDot.style.top = '15%'; demoDot.style.left = '50%'; break;
+                case 'top-left':      demoDot.style.top = '15%'; demoDot.style.left = '18%'; break;
+                case 'top-right':     demoDot.style.top = '15%'; demoDot.style.left = '82%'; break;
+            }
+        }
+
+        posSelect.addEventListener('change', (e) => updateDemoIndicator(e.target.value));
+        updateDemoIndicator('bottom-center'); // Initial Default State
     }
     initConvertUI();
 
@@ -267,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 3. Get Pages and Add Numbers
             const pages = pdfDoc.getPages();
             const fontSize = 11;
-            const margin = 30; // 30 units from the edge
+            const margin = 35; // margin offset from page edges
             
             pages.forEach((page, index) => {
                 const { width, height } = page.getSize();
@@ -276,10 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let x, y;
 
-                // Calculate Position Math
+                // Calculate Position Math for all 6 options
                 switch (posSelect) {
                     case 'bottom-center':
                         x = (width / 2) - (textWidth / 2);
+                        y = margin;
+                        break;
+                    case 'bottom-left':
+                        x = margin;
                         y = margin;
                         break;
                     case 'bottom-right':
@@ -288,6 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     case 'top-center':
                         x = (width / 2) - (textWidth / 2);
+                        y = height - margin - fontSize;
+                        break;
+                    case 'top-left':
+                        x = margin;
                         y = height - margin - fontSize;
                         break;
                     case 'top-right':
@@ -299,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         y = margin;
                 }
 
-                // Draw the number
+                // Draw the number onto the page
                 page.drawText(text, {
                     x: x,
                     y: y,
