@@ -51,7 +51,7 @@
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         /* Options Panel for Password Input */
-        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 420px; }
+        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 420px; font-family: 'Space Grotesk', sans-serif; }
         .options-panel label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         
         .password-input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
@@ -61,30 +61,44 @@
         .toggle-password { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
         .toggle-password:hover { color: var(--theme-color, #ffbf00); }
 
-        /* Generator Toggle Link / Button */
-        .gen-toggle-btn { background: none; border: none; color: var(--theme-color, #ffbf00); font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif; cursor: pointer; font-weight: 600; text-decoration: underline; padding: 0; }
-        .gen-toggle-btn:hover { color: #fff; }
+        /* Clean Modern Generator Pill Button */
+        .gen-toggle-btn { 
+            background: rgba(255, 191, 0, 0.1); 
+            border: 1px solid rgba(255, 191, 0, 0.3); 
+            color: var(--theme-color, #ffbf00); 
+            font-size: 0.75rem; 
+            font-family: 'Space Grotesk', sans-serif; 
+            cursor: pointer; 
+            font-weight: 600; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            transition: all 0.2s; 
+        }
+        .gen-toggle-btn:hover { background: rgba(255, 191, 0, 0.2); border-color: var(--theme-color); color: #fff; }
 
         /* Embedded Password Generator Drawer */
-        .password-generator-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 191, 0, 0.2); border-radius: 6px; padding: 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; }
+        .password-generator-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 191, 0, 0.25); border-radius: 8px; padding: 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; }
         .password-generator-box.active { display: flex; }
         
         .gen-preview-row { display: flex; gap: 8px; align-items: center; }
-        .gen-preview-input { background: #050505 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.85rem !important; color: var(--theme-color) !important; flex: 1; padding: 0.5rem !important; border: 1px solid rgba(255, 191, 0, 0.3) !important; border-radius: 4px; outline: none; }
+        .gen-preview-input { background: #050505 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.9rem !important; color: var(--theme-color) !important; flex: 1; padding: 0.5rem 0.75rem !important; border: 1px solid rgba(255, 191, 0, 0.3) !important; border-radius: 6px !important; outline: none; }
         
-        .gen-refresh-btn { background: rgba(255, 191, 0, 0.1); border: 1px solid rgba(255, 191, 0, 0.3); color: var(--theme-color); border-radius: 4px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .gen-refresh-btn:hover { background: rgba(255, 191, 0, 0.2); }
+        .gen-refresh-btn { background: rgba(255, 191, 0, 0.1); border: 1px solid rgba(255, 191, 0, 0.3); color: var(--theme-color); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .gen-refresh-btn:hover { background: rgba(255, 191, 0, 0.25); color: #fff; }
 
-        .gen-settings { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+        .gen-settings { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.82rem; color: var(--text-muted); }
         .gen-slider-row { display: flex; justify-content: space-between; align-items: center; }
         .gen-slider-row input[type="range"] { accent-color: var(--theme-color, #ffbf00); cursor: pointer; flex: 1; margin-left: 10px; }
         
         .gen-checkboxes { display: flex; gap: 1.25rem; align-items: center; margin-top: 2px; }
-        .gen-checkboxes label { display: flex; align-items: center; gap: 5px; cursor: pointer; color: var(--text-main); font-size: 0.8rem; }
+        .gen-checkboxes label { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.82rem; font-weight: 400; }
         .gen-checkboxes input[type="checkbox"] { accent-color: var(--theme-color, #ffbf00); cursor: pointer; width: 14px; height: 14px; }
 
-        .btn-use-gen { background: var(--theme-color, #ffbf00); color: #050505; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: transform 0.1s; text-align: center; margin-top: 2px; }
-        .btn-use-gen:hover { transform: scale(1.02); }
+        .btn-use-gen { background: var(--theme-color, #ffbf00); color: #050505; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: transform 0.1s, background-color 0.2s; text-align: center; margin-top: 4px; box-shadow: 0 2px 8px rgba(255, 191, 0, 0.2); }
+        .btn-use-gen:hover { background-color: #ffd233; transform: translateY(-1px); }
 
         /* Eye-Friendly Balanced Amber Action Button with Dark Text */
         .btn-action { 
@@ -227,16 +241,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Toggle Generator Drawer
-        genTrigger.addEventListener('click', () => {
+        genTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
             genDrawer.classList.toggle('active');
-            if (genDrawer.classList.contains('active') && !genResult.value) {
+            if (genDrawer.classList.contains('active')) {
                 generateNewPassword();
             }
         });
 
-        // Password Generator Function
+        // Password Generator Core Function
         function generateNewPassword() {
-            const length = parseInt(gensliderValue());
+            const length = parseInt(genSlider.value);
             let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const nums = '0123456789';
             const syms = '!@#$%^&*()_+-=[]{}|;:,.<>?';
@@ -251,10 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
             genResult.value = result;
         }
 
-        function gendsliderValue() {
-            return genSlider.value;
-        }
-
         genSlider.addEventListener('input', () => {
             genLengthVal.textContent = genSlider.value;
             generateNewPassword();
@@ -262,14 +273,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         genNums.addEventListener('change', generateNewPassword);
         genSyms.addEventListener('change', generateNewPassword);
-        genRefresh.addEventListener('click', generateNewPassword);
+        genRefresh.addEventListener('click', (e) => {
+            e.preventDefault();
+            generateNewPassword();
+        });
 
         // Apply Generated Password to Main Input
-        genUseBtn.addEventListener('click', () => {
-            passInput.value = genResult.value;
-            passInput.type = 'text'; // Show it briefly so user can see it
-            eyeIcon.className = 'fa-solid fa-eye-slash';
-            genDrawer.classList.remove('active');
+        genUseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (genResult.value) {
+                passInput.value = genResult.value;
+                passInput.type = 'text'; // Make it visible temporarily so user confirms
+                eyeIcon.className = 'fa-solid fa-eye-slash';
+                genDrawer.classList.remove('active');
+            }
         });
     }
     initPasswordUI();
