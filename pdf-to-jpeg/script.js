@@ -22,8 +22,8 @@
     const style = document.createElement('style');
     style.innerHTML = `
         /* Dynamic Dropzone Shrinking */
-        .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; }
-        .dropzone.has-files { padding: 1.25rem 1rem 0.25rem 1rem !important; margin-bottom: 0 !important; }
+        .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+        .dropzone.has-files { padding: 1.25rem 1rem 0.25rem 1rem !important; margin-bottom: 0 !important; cursor: default; }
 
         /* A4 Grid Layout for the selected file */
         .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; }
@@ -79,239 +79,259 @@
     document.head.appendChild(style);
 })();
 
+
 // ==========================================
-// 2. STATE MANAGEMENT & DOM SETUP
+// WAIT FOR HTML DOM TO FULLY LOAD
 // ==========================================
-let activePdfFile = null; 
+document.addEventListener('DOMContentLoaded', () => {
 
-const dropzone = document.getElementById('pdf-dropzone');
-const fileInput = document.getElementById('file-input');
-const selectFilesBtn = document.getElementById('select-files-btn');
+    // ==========================================
+    // 2. STATE MANAGEMENT & DOM SETUP
+    // ==========================================
+    let activePdfFile = null; 
 
-const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
+    const dropzone = document.getElementById('pdf-dropzone');
+    const fileInput = document.getElementById('file-input');
+    const selectFilesBtn = document.getElementById('select-files-btn');
 
-const a4Grid = document.createElement('div');
-a4Grid.className = 'a4-grid';
-a4Grid.style.display = 'none';
-dropzone.appendChild(a4Grid);
+    const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
 
-const actionContainer = document.createElement('div');
-actionContainer.className = 'action-container';
-dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
+    const a4Grid = document.createElement('div');
+    a4Grid.className = 'a4-grid';
+    a4Grid.style.display = 'none';
+    dropzone.appendChild(a4Grid);
 
-function initConvertUI() {
-    actionContainer.innerHTML = '';
-    const btnGroup = document.createElement('div');
-    btnGroup.className = 'button-group';
+    const actionContainer = document.createElement('div');
+    actionContainer.className = 'action-container';
+    dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
+
+    function initConvertUI() {
+        actionContainer.innerHTML = '';
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'button-group';
+        
+        const convertBtn = document.createElement('button');
+        convertBtn.className = 'btn-action';
+        convertBtn.innerHTML = '<i class="fa-regular fa-image"></i> Convert to JPEG';
+        convertBtn.addEventListener('click', executeConversion);
+        
+        btnGroup.appendChild(convertBtn);
+        actionContainer.appendChild(btnGroup);
+    }
+    initConvertUI();
+
+    // ==========================================
+    // 3. BULLETPROOF EVENT LISTENERS 
+    // ==========================================
     
-    const convertBtn = document.createElement('button');
-    convertBtn.className = 'btn-action';
-    convertBtn.innerHTML = '<i class="fa-regular fa-image"></i> Convert to JPEG';
-    convertBtn.addEventListener('click', executeConversion);
-    
-    btnGroup.appendChild(convertBtn);
-    actionContainer.appendChild(btnGroup);
-}
-initConvertUI();
+    // 1. Button Click
+    if (selectFilesBtn) {
+        selectFilesBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            fileInput.click();
+        });
+    }
 
-// ==========================================
-// 3. EVENT LISTENERS
-// ==========================================
-if (selectFilesBtn) {
-    selectFilesBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
+    // 2. Dropzone Background/Icon/Text Click
+    dropzone.addEventListener('click', (e) => {
+        // If there isn't an active file yet, clicking ANYWHERE in the box opens the selector
+        if (!activePdfFile && e.target !== fileInput) {
+            fileInput.click();
+        }
     });
-}
 
-dropzone.addEventListener('click', (e) => {
-    if (!activePdfFile && e.target === dropzone) {
-        fileInput.click();
-    }
-});
+    // 3. Hidden File Input Change (when user actually picks a file)
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+            fileInput.value = ''; // Reset so they can select the same file again if needed
+        }
+    });
 
-fileInput.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-        handleFile(e.target.files[0]);
-        fileInput.value = ''; 
-    }
-});
-
-dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        handleFile(e.dataTransfer.files[0]);
-    }
-});
-
-window.addEventListener('paste', (e) => {
-    if (e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
-});
-
-// ==========================================
-// 4. FILE HANDLING & UI RENDERING
-// ==========================================
-function handleFile(file) {
-    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-        alert('Invalid format. Please select a PDF document.');
-        return;
-    }
+    // 4. Drag & Drop
+    dropzone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        dropzone.classList.add('dragover'); 
+    });
     
-    activePdfFile = file;
-    renderFileCard();
-}
-
-function renderFileCard() {
-    a4Grid.innerHTML = '';
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
     
-    if (!activePdfFile) {
-        dropzone.classList.remove('has-files');
-        defaultDropzoneElements.forEach(el => el.style.display = '');
-        a4Grid.style.display = 'none';
-        actionContainer.style.display = 'none';
-        dropzone.style.cursor = 'pointer';
-        return;
-    }
-    
-    dropzone.classList.add('has-files');
-    defaultDropzoneElements.forEach(el => el.style.display = 'none');
-    a4Grid.style.display = 'flex';
-    actionContainer.style.display = 'flex';
-    dropzone.style.cursor = 'default';
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
 
-    const item = document.createElement('div');
-    item.className = 'a4-card';
+    // 5. CTRL+V Paste
+    window.addEventListener('paste', (e) => {
+        if (e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
+    });
 
-    item.innerHTML = `
-        <button class="a4-remove" onclick="removeFile(event)" title="Remove File">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <div class="a4-icon-wrapper">
-            <i class="fa-solid fa-file-pdf a4-icon"></i>
-        </div>
-        <div class="a4-name" title="${activePdfFile.name}">${activePdfFile.name}</div>
-    `;
-
-    a4Grid.appendChild(item);
-}
-
-window.removeFile = function(event) {
-    event.stopPropagation(); 
-    activePdfFile = null;
-    renderFileCard();
-};
-
-window.resetTool = function() {
-    window.location.reload(); 
-};
-
-// ==========================================
-// 5. CLIENT-SIDE CONVERSION LOGIC (pdf.js + jszip)
-// ==========================================
-async function executeConversion() {
-    if (!activePdfFile) {
-        alert('Please upload a PDF file first.');
-        return;
-    }
-
-    if (!window.pdfjsLib || !window.JSZip) {
-        alert('Rendering engine is still loading. Please wait a moment and try again.');
-        return;
-    }
-
-    const convertBtn = actionContainer.querySelector('.btn-action');
-    
-    try {
-        convertBtn.disabled = true;
-        convertBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...';
-
-        // 1. Load the PDF
-        const arrayBuffer = await activePdfFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-        const totalPages = pdf.numPages;
+    // ==========================================
+    // 4. FILE HANDLING & UI RENDERING
+    // ==========================================
+    function handleFile(file) {
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            alert('Invalid format. Please select a PDF document.');
+            return;
+        }
         
-        // 2. Initialize JSZip
-        const zip = new JSZip();
+        activePdfFile = file;
+        renderFileCard();
+    }
+
+    function renderFileCard() {
+        a4Grid.innerHTML = '';
         
-        // 3. Render each page to Canvas, then to JPEG Blob
-        for (let i = 1; i <= totalPages; i++) {
-            convertBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Processing <span class="progress-text">${i} / ${totalPages}</span>`;
-            
-            const page = await pdf.getPage(i);
-            
-            // Scale dictates the output resolution. 2.0 or 3.0 provides high quality.
-            const viewport = page.getViewport({ scale: 2.5 }); 
-            
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+        if (!activePdfFile) {
+            dropzone.classList.remove('has-files');
+            defaultDropzoneElements.forEach(el => el.style.display = '');
+            a4Grid.style.display = 'none';
+            actionContainer.style.display = 'none';
+            return;
+        }
+        
+        dropzone.classList.add('has-files');
+        defaultDropzoneElements.forEach(el => el.style.display = 'none');
+        a4Grid.style.display = 'flex';
+        actionContainer.style.display = 'flex';
 
-            // Fill with white background (since PDFs can be transparent)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const item = document.createElement('div');
+        item.className = 'a4-card';
 
-            const renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-            };
+        item.innerHTML = `
+            <button class="a4-remove" onclick="removeFile(event)" title="Remove File">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="a4-icon-wrapper">
+                <i class="fa-solid fa-file-pdf a4-icon"></i>
+            </div>
+            <div class="a4-name" title="${activePdfFile.name}">${activePdfFile.name}</div>
+        `;
 
-            await page.render(renderContext).promise;
+        a4Grid.appendChild(item);
+    }
 
-            // Convert canvas to JPEG blob
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
-            
-            // Add to zip file (Pad page numbers with zero for neat sorting, e.g., Page_01.jpg)
-            const paddedNumber = String(i).padStart(String(totalPages).length, '0');
-            zip.file(`Page_${paddedNumber}.jpg`, blob);
+    window.removeFile = function(event) {
+        event.stopPropagation(); 
+        event.preventDefault();
+        activePdfFile = null;
+        renderFileCard();
+    };
+
+    window.resetTool = function() {
+        window.location.reload(); 
+    };
+
+    // ==========================================
+    // 5. CLIENT-SIDE CONVERSION LOGIC (pdf.js + jszip)
+    // ==========================================
+    async function executeConversion() {
+        if (!activePdfFile) {
+            alert('Please upload a PDF file first.');
+            return;
         }
 
-        convertBtn.innerHTML = '<i class="fa-solid fa-box-archive fa-bounce"></i> Zipping files...';
+        if (!window.pdfjsLib || !window.JSZip) {
+            alert('Rendering engine is still loading. Please wait a moment and try again.');
+            return;
+        }
 
-        // 4. Generate the ZIP file
-        const zipBlob = await zip.generateAsync({ type: 'blob' });
-        const url = URL.createObjectURL(zipBlob);
+        const convertBtn = actionContainer.querySelector('.btn-action');
         
-        // 5. Create final filename (replace .pdf with .zip)
-        const baseName = activePdfFile.name.replace(/\.[^/.]+$/, "");
-        const finalFileName = `${baseName}_Images.zip`;
-        
-        setTimeout(() => {
-            document.getElementById('pdf-dropzone').style.display = 'none';
+        try {
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...';
+
+            // 1. Load the PDF
+            const arrayBuffer = await activePdfFile.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            const totalPages = pdf.numPages;
             
-            actionContainer.innerHTML = `
-                <div class="success-message">
-                    <i class="fa-solid fa-circle-check"></i> Conversion Complete!
-                </div>
-                <div class="file-flow">
-                    <span class="file-flow-name">${activePdfFile.name}</span>
-                    <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #b829ff); margin: 0 10px;"></i>
-                    <span class="file-flow-final">${finalFileName}</span>
-                    <span style="display: block; width: 100%; margin-top: 5px; color: var(--text-muted); font-size: 0.8rem;">
-                        Extracted ${totalPages} high-quality JPEG(s)
-                    </span>
-                </div>
-                <div class="button-group">
-                    <a href="${url}" download="${finalFileName}" class="btn-action">
-                        <i class="fa-solid fa-download"></i> Download ZIP
-                    </a>
-                    <button class="btn-secondary" onclick="resetTool()">
-                        <i class="fa-solid fa-rotate-right"></i> Convert Another
-                    </button>
-                    <a href="/" class="btn-secondary">
-                        <i class="fa-solid fa-toolbox"></i> Other Tools
-                    </a>
-                </div>
-            `;
-        }, 500);
+            // 2. Initialize JSZip
+            const zip = new JSZip();
+            
+            // 3. Render each page to Canvas, then to JPEG Blob
+            for (let i = 1; i <= totalPages; i++) {
+                convertBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Processing <span class="progress-text">${i} / ${totalPages}</span>`;
+                
+                const page = await pdf.getPage(i);
+                
+                // Scale dictates the output resolution. 2.5 provides crisp high quality.
+                const viewport = page.getViewport({ scale: 2.5 }); 
+                
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
 
-    } catch (error) {
-        console.error('Conversion Error:', error);
-        alert('An error occurred while rendering the PDF. It might be corrupted or password protected.');
-        convertBtn.disabled = false;
-        convertBtn.innerHTML = '<i class="fa-regular fa-image"></i> Convert to JPEG';
+                // Fill with white background (since PDFs can be transparent)
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+
+                await page.render(renderContext).promise;
+
+                // Convert canvas to JPEG blob
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+                
+                // Add to zip file (Pad page numbers with zero for neat sorting)
+                const paddedNumber = String(i).padStart(String(totalPages).length, '0');
+                zip.file(`Page_${paddedNumber}.jpg`, blob);
+            }
+
+            convertBtn.innerHTML = '<i class="fa-solid fa-box-archive fa-bounce"></i> Zipping files...';
+
+            // 4. Generate the ZIP file
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(zipBlob);
+            
+            // 5. Create final filename (include PDFase brand)
+            const baseName = activePdfFile.name.replace(/\.[^/.]+$/, "");
+            const finalFileName = `PDFase_${baseName}_Images.zip`;
+            
+            setTimeout(() => {
+                document.getElementById('pdf-dropzone').style.display = 'none';
+                
+                actionContainer.innerHTML = `
+                    <div class="success-message">
+                        <i class="fa-solid fa-circle-check"></i> Conversion Complete!
+                    </div>
+                    <div class="file-flow">
+                        <span class="file-flow-name">${activePdfFile.name}</span>
+                        <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #b829ff); margin: 0 10px;"></i>
+                        <span class="file-flow-final">${finalFileName}</span>
+                        <span style="display: block; width: 100%; margin-top: 5px; color: var(--text-muted); font-size: 0.8rem;">
+                            Extracted ${totalPages} high-quality JPEG(s)
+                        </span>
+                    </div>
+                    <div class="button-group">
+                        <a href="${url}" download="${finalFileName}" class="btn-action">
+                            <i class="fa-solid fa-download"></i> Download ZIP
+                        </a>
+                        <button class="btn-secondary" onclick="resetTool()">
+                            <i class="fa-solid fa-rotate-right"></i> Convert Another
+                        </button>
+                        <a href="/" class="btn-secondary">
+                            <i class="fa-solid fa-toolbox"></i> Other Tools
+                        </a>
+                    </div>
+                `;
+            }, 500);
+
+        } catch (error) {
+            console.error('Conversion Error:', error);
+            alert('An error occurred while rendering the PDF. It might be corrupted or password protected.');
+            convertBtn.disabled = false;
+            convertBtn.innerHTML = '<i class="fa-regular fa-image"></i> Convert to JPEG';
+        }
     }
-}
+
+}); // End of DOMContentLoaded
