@@ -61,10 +61,10 @@
         .toggle-password { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
         .toggle-password:hover { color: var(--theme-color, #ffbf00); }
 
-        /* Clean Modern Generator Pill Button */
+        /* Clean Modern Generator Pill Button (No Blinding Glare) */
         .gen-toggle-btn { 
-            background: rgba(255, 191, 0, 0.1); 
-            border: 1px solid rgba(255, 191, 0, 0.3); 
+            background: rgba(255, 191, 0, 0.08); 
+            border: 1px solid rgba(255, 191, 0, 0.25); 
             color: var(--theme-color, #ffbf00); 
             font-size: 0.75rem; 
             font-family: 'Space Grotesk', sans-serif; 
@@ -75,26 +75,31 @@
             display: inline-flex; 
             align-items: center; 
             gap: 5px; 
-            transition: all 0.2s; 
+            transition: background-color 0.2s ease, border-color 0.2s ease; 
+            box-shadow: none !important;
         }
-        .gen-toggle-btn:hover { background: rgba(255, 191, 0, 0.2); border-color: var(--theme-color); color: #fff; }
+        .gen-toggle-btn:hover { background: rgba(255, 191, 0, 0.15); border-color: var(--theme-color); color: #fff; transform: none !important; }
 
         /* Embedded Password Generator Drawer */
-        .password-generator-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 191, 0, 0.25); border-radius: 8px; padding: 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; }
+        .password-generator-box { background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 191, 0, 0.25); border-radius: 8px; padding: 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; position: relative; }
         .password-generator-box.active { display: flex; }
         
+        .gen-header-row { display: flex; justify-content: space-between; align-items: center; color: var(--text-main); font-size: 0.8rem; font-weight: 600; }
+        .gen-close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; transition: color 0.2s; padding: 2px 6px; }
+        .gen-close-btn:hover { color: #ff3366; }
+
         .gen-preview-row { display: flex; gap: 8px; align-items: center; }
         .gen-preview-input { background: #050505 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.9rem !important; color: var(--theme-color) !important; flex: 1; padding: 0.5rem 0.75rem !important; border: 1px solid rgba(255, 191, 0, 0.3) !important; border-radius: 6px !important; outline: none; }
         
-        .gen-refresh-btn { background: rgba(255, 191, 0, 0.1); border: 1px solid rgba(255, 191, 0, 0.3); color: var(--theme-color); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .gen-refresh-btn:hover { background: rgba(255, 191, 0, 0.25); color: #fff; }
+        .gen-refresh-btn { background: rgba(255, 191, 0, 0.08); border: 1px solid rgba(255, 191, 0, 0.25); color: var(--theme-color); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: none !important; }
+        .gen-refresh-btn:hover { background: rgba(255, 191, 0, 0.2); color: #fff; transform: none !important; }
 
-        .gen-settings { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.82rem; color: var(--text-muted); }
+        .gen-settings { display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.82rem; color: var(--text-muted); }
         .gen-slider-row { display: flex; justify-content: space-between; align-items: center; }
         .gen-slider-row input[type="range"] { accent-color: var(--theme-color, #ffbf00); cursor: pointer; flex: 1; margin-left: 10px; }
         
-        .gen-checkboxes { display: flex; gap: 1.25rem; align-items: center; margin-top: 2px; }
-        .gen-checkboxes label { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.82rem; font-weight: 400; }
+        .gen-checkboxes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1rem; margin-top: 2px; }
+        .gen-checkboxes label { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.8rem; font-weight: 400; justify-content: flex-start !important; }
         .gen-checkboxes input[type="checkbox"] { accent-color: var(--theme-color, #ffbf00); cursor: pointer; width: 14px; height: 14px; }
 
         .btn-use-gen { background: var(--theme-color, #ffbf00); color: #050505; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: transform 0.1s, background-color 0.2s; text-align: center; margin-top: 4px; box-shadow: 0 2px 8px rgba(255, 191, 0, 0.2); }
@@ -166,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initPasswordUI() {
         actionContainer.innerHTML = '';
         
-        // Options Panel with Password Input, Eye Toggle & Embedded Password Generator Drawer
+        // Options Panel with Password Input, Eye Toggle & Enhanced Password Generator Drawer
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
@@ -181,8 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
 
-            <!-- Embedded Password Generator Box -->
+            <!-- Embedded Password Generator Box with Close (X) Button -->
             <div class="password-generator-box" id="gen-drawer">
+                <div class="gen-header-row">
+                    <span>Password Generator</span>
+                    <button type="button" class="gen-close-btn" id="gen-close-trigger" title="Close Generator"><i class="fa-solid fa-xmark"></i></button>
+                </div>
                 <div class="gen-preview-row">
                     <input type="text" id="gen-result-field" class="gen-preview-input" readonly>
                     <button type="button" class="gen-refresh-btn" id="gen-refresh-trigger" title="Generate New"><i class="fa-solid fa-rotate-right"></i></button>
@@ -193,8 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="range" id="gen-length-slider" min="6" max="30" value="12">
                     </div>
                     <div class="gen-checkboxes">
-                        <label><input type="checkbox" id="gen-nums" checked> Numbers</label>
-                        <label><input type="checkbox" id="gen-syms" checked> Symbols</label>
+                        <label><input type="checkbox" id="gen-upper" checked> Uppercase (A-Z)</label>
+                        <label><input type="checkbox" id="gen-lower" checked> Lowercase (a-z)</label>
+                        <label><input type="checkbox" id="gen-nums" checked> Numbers (0-9)</label>
+                        <label><input type="checkbox" id="gen-syms" checked> Symbols (!@#$)</label>
                     </div>
                 </div>
                 <button type="button" class="btn-use-gen" id="gen-use-btn">Use Password</button>
@@ -220,11 +231,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const eyeIcon = optionsPanel.querySelector('#toggle-eye-icon');
         
         const genTrigger = optionsPanel.querySelector('#gen-toggle-trigger');
+        const genClose = optionsPanel.querySelector('#gen-close-trigger');
         const genDrawer = optionsPanel.querySelector('#gen-drawer');
         const genResult = optionsPanel.querySelector('#gen-result-field');
         const genRefresh = optionsPanel.querySelector('#gen-refresh-trigger');
         const genSlider = optionsPanel.querySelector('#gen-length-slider');
         const genLengthVal = optionsPanel.querySelector('#gen-length-val');
+        
+        const genUpper = optionsPanel.querySelector('#gen-upper');
+        const genLower = optionsPanel.querySelector('#gen-lower');
         const genNums = optionsPanel.querySelector('#gen-nums');
         const genSyms = optionsPanel.querySelector('#gen-syms');
         const genUseBtn = optionsPanel.querySelector('#gen-use-btn');
@@ -240,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Toggle Generator Drawer
+        // Toggle Generator Drawer Open/Close
         genTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             genDrawer.classList.toggle('active');
@@ -249,19 +264,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        genClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            genDrawer.classList.remove('active');
+        });
+
         // Password Generator Core Function
         function generateNewPassword() {
             const length = parseInt(genSlider.value);
-            let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const nums = '0123456789';
-            const syms = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
+            const numChars = '0123456789';
+            const symChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-            if (genNums.checked) chars += nums;
-            if (genSyms.checked) chars += syms;
+            let availableChars = '';
+            if (genUpper.checked) availableChars += upperChars;
+            if (genLower.checked) availableChars += lowerChars;
+            if (genNums.checked) availableChars += numChars;
+            if (genSyms.checked) availableChars += symChars;
+
+            // Fallback if user unchecks everything
+            if (!availableChars) {
+                availableChars = lowerChars; 
+                genLower.checked = true;
+            }
 
             let result = '';
             for (let i = 0; i < length; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
+                result += availableChars.charAt(Math.floor(Math.random() * availableChars.length));
             }
             genResult.value = result;
         }
@@ -271,8 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
             generateNewPassword();
         });
 
+        genUpper.addEventListener('change', generateNewPassword);
+        genLower.addEventListener('change', generateNewPassword);
         genNums.addEventListener('change', generateNewPassword);
         genSyms.addEventListener('change', generateNewPassword);
+        
         genRefresh.addEventListener('click', (e) => {
             e.preventDefault();
             generateNewPassword();
@@ -283,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (genResult.value) {
                 passInput.value = genResult.value;
-                passInput.type = 'text'; // Make it visible temporarily so user confirms
+                passInput.type = 'text'; // Make it visible briefly so user confirms
                 eyeIcon.className = 'fa-solid fa-eye-slash';
                 genDrawer.classList.remove('active');
             }
