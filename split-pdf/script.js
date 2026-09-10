@@ -2,19 +2,16 @@
 // 1. INJECT DEPENDENCIES & STYLES (SPLIT PDF PRO)
 // ==========================================
 (function initEnvironment() {
-    // pdf-lib for processing/splitting
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
     }
-    // JSZip for bundling multiple PDFs
     if (!window.JSZip) {
         const zipScript = document.createElement('script');
         zipScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
         document.head.appendChild(zipScript);
     }
-    // pdf.js for rendering visual previews
     if (!window.pdfjsLib) {
         const pdfjsScript = document.createElement('script');
         pdfjsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
@@ -36,15 +33,22 @@
         /* Canvas Cards */
         .page-card { width: 110px; height: 155px; background-color: #fff; border: 3px solid var(--border-subtle); border-radius: 6px; position: relative; display: flex; justify-content: center; align-items: center; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); overflow: hidden; transition: all 0.2s ease; cursor: pointer; }
         .page-card:hover { border-color: rgba(0, 255, 204, 0.6); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
-        .page-card.selected { border-color: var(--cyber-cyan); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.25); }
         .page-card canvas { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
         
         .card-loader { color: var(--bg-card); font-size: 1.5rem; position: absolute; }
         .page-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.8); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; z-index: 5; pointer-events: none; }
-        .page-card.selected .page-badge { background: var(--cyber-cyan); color: #000; font-weight: bold; }
         
-        .check-icon { position: absolute; top: 4px; left: 4px; background: var(--cyber-cyan); color: #000; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; display: none; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); z-index: 10; pointer-events: none; }
-        .page-card.selected .check-icon { display: flex; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .check-icon { position: absolute; top: 4px; left: 4px; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; display: none; justify-content: center; align-items: center; z-index: 10; pointer-events: none; }
+
+        /* Card States: Active Box vs Other Boxes */
+        .page-card.selected-active { border-color: var(--cyber-cyan); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.25); }
+        .page-card.selected-active .page-badge { background: var(--cyber-cyan); color: #000; font-weight: bold; }
+        .page-card.selected-active .check-icon { display: flex; background: var(--cyber-cyan); color: #000; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .page-card.selected-other { border-color: rgba(255,255,255,0.15); opacity: 0.45; }
+        .page-card.selected-other:hover { opacity: 0.8; border-color: var(--cyber-cyan); }
+        .page-card.selected-other .check-icon { display: flex; background: #333; color: #888; box-shadow: none; }
+
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
         /* Configuration Panel Below Dropzone */
@@ -69,7 +73,7 @@
         .range-box { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 0.8rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; opacity: 0.6; cursor: pointer; position: relative; overflow: hidden; }
         .range-box:hover { opacity: 0.8; }
         
-        /* Active State for the Box currently receiving clicks */
+        /* Active State */
         .range-box.active { opacity: 1; border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.03); box-shadow: 0 4px 15px rgba(0,255,204,0.1); }
         .range-box.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--cyber-cyan); }
         
@@ -135,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>
         <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
-            Click a box to select it, then click thumbnails to assign pages, or type manually.
+            Click a box to activate it, then click thumbnails to assign pages. Faded checkmarks are assigned to other files.
         </div>
         <div class="range-boxes-container" id="range-boxes-container">
             <!-- Dynamic boxes go here -->
@@ -151,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnExecuteSplit.addEventListener('click', executeSplit);
     configWrapper.querySelector('#btn-generate-boxes').addEventListener('click', () => {
         generateRangeBoxes();
-        setActiveBox(1); // Reset to file 1 on update
+        setActiveBox(1);
     });
 
     // ==========================================
@@ -233,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // CANVAS RENDERING & CLICKS
+    // CANVAS RENDERING 
     // ==========================================
     async function renderAllCanvases() {
         a4Grid.innerHTML = '';
@@ -248,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <canvas id="canvas-page-${i}"></canvas>
             `;
             
-            // Thumbnail Click Handler
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
                 handleThumbnailClick(i);
@@ -283,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // SMART DYNAMIC RANGE LOGIC & TWO-WAY UI
+    // SMART DYNAMIC RANGE LOGIC & FADE UI
     // ==========================================
     function getDynamicHint(maxPage) {
         if (maxPage <= 5) return `e.g. 1, 3`;
@@ -313,21 +316,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="active-indicator">Editing</div>
             `;
 
-            // Make box active when clicked anywhere inside
             box.addEventListener('click', () => setActiveBox(i));
             
-            // Update canvas checkmarks in real-time when typing manually
             const inputField = box.querySelector('.range-input');
             inputField.addEventListener('input', () => {
                 setActiveBox(i);
-                syncCanvasWithInput();
             });
 
             container.appendChild(box);
         }
     }
 
-    // Switches focus to a specific box and syncs the canvas visually
     function setActiveBox(index) {
         activeBoxIndex = index;
         document.querySelectorAll('.range-box').forEach(b => b.classList.remove('active'));
@@ -341,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         syncCanvasWithInput();
     }
 
-    // Lenient parser: turns "1-3, 5" into Set(1, 2, 3, 5) without crashing on typos
     function parseLenientSet(str) {
         const pages = new Set();
         if(!str) return pages;
@@ -358,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(start) && !isNaN(end) && start <= end) {
                     for(let p = start; p <= end; p++) if(p <= totalPages) pages.add(p);
                 } else if (!isNaN(start)) {
-                    if (start <= totalPages) pages.add(start); // Handle dangling "1-" as just "1"
+                    if (start <= totalPages) pages.add(start); 
                 }
             } else {
                 const val = parseInt(part);
@@ -368,7 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return pages;
     }
 
-    // Serializer: turns Set(1, 2, 3, 5) into "1-3, 5"
     function serializeSetToString(pagesSet) {
         if (pagesSet.size === 0) return "";
         const sorted = Array.from(pagesSet).sort((a,b) => a - b);
@@ -392,41 +389,54 @@ document.addEventListener('DOMContentLoaded', () => {
         return ranges.join(", ");
     }
 
-    // Master logic for clicking a thumbnail
+    // Logic: Clicking a thumbnail checks where it belongs
     function handleThumbnailClick(pageNum) {
-        const activeInput = document.querySelector(`.range-input[data-index="${activeBoxIndex}"]`);
-        if (!activeInput) return;
-
-        const currentPages = parseLenientSet(activeInput.value);
+        const inputs = Array.from(document.querySelectorAll('.range-input'));
+        const allSets = inputs.map(inp => parseLenientSet(inp.value));
+        const activeSetIndex = activeBoxIndex - 1;
         
-        if (currentPages.has(pageNum)) {
-            currentPages.delete(pageNum);
+        if (!allSets[activeSetIndex]) return;
+
+        // If it's already in the active box, remove it
+        if (allSets[activeSetIndex].has(pageNum)) {
+            allSets[activeSetIndex].delete(pageNum);
         } else {
-            currentPages.add(pageNum);
+            // Remove it from ALL OTHER boxes to "steal" it
+            allSets.forEach(set => set.delete(pageNum));
+            // Add it to the active box
+            allSets[activeSetIndex].add(pageNum);
         }
 
-        // Re-write the string cleanly into the box
-        activeInput.value = serializeSetToString(currentPages);
+        // Write strings back to all inputs
+        inputs.forEach((inp, idx) => {
+            inp.value = serializeSetToString(allSets[idx]);
+        });
         
-        // Sync visual checkmarks
         syncCanvasWithInput();
     }
 
-    // Visual sync
+    // Sync visual states: Active Box vs Other Boxes
     function syncCanvasWithInput() {
-        const activeInput = document.querySelector(`.range-input[data-index="${activeBoxIndex}"]`);
-        const activePages = activeInput ? parseLenientSet(activeInput.value) : new Set();
+        const inputs = Array.from(document.querySelectorAll('.range-input'));
+        const allSets = inputs.map(inp => parseLenientSet(inp.value));
+        const activeSet = allSets[activeBoxIndex - 1] || new Set();
         
         document.querySelectorAll('.page-card').forEach(card => {
             const p = parseInt(card.dataset.page);
-            if (activePages.has(p)) {
-                card.classList.add('selected');
+            card.classList.remove('selected-active', 'selected-other');
+            
+            if (activeSet.has(p)) {
+                // Priority 1: It is assigned to the currently active box
+                card.classList.add('selected-active');
             } else {
-                card.classList.remove('selected');
+                // Priority 2: It is assigned to some other box
+                const inOtherBox = allSets.some((set, idx) => idx !== (activeBoxIndex - 1) && set.has(p));
+                if (inOtherBox) {
+                    card.classList.add('selected-other');
+                }
             }
         });
     }
-
 
     window.resetTool = function() {
         window.location.reload(); 
@@ -441,7 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.range-input');
         const splitInstructions = [];
         
-        // Strict Validation for extraction
         try {
             inputs.forEach((input, index) => {
                 const val = input.value.trim();
@@ -449,7 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (!val) throw new Error(`File ${fileNum} is empty. Please select pages.`);
 
-                // Convert 1-indexed UI sets to 0-indexed pdf-lib arrays
                 const pagesSet = parseLenientSet(val);
                 if (pagesSet.size === 0) throw new Error(`File ${fileNum} has no valid pages selected.`);
                 
@@ -493,6 +501,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const finalContainer = document.createElement('div');
                 finalContainer.style.width = '100%';
+                
+                // FIX: Added margin-bottom: 4rem to prevent overlapping with the info grid below
+                finalContainer.style.marginBottom = '4rem'; 
+                
                 finalContainer.innerHTML = `
                     <div class="success-message">
                         <i class="fa-solid fa-circle-check"></i> Splitting Complete!
