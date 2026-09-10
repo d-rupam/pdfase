@@ -2,11 +2,18 @@
 // 1. INJECT DEPENDENCIES & STYLES (SPLIT PDF)
 // ==========================================
 (function initEnvironment() {
-    // Load pdf-lib for client-side processing
+    // 1. pdf-lib for processing/splitting the actual file
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
+    }
+
+    // 2. pdf.js for rendering the visual canvas previews
+    if (!window.pdfjsLib) {
+        const pdfjsScript = document.createElement('script');
+        pdfjsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        document.head.appendChild(pdfjsScript);
     }
 
     const style = document.createElement('style');
@@ -24,7 +31,7 @@
         .btn-text:hover { background: rgba(0, 255, 204, 0.15); border-color: var(--cyber-cyan); }
 
         /* Scrollable Grid for Pages */
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; padding: 0.5rem; margin: 0; max-height: 55vh; overflow-y: auto; }
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; width: 100%; padding: 0.5rem; margin: 0; max-height: 60vh; overflow-y: auto; }
         
         /* Custom Scrollbar */
         .a4-grid::-webkit-scrollbar { width: 8px; }
@@ -32,19 +39,37 @@
         .a4-grid::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.2); border-radius: 4px; }
         .a4-grid::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 204, 0.5); }
 
-        /* Page Cards */
-        .page-card { width: 110px; height: 150px; background-color: var(--bg-card); border: 2px solid var(--border-subtle); border-radius: 8px; position: relative; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .page-card:hover { border-color: rgba(0, 255, 204, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
-        .page-card.selected { border-color: var(--cyber-cyan); background-color: rgba(0, 255, 204, 0.05); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.2); }
+        /* Canvas Page Cards */
+        .page-card { 
+            width: 140px; 
+            height: 198px; /* A4 aspect ratio approx */
+            background-color: #fff; /* White bg for PDF canvas */
+            border: 3px solid var(--border-subtle); 
+            border-radius: 6px; 
+            position: relative; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            user-select: none; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .page-card:hover { border-color: rgba(0, 255, 204, 0.6); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
+        .page-card.selected { border-color: var(--cyber-cyan); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.25); }
         
-        .page-number { font-size: 2.8rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); transition: color 0.2s; line-height: 1; }
-        .page-card:hover .page-number { color: #fff; }
-        .page-card.selected .page-number { color: var(--cyber-cyan); }
+        .page-card canvas { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
         
-        .page-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .page-card.selected .page-label { color: #fff; }
+        /* Loading spinner inside card */
+        .card-loader { color: var(--bg-card); font-size: 1.5rem; position: absolute; }
+
+        /* Page Number Badge overlay */
+        .page-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; z-index: 5; backdrop-filter: blur(2px); pointer-events: none; }
+        .page-card.selected .page-badge { background: var(--cyber-cyan); color: #000; font-weight: bold; }
         
-        .check-icon { position: absolute; top: -10px; right: -10px; background: var(--cyber-cyan); color: #000; border-radius: 50%; width: 26px; height: 26px; font-size: 0.9rem; display: none; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 255, 204, 0.5); z-index: 10; }
+        /* Selection Check Icon */
+        .check-icon { position: absolute; top: 4px; left: 4px; background: var(--cyber-cyan); color: #000; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: none; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); z-index: 10; pointer-events: none; }
         .page-card.selected .check-icon { display: flex; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
@@ -60,7 +85,7 @@
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-secondary:hover { border-color: var(--cyber-cyan); color: var(--cyber-cyan); background-color: rgba(0, 255, 204, 0.05); }
 
-        /* Success UI */
+        /* Success UI & Loaders */
         .success-message { width: 100%; text-align: center; color: var(--cyber-cyan); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
         .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(0, 255, 204, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(0, 255, 204, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
         .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
@@ -78,20 +103,17 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ==========================================
-    // 2. STATE MANAGEMENT & DOM SETUP
-    // ==========================================
     let currentPdfBytes = null;
     let currentFileName = "";
     let totalPages = 0;
-    let selectedPages = new Set(); // Stores 1-based page numbers
+    let selectedPages = new Set();
+    let pdfJsDoc = null; // Store the PDF.js document for rendering
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
     const selectFilesBtn = document.getElementById('select-files-btn');
     const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
 
-    // Create Controls Container (Top Bar)
     const controlsContainer = document.createElement('div');
     controlsContainer.className = 'controls-container';
     controlsContainer.innerHTML = `
@@ -103,18 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     dropzone.appendChild(controlsContainer);
 
-    // Create Scrollable Grid
     const a4Grid = document.createElement('div');
     a4Grid.className = 'a4-grid';
     a4Grid.style.display = 'none';
     dropzone.appendChild(a4Grid);
 
-    // Create Action Container (Below Dropzone)
     const actionContainer = document.createElement('div');
     actionContainer.className = 'action-container';
     dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
 
-    let splitBtn; // Reference to the main action button
+    let splitBtn;
 
     function initSplitUI() {
         actionContainer.innerHTML = '';
@@ -123,41 +143,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         splitBtn = document.createElement('button');
         splitBtn.className = 'btn-action';
-        splitBtn.disabled = true; // Disabled initially
+        splitBtn.disabled = true; 
         splitBtn.innerHTML = '<i class="fa-solid fa-scissors"></i> Extract Pages';
         splitBtn.addEventListener('click', executeSplit);
         
         btnGroup.appendChild(splitBtn);
         actionContainer.appendChild(btnGroup);
 
-        // Hook up selection buttons
-        document.getElementById('btn-select-all').addEventListener('click', (e) => {
-            e.stopPropagation();
-            selectAllPages();
-        });
-        document.getElementById('btn-deselect-all').addEventListener('click', (e) => {
-            e.stopPropagation();
-            deselectAllPages();
-        });
+        document.getElementById('btn-select-all').addEventListener('click', (e) => { e.stopPropagation(); selectAllPages(); });
+        document.getElementById('btn-deselect-all').addEventListener('click', (e) => { e.stopPropagation(); deselectAllPages(); });
     }
     initSplitUI();
 
     // ==========================================
     // 3. EVENT LISTENERS
     // ==========================================
-    
     if (selectFilesBtn) {
-        selectFilesBtn.addEventListener('click', (e) => {
-            e.preventDefault(); e.stopPropagation();
-            fileInput.click();
-        });
+        selectFilesBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); fileInput.click(); });
     }
 
     dropzone.addEventListener('click', (e) => {
-        // Only trigger file input if no file is loaded and we aren't clicking a card
-        if (!currentPdfBytes && e.target !== fileInput) {
-            fileInput.click();
-        }
+        if (!currentPdfBytes && e.target !== fileInput) fileInput.click();
     });
 
     fileInput.addEventListener('change', (e) => {
@@ -172,19 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
     dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            handleFile(e.dataTransfer.files[0]);
-        }
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
     });
 
     window.addEventListener('paste', (e) => {
-        if (!currentPdfBytes && e.clipboardData && e.clipboardData.files.length > 0) {
-            handleFile(e.clipboardData.files[0]);
-        }
+        if (!currentPdfBytes && e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
     });
 
     // ==========================================
-    // 4. FILE HANDLING & UI RENDERING
+    // 4. FILE HANDLING & CANVAS RENDERING
     // ==========================================
     async function handleFile(file) {
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
@@ -192,27 +194,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!window.PDFLib) {
-            alert('Engine is still loading. Please wait a moment.');
+        if (!window.PDFLib || !window.pdfjsLib) {
+            alert('Engines are still loading. Please wait a moment.');
             return;
         }
 
-        // Show loading state in dropzone
+        // Set up PDF.js worker
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
         const loadingDiv = document.createElement('div');
         loadingDiv.className = 'loading-overlay';
-        loadingDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><p>Analyzing Document Structure...</p>';
+        loadingDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><p>Rendering Document Previews...</p>';
         dropzone.appendChild(loadingDiv);
 
         try {
             const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await window.PDFLib.PDFDocument.load(arrayBuffer);
-            
-            totalPages = pdfDoc.getPageCount();
             currentPdfBytes = arrayBuffer;
             currentFileName = file.name;
-            selectedPages.clear(); // Reset selections
+            selectedPages.clear();
 
-            renderPageGrid();
+            // Load PDF for visual rendering via pdf.js
+            const typedarray = new Uint8Array(arrayBuffer);
+            pdfJsDoc = await pdfjsLib.getDocument(typedarray).promise;
+            totalPages = pdfJsDoc.numPages;
+
+            setupUILayout();
+            await renderAllCanvases();
+
         } catch (error) {
             console.error('Error loading PDF:', error);
             alert('Could not read the PDF file. It might be corrupted or password-protected.');
@@ -221,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderPageGrid() {
+    function setupUILayout() {
         dropzone.classList.add('has-files');
         defaultDropzoneElements.forEach(el => el.style.display = 'none');
         
@@ -233,7 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
         a4Grid.style.display = 'flex';
         actionContainer.style.display = 'flex';
         a4Grid.innerHTML = '';
+        updateActionState();
+    }
 
+    async function renderAllCanvases() {
+        // Create all the empty cards first so the user sees the grid instantly
         for (let i = 1; i <= totalPages; i++) {
             const card = document.createElement('div');
             card.className = 'page-card';
@@ -241,21 +253,57 @@ document.addEventListener('DOMContentLoaded', () => {
             
             card.innerHTML = `
                 <div class="check-icon"><i class="fa-solid fa-check"></i></div>
-                <div class="page-number">${i}</div>
-                <div class="page-label">Page</div>
+                <div class="page-badge">${i}</div>
+                <i class="fa-solid fa-circle-notch fa-spin card-loader"></i>
+                <canvas id="canvas-page-${i}"></canvas>
             `;
 
             card.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent dropzone click
+                e.stopPropagation();
                 togglePageSelection(i, card);
             });
 
             a4Grid.appendChild(card);
         }
 
-        updateActionState();
+        // Render canvases asynchronously one by one to prevent browser freezing
+        for (let i = 1; i <= totalPages; i++) {
+            await renderSinglePage(i);
+        }
     }
 
+    async function renderSinglePage(pageNum) {
+        try {
+            const page = await pdfJsDoc.getPage(pageNum);
+            const canvas = document.getElementById(`canvas-page-${pageNum}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Set a fixed low-res scale for thumbnails to save memory
+            const viewport = page.getViewport({ scale: 0.5 });
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            
+            await page.render(renderContext).promise;
+            
+            // Remove spinner once loaded
+            const card = canvas.parentElement;
+            const loader = card.querySelector('.card-loader');
+            if(loader) loader.remove();
+
+        } catch(err) {
+            console.error(`Error rendering page ${pageNum}:`, err);
+        }
+    }
+
+    // ==========================================
+    // 5. SELECTION LOGIC
+    // ==========================================
     function togglePageSelection(pageNum, cardElement) {
         if (selectedPages.has(pageNum)) {
             selectedPages.delete(pageNum);
@@ -300,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE EXTRACT LOGIC (pdf-lib)
+    // 6. CLIENT-SIDE EXTRACT LOGIC (pdf-lib)
     // ==========================================
     async function executeSplit() {
         if (selectedPages.size === 0 || !currentPdfBytes) return;
@@ -311,30 +359,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { PDFDocument } = window.PDFLib;
             
-            // Load original doc
+            // Load original doc into pdf-lib (completely separate from pdf.js rendering)
             const originalPdf = await PDFDocument.load(currentPdfBytes);
-            // Create a new blank doc
             const newPdf = await PDFDocument.create();
 
-            // Convert set to array, sort numerically, then convert to 0-based indices for pdf-lib
             const pageIndices = Array.from(selectedPages)
                                      .sort((a, b) => a - b)
-                                     .map(pageNum => pageNum - 1);
+                                     .map(pageNum => pageNum - 1); // pdf-lib is 0-indexed
 
-            // Copy selected pages
             const copiedPages = await newPdf.copyPages(originalPdf, pageIndices);
             copiedPages.forEach(page => newPdf.addPage(page));
 
-            // Save the new PDF
             const pdfBytes = await newPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
-            // Name formatting: originalName_Extracted.pdf
             const baseName = currentFileName.replace(/\.[^/.]+$/, "");
             const finalFileName = `${baseName}_Extracted.pdf`;
             
-            // Transition to Success UI
             setTimeout(() => {
                 dropzone.style.display = 'none';
                 
@@ -365,9 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Extraction Error:', error);
-            alert('A critical error occurred while extracting the pages.');
-            updateActionState(); // Reset button to normal state
+            alert('A critical error occurred while extracting the pages. Check if the PDF is password protected.');
+            updateActionState(); 
         }
     }
 
-}); // End of DOMContentLoaded
+});
