@@ -103,11 +103,12 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    let currentPdfBytes = null;
+    // FIXED: Storing the File object instead of the raw ArrayBuffer to prevent detachment 
+    let currentFileObj = null; 
     let currentFileName = "";
     let totalPages = 0;
     let selectedPages = new Set();
-    let pdfJsDoc = null; // Store the PDF.js document for rendering
+    let pdfJsDoc = null; 
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
@@ -163,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     dropzone.addEventListener('click', (e) => {
-        if (!currentPdfBytes && e.target !== fileInput) fileInput.click();
+        if (!currentFileObj && e.target !== fileInput) fileInput.click();
     });
 
     fileInput.addEventListener('change', (e) => {
@@ -182,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('paste', (e) => {
-        if (!currentPdfBytes && e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
+        if (!currentFileObj && e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
     });
 
     // ==========================================
@@ -199,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Set up PDF.js worker
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         const loadingDiv = document.createElement('div');
@@ -208,12 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dropzone.appendChild(loadingDiv);
 
         try {
-            const arrayBuffer = await file.arrayBuffer();
-            currentPdfBytes = arrayBuffer;
+            currentFileObj = file; // Store the original file reference
             currentFileName = file.name;
             selectedPages.clear();
 
-            // Load PDF for visual rendering via pdf.js
+            // Read buffer JUST for PDF.js to use and consume
+            const arrayBuffer = await file.arrayBuffer();
             const typedarray = new Uint8Array(arrayBuffer);
             pdfJsDoc = await pdfjsLib.getDocument(typedarray).promise;
             totalPages = pdfJsDoc.numPages;
@@ -245,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function renderAllCanvases() {
-        // Create all the empty cards first so the user sees the grid instantly
         for (let i = 1; i <= totalPages; i++) {
             const card = document.createElement('div');
             card.className = 'page-card';
@@ -266,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
             a4Grid.appendChild(card);
         }
 
-        // Render canvases asynchronously one by one to prevent browser freezing
         for (let i = 1; i <= totalPages; i++) {
             await renderSinglePage(i);
         }
@@ -278,20 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById(`canvas-page-${pageNum}`);
             const ctx = canvas.getContext('2d');
             
-            // Set a fixed low-res scale for thumbnails to save memory
             const viewport = page.getViewport({ scale: 0.5 });
-            
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
-            const renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-            };
-            
+            const renderContext = { canvasContext: ctx, viewport: viewport };
             await page.render(renderContext).promise;
             
-            // Remove spinner once loaded
             const card = canvas.parentElement;
             const loader = card.querySelector('.card-loader');
             if(loader) loader.remove();
@@ -318,8 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function selectAllPages() {
         const cards = a4Grid.querySelectorAll('.page-card');
         cards.forEach((card, index) => {
-            const pageNum = index + 1;
-            selectedPages.add(pageNum);
+            selectedPages.add(index + 1);
             card.classList.add('selected');
         });
         updateActionState();
@@ -351,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. CLIENT-SIDE EXTRACT LOGIC (pdf-lib)
     // ==========================================
     async function executeSplit() {
-        if (selectedPages.size === 0 || !currentPdfBytes) return;
+        if (selectedPages.size === 0 || !currentFileObj) return;
 
         try {
             splitBtn.disabled = true;
@@ -359,13 +349,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { PDFDocument } = window.PDFLib;
             
-            // Load original doc into pdf-lib (completely separate from pdf.js rendering)
-            const originalPdf = await PDFDocument.load(currentPdfBytes);
+            // Read a fresh array buffer from the stored File object
+            const freshBuffer = await currentFileObj.arrayBuffer();
+            const originalPdf = await PDFDocument.load(freshBuffer);
             const newPdf = await PDFDocument.create();
 
             const pageIndices = Array.from(selectedPages)
                                      .sort((a, b) => a - b)
-                                     .map(pageNum => pageNum - 1); // pdf-lib is 0-indexed
+                                     .map(pageNum => pageNum - 1); 
 
             const copiedPages = await newPdf.copyPages(originalPdf, pageIndices);
             copiedPages.forEach(page => newPdf.addPage(page));
