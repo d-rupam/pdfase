@@ -33,40 +33,54 @@
         .a4-grid::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.2); border-radius: 4px; }
         .a4-grid::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 204, 0.5); }
 
-        /* Canvas Cards (Visual Reference Only) */
-        .page-card { width: 120px; height: 170px; background-color: #fff; border: 2px solid var(--border-subtle); border-radius: 6px; position: relative; display: flex; justify-content: center; align-items: center; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); overflow: hidden; transition: border 0.3s; }
-        .page-card:hover { border-color: var(--cyber-cyan); }
+        /* Canvas Cards */
+        .page-card { width: 110px; height: 155px; background-color: #fff; border: 3px solid var(--border-subtle); border-radius: 6px; position: relative; display: flex; justify-content: center; align-items: center; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); overflow: hidden; transition: all 0.2s ease; cursor: pointer; }
+        .page-card:hover { border-color: rgba(0, 255, 204, 0.6); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 255, 204, 0.15); }
+        .page-card.selected { border-color: var(--cyber-cyan); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.25); }
         .page-card canvas { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
         .card-loader { color: var(--bg-card); font-size: 1.5rem; position: absolute; }
-        .page-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.8); color: var(--cyber-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: bold; padding: 3px 8px; border-radius: 4px; z-index: 5; pointer-events: none; border: 1px solid rgba(0,255,204,0.3); }
+        .page-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.8); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; z-index: 5; pointer-events: none; }
+        .page-card.selected .page-badge { background: var(--cyber-cyan); color: #000; font-weight: bold; }
+        
+        .check-icon { position: absolute; top: 4px; left: 4px; background: var(--cyber-cyan); color: #000; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; display: none; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); z-index: 10; pointer-events: none; }
+        .page-card.selected .check-icon { display: flex; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
         /* Configuration Panel Below Dropzone */
-        .split-config-wrapper { display: none; flex-direction: column; width: 100%; max-width: 750px; margin: 0 auto 3rem auto; animation: fadeIn 0.4s ease; }
+        .split-config-wrapper { display: none; flex-direction: column; width: 100%; max-width: 900px; margin: 0 auto 3rem auto; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .config-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 1.2rem 2rem; border-radius: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px; }
-        .config-title { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .config-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px; }
+        .config-title { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 10px; }
         .config-title i { color: var(--cyber-cyan); }
         
         .split-controls { display: flex; align-items: center; gap: 12px; }
-        .split-controls label { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
-        .input-number { background: var(--bg-base); border: 1px solid rgba(0, 255, 204, 0.3); color: #fff; padding: 0.6rem 1rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 1rem; width: 80px; text-align: center; outline: none; transition: all 0.3s; }
+        .split-controls label { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        .input-number { background: var(--bg-base); border: 1px solid rgba(0, 255, 204, 0.3); color: #fff; padding: 0.5rem 0.8rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 1rem; width: 70px; text-align: center; outline: none; transition: all 0.3s; }
         .input-number:focus { border-color: var(--cyber-cyan); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
-        .btn-set { background: rgba(0, 255, 204, 0.1); color: var(--cyber-cyan); border: 1px solid var(--cyber-cyan); padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; }
+        .btn-set { background: rgba(0, 255, 204, 0.1); color: var(--cyber-cyan); border: 1px solid var(--cyber-cyan); padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem;}
         .btn-set:hover { background: var(--cyber-cyan); color: #000; }
 
-        /* Beautiful Range Input Boxes */
-        .range-boxes-container { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-        .range-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--cyber-cyan); padding: 1.2rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 20px; transition: all 0.3s ease; }
-        .range-box:focus-within { border-color: rgba(0, 255, 204, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: rgba(255,255,255,0.02); }
+        /* Compact Grid Range Boxes */
+        .range-boxes-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        @media (max-width: 768px) { .range-boxes-container { grid-template-columns: 1fr; } }
         
-        .range-box-badge { background: rgba(0, 255, 204, 0.1); color: var(--cyber-cyan); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.9rem; padding: 0.4rem 0.8rem; border-radius: 4px; min-width: 85px; text-align: center; border: 1px solid rgba(0,255,204,0.2); }
+        .range-box { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 0.8rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; opacity: 0.6; cursor: pointer; position: relative; overflow: hidden; }
+        .range-box:hover { opacity: 0.8; }
         
-        .range-input-wrapper { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-        .range-input { width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: #fff; padding: 0.8rem 1.2rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; outline: none; transition: all 0.3s; }
-        .range-input:focus { border-color: var(--cyber-cyan); box-shadow: inset 0 0 0 1px var(--cyber-cyan); }
+        /* Active State for the Box currently receiving clicks */
+        .range-box.active { opacity: 1; border-color: var(--cyber-cyan); background: rgba(0, 255, 204, 0.03); box-shadow: 0 4px 15px rgba(0,255,204,0.1); }
+        .range-box.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--cyber-cyan); }
+        
+        .range-box-badge { background: rgba(255, 255, 255, 0.05); color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 4px; min-width: 70px; text-align: center; border: 1px solid var(--border-subtle); transition: all 0.3s; }
+        .range-box.active .range-box-badge { background: rgba(0, 255, 204, 0.1); color: var(--cyber-cyan); border-color: rgba(0, 255, 204, 0.3); }
+        
+        .range-input { flex: 1; background: transparent; border: none; color: #fff; padding: 0.4rem; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s; min-width: 0; }
         .range-input::placeholder { color: rgba(255,255,255,0.2); }
-        .range-hint { font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        
+        .active-indicator { font-size: 0.75rem; color: var(--cyber-cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: none; margin-left: auto; }
+        .range-box.active .active-indicator { display: block; animation: fadeIn 0.3s ease; }
 
         /* Action Container */
         .action-container { display: flex; justify-content: center; width: 100%; margin-top: 1rem; }
@@ -92,19 +106,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFileName = "";
     let totalPages = 0;
     let pdfJsDoc = null; 
+    
+    // TRACKING ACTIVE BOX FOR CLICKS
+    let activeBoxIndex = 1;
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
     const selectFilesBtn = document.getElementById('select-files-btn');
     const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
 
-    // Create Grid for Visual Previews
     const a4Grid = document.createElement('div');
     a4Grid.className = 'a4-grid';
     a4Grid.style.display = 'none';
     dropzone.appendChild(a4Grid);
 
-    // Create Configuration Wrapper (Below Dropzone)
     const configWrapper = document.createElement('div');
     configWrapper.className = 'split-config-wrapper';
     configWrapper.innerHTML = `
@@ -114,10 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span style="color: var(--text-muted); font-size: 0.9rem; margin-left: 10px;" id="display-pages"></span>
             </div>
             <div class="split-controls">
-                <label>Split into how many files?</label>
+                <label>Files:</label>
                 <input type="number" id="split-count" class="input-number" min="2" max="50" value="2">
                 <button class="btn-set" id="btn-generate-boxes">Update</button>
             </div>
+        </div>
+        <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+            Click a box to select it, then click thumbnails to assign pages, or type manually.
         </div>
         <div class="range-boxes-container" id="range-boxes-container">
             <!-- Dynamic boxes go here -->
@@ -127,12 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
     
-    // Insert config panel directly after the dropzone in the DOM
     dropzone.parentNode.insertBefore(configWrapper, dropzone.nextSibling);
 
     const btnExecuteSplit = configWrapper.querySelector('#btn-execute-split');
     btnExecuteSplit.addEventListener('click', executeSplit);
-    configWrapper.querySelector('#btn-generate-boxes').addEventListener('click', generateRangeBoxes);
+    configWrapper.querySelector('#btn-generate-boxes').addEventListener('click', () => {
+        generateRangeBoxes();
+        setActiveBox(1); // Reset to file 1 on update
+    });
 
     // ==========================================
     // FILE INPUT HANDLING
@@ -181,17 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             currentFileName = file.name;
 
-            // 1. Safe Deep Clone for pdf-lib
             const rawBuffer = await file.arrayBuffer();
             safePdfBytes = rawBuffer.slice(0); 
 
-            // 2. Render visuals with pdf.js
             const typedarray = new Uint8Array(rawBuffer);
             pdfJsDoc = await pdfjsLib.getDocument(typedarray).promise;
             totalPages = pdfJsDoc.numPages;
 
             setupUILayout();
             await renderAllCanvases();
+            setActiveBox(1); // Initialize selection
 
         } catch (error) {
             console.error('Error loading PDF:', error);
@@ -205,30 +224,36 @@ document.addEventListener('DOMContentLoaded', () => {
         dropzone.classList.add('has-files');
         defaultDropzoneElements.forEach(el => el.style.display = 'none');
         
-        // Show Canvas Grid inside dropzone
         a4Grid.style.display = 'flex';
-
-        // Show Config Panel below dropzone
         configWrapper.style.display = 'flex';
         document.getElementById('display-filename').textContent = currentFileName;
         document.getElementById('display-pages').textContent = `(${totalPages} Pages)`;
         
-        generateRangeBoxes(); // Create default boxes
+        generateRangeBoxes();
     }
 
     // ==========================================
-    // CANVAS RENDERING (Visual Only)
+    // CANVAS RENDERING & CLICKS
     // ==========================================
     async function renderAllCanvases() {
         a4Grid.innerHTML = '';
         for (let i = 1; i <= totalPages; i++) {
             const card = document.createElement('div');
             card.className = 'page-card';
+            card.dataset.page = i;
             card.innerHTML = `
+                <div class="check-icon"><i class="fa-solid fa-check"></i></div>
                 <div class="page-badge">Pg ${i}</div>
                 <i class="fa-solid fa-circle-notch fa-spin card-loader"></i>
                 <canvas id="canvas-page-${i}"></canvas>
             `;
+            
+            // Thumbnail Click Handler
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleThumbnailClick(i);
+            });
+
             a4Grid.appendChild(card);
         }
 
@@ -243,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById(`canvas-page-${pageNum}`);
             const ctx = canvas.getContext('2d');
             
-            const viewport = page.getViewport({ scale: 0.4 }); // Low res for thumbnails
+            const viewport = page.getViewport({ scale: 0.3 }); 
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
@@ -258,15 +283,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // SMART DYNAMIC RANGE LOGIC & UI
+    // SMART DYNAMIC RANGE LOGIC & TWO-WAY UI
     // ==========================================
     function getDynamicHint(maxPage) {
-        if (maxPage === 1) return `e.g., 1`;
-        if (maxPage === 2) return `e.g., 1, 2`;
-        if (maxPage <= 5) return `e.g., 1-2, 4-${maxPage}`;
-        // For larger files, create a smart-looking dummy hint bounded by total pages
-        const midPoint = Math.floor(maxPage / 2);
-        return `e.g., 1-3, ${midPoint}, ${maxPage-1}-${maxPage}`;
+        if (maxPage <= 5) return `e.g. 1, 3`;
+        return `e.g. 1-3, ${maxPage}`;
     }
 
     function generateRangeBoxes() {
@@ -284,62 +305,128 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= count; i++) {
             const box = document.createElement('div');
             box.className = 'range-box';
+            box.dataset.index = i;
             
-            // Suggest an initial sequential distribution for placeholders
-            const pagesPerFile = Math.floor(totalPages / count);
-            let start = ((i - 1) * pagesPerFile) + 1;
-            let end = (i === count) ? totalPages : (i * pagesPerFile);
-            if (start > totalPages) { start = totalPages; end = totalPages; }
-            
-            const placeholder = (start === end) ? `${start}` : `${start}-${end}`;
-
             box.innerHTML = `
-                <div class="range-box-badge">FILE 0${i}</div>
-                <div class="range-input-wrapper">
-                    <input type="text" class="range-input" data-index="${i}" placeholder="Auto: ${placeholder}" title="Type the pages to include in File ${i}">
-                    <div class="range-hint">Enter exact pages to extract for this file (${smartHint})</div>
-                </div>
+                <div class="range-box-badge">FILE ${String(i).padStart(2, '0')}</div>
+                <input type="text" class="range-input" data-index="${i}" placeholder="${smartHint}">
+                <div class="active-indicator">Editing</div>
             `;
+
+            // Make box active when clicked anywhere inside
+            box.addEventListener('click', () => setActiveBox(i));
+            
+            // Update canvas checkmarks in real-time when typing manually
+            const inputField = box.querySelector('.range-input');
+            inputField.addEventListener('input', () => {
+                setActiveBox(i);
+                syncCanvasWithInput();
+            });
+
             container.appendChild(box);
         }
     }
 
-    function parsePageRangeString(rangeStr, maxPage, fallbackStart, fallbackEnd) {
-        // If user left it blank, use the auto placeholder logic
-        if (!rangeStr.trim()) {
-            const pages = [];
-            for (let p = fallbackStart; p <= fallbackEnd; p++) pages.push(p - 1);
-            return pages;
-        }
-
-        const pages = new Set();
-        const parts = rangeStr.split(',');
+    // Switches focus to a specific box and syncs the canvas visually
+    function setActiveBox(index) {
+        activeBoxIndex = index;
+        document.querySelectorAll('.range-box').forEach(b => b.classList.remove('active'));
         
+        const activeBox = document.querySelector(`.range-box[data-index="${index}"]`);
+        if(activeBox) {
+            activeBox.classList.add('active');
+            activeBox.querySelector('.range-input').focus();
+        }
+        
+        syncCanvasWithInput();
+    }
+
+    // Lenient parser: turns "1-3, 5" into Set(1, 2, 3, 5) without crashing on typos
+    function parseLenientSet(str) {
+        const pages = new Set();
+        if(!str) return pages;
+        
+        const parts = str.split(',');
         for (let part of parts) {
             part = part.trim();
-            if (!part) continue;
-
+            if(!part) continue;
+            
             if (part.includes('-')) {
-                const bounds = part.split('-');
-                const start = parseInt(bounds[0], 10);
-                const end = parseInt(bounds[1], 10);
-                
-                if (isNaN(start) || isNaN(end) || start > end || start < 1) throw new Error(`Invalid format in range: "${part}"`);
-                
-                for (let p = start; p <= end; p++) {
-                    if (p > maxPage) throw new Error(`Page ${p} does not exist. (Max is ${maxPage})`);
-                    pages.add(p);
+                const [startStr, endStr] = part.split('-');
+                const start = parseInt(startStr);
+                const end = parseInt(endStr);
+                if (!isNaN(start) && !isNaN(end) && start <= end) {
+                    for(let p = start; p <= end; p++) if(p <= totalPages) pages.add(p);
+                } else if (!isNaN(start)) {
+                    if (start <= totalPages) pages.add(start); // Handle dangling "1-" as just "1"
                 }
             } else {
-                const p = parseInt(part, 10);
-                if (isNaN(p) || p < 1) throw new Error(`Invalid page number: "${part}"`);
-                if (p > maxPage) throw new Error(`Page ${p} does not exist. (Max is ${maxPage})`);
-                pages.add(p);
+                const val = parseInt(part);
+                if (!isNaN(val) && val <= totalPages) pages.add(val);
             }
         }
-        
-        return Array.from(pages).sort((a, b) => a - b).map(p => p - 1); // 0-indexed
+        return pages;
     }
+
+    // Serializer: turns Set(1, 2, 3, 5) into "1-3, 5"
+    function serializeSetToString(pagesSet) {
+        if (pagesSet.size === 0) return "";
+        const sorted = Array.from(pagesSet).sort((a,b) => a - b);
+        const ranges = [];
+        let start = sorted[0];
+        let prev = sorted[0];
+
+        for (let i = 1; i <= sorted.length; i++) {
+            if (i < sorted.length && sorted[i] === prev + 1) {
+                prev = sorted[i];
+            } else {
+                if (start === prev) ranges.push(`${start}`);
+                else ranges.push(`${start}-${prev}`);
+                
+                if (i < sorted.length) {
+                    start = sorted[i];
+                    prev = sorted[i];
+                }
+            }
+        }
+        return ranges.join(", ");
+    }
+
+    // Master logic for clicking a thumbnail
+    function handleThumbnailClick(pageNum) {
+        const activeInput = document.querySelector(`.range-input[data-index="${activeBoxIndex}"]`);
+        if (!activeInput) return;
+
+        const currentPages = parseLenientSet(activeInput.value);
+        
+        if (currentPages.has(pageNum)) {
+            currentPages.delete(pageNum);
+        } else {
+            currentPages.add(pageNum);
+        }
+
+        // Re-write the string cleanly into the box
+        activeInput.value = serializeSetToString(currentPages);
+        
+        // Sync visual checkmarks
+        syncCanvasWithInput();
+    }
+
+    // Visual sync
+    function syncCanvasWithInput() {
+        const activeInput = document.querySelector(`.range-input[data-index="${activeBoxIndex}"]`);
+        const activePages = activeInput ? parseLenientSet(activeInput.value) : new Set();
+        
+        document.querySelectorAll('.page-card').forEach(card => {
+            const p = parseInt(card.dataset.page);
+            if (activePages.has(p)) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    }
+
 
     window.resetTool = function() {
         window.location.reload(); 
@@ -353,22 +440,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const inputs = document.querySelectorAll('.range-input');
         const splitInstructions = [];
-        const count = inputs.length;
-        const pagesPerFile = Math.floor(totalPages / count);
         
-        // Validation
+        // Strict Validation for extraction
         try {
             inputs.forEach((input, index) => {
-                const val = input.value;
+                const val = input.value.trim();
                 const fileNum = index + 1;
                 
-                let fallbackStart = ((fileNum - 1) * pagesPerFile) + 1;
-                let fallbackEnd = (fileNum === count) ? totalPages : (fileNum * pagesPerFile);
-                if (fallbackStart > totalPages) { fallbackStart = totalPages; fallbackEnd = totalPages; }
+                if (!val) throw new Error(`File ${fileNum} is empty. Please select pages.`);
 
-                const zeroIndexedPages = parsePageRangeString(val, totalPages, fallbackStart, fallbackEnd);
-                if (zeroIndexedPages.length === 0) throw new Error(`File ${fileNum} has no valid pages selected.`);
+                // Convert 1-indexed UI sets to 0-indexed pdf-lib arrays
+                const pagesSet = parseLenientSet(val);
+                if (pagesSet.size === 0) throw new Error(`File ${fileNum} has no valid pages selected.`);
                 
+                const zeroIndexedPages = Array.from(pagesSet).sort((a,b)=>a-b).map(p => p - 1);
                 splitInstructions.push({ fileNum, pages: zeroIndexedPages });
             });
         } catch (err) {
@@ -402,7 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const zipUrl = URL.createObjectURL(zipBlob);
             const finalZipName = `PDFase_${baseName}_Split.zip`;
 
-            // Success UI: Hide Dropzone and Config, Show Download
             setTimeout(() => {
                 dropzone.style.display = 'none';
                 configWrapper.style.display = 'none';
