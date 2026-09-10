@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclaimer - PDFase</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --cyber-cyan: #00ffcc;
+            --border-subtle: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { 
+            background-color: var(--bg-header-footer); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-subtle); 
+        }
+        .navbar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+        }
+        .brand-highlight { color: var(--cyber-cyan); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            transition: color 0.3s; 
+        }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; width: 100%; }
+
+        /* --- DOSSIER STYLES --- */
+        .legal-dossier-module { width: 100%; max-width: 900px; margin: 60px auto; padding: 0 15px; }
+        .legal-header { border-bottom: 1px solid rgba(0, 229, 255, 0.25); padding-bottom: 30px; margin-bottom: 50px; }
+        .legal-tag { color: #FF2A55; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
+        .legal-title { color: #F1F5F9; font-size: clamp(32px, 5vw, 48px); font-weight: 700; margin: 0 0 15px 0; line-height: 1.1; text-transform: uppercase; }
+        
+        .legal-meta { color: #94A3B8; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px; line-height: 1.6; }
+        .legal-meta span { color: #00E5FF; font-weight: 600; }
+        
+        .legal-section { margin-bottom: 60px; position: relative; padding-left: 30px; }
+        .legal-section::before { content: ''; position: absolute; left: 0; top: 5px; bottom: 0; width: 2px; background: rgba(0, 229, 255, 0.2); transition: all 0.3s ease; }
+        .legal-section:hover::before { background: #00E5FF; box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
+        .section-index { color: #00E5FF; font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; display: block; }
+        .section-title { color: #F1F5F9; font-size: 26px; font-weight: 700; margin: 0 0 20px 0; line-height: 1.3; }
+        .sub-section-title { color: #F1F5F9; font-size: 18px; font-weight: 600; margin: 25px 0 10px 0; font-family: 'JetBrains Mono', monospace; }
+        
+        .section-text { color: #94A3B8; font-size: 16px; line-height: 1.8; margin: 0 0 15px 0; }
+        .section-text strong { color: #F1F5F9; font-weight: 600; }
+        
+        .section-text a { color: #00E5FF; font-weight: 600; text-decoration: underline; transition: color 0.3s ease; }
+        .section-text a:hover { color: #FF2A55; }
+        
+        .highlight-cyan { color: #00E5FF; font-weight: 600; }
+        .highlight-crimson { color: #FF2A55; font-weight: 600; }
+        
+        .section-list { list-style: none; padding: 0; margin: 20px 0; }
+        .section-list li { color: #94A3B8; font-size: 15.5px; line-height: 1.7; margin-bottom: 15px; padding-left: 25px; position: relative; }
+        .section-list li::before { content: '>'; font-family: 'JetBrains Mono', monospace; color: #FF2A55; position: absolute; left: 0; top: 0; font-weight: bold; }
+        
+        .legal-contact-box { background: rgba(0, 229, 255, 0.03); border: 1px dashed rgba(0, 229, 255, 0.3); border-radius: 8px; padding: 30px; margin-top: 30px; }
+        .legal-contact-box a { color: #00E5FF; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 20px; letter-spacing: 1px; transition: all 0.3s ease; display: inline-block; margin-top: 10px; }
+        .legal-contact-box a:hover { text-shadow: 0 0 15px rgba(0, 229, 255, 0.6); }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.5rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-text a { color: var(--cyber-cyan); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .legal-dossier-module { margin: 40px auto; }
+            .legal-section { padding-left: 20px; margin-bottom: 50px; }
+            .legal-title { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR START -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <main>
+        <div class="legal-dossier-module">
+            
+            <div class="legal-header">
+                <div class="legal-tag">LEGAL COMPLIANCE</div>
+                <h1 class="legal-title">Disclaimer</h1>
+                <div class="legal-meta">
+                    ENTITY: <span>RUPAM DAS</span><br>
+                    DOMAIN: <span>pdfase.rupamdas.in</span><br>
+                    GOVERNING JURISDICTION: <span>INDIA</span><br>
+                    LAST UPDATED: <span>SEPTEMBER 2026</span>
+                </div>
+            </div>
+
+            <div class="legal-section">
+                <span class="section-index">01.0</span>
+                <h2 class="section-title">General Disclaimer & "As Is" Basis</h2>
+                <p class="section-text">The information and utility tools provided by <span class="highlight-cyan">Rupam Das</span> on <strong>pdfase.rupamdas.in</strong> (the "Site") are provided for general informational and utility purposes only. All information and services on the Site are provided in good faith, however, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any tool or information on the Site.</p>
+                <p class="section-text"><span class="highlight-crimson">UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR RELIANCE ON ANY INFORMATION OR TOOL PROVIDED ON THE SITE. YOUR USE OF THE SITE AND YOUR RELIANCE ON ANY FEATURE IS SOLELY AT YOUR OWN RISK.</span></p>
+            </div>
+
+            <div class="legal-section">
+                <span class="section-index">02.0</span>
+                <h2 class="section-title">External Links & Third-Party Non-Liability</h2>
+                <p class="section-text">The Site may contain (or you may be sent through the Site) links to other websites, ad networks (such as Google AdSense), or content belonging to or originating from third parties. Such external links are not investigated, monitored, or checked for accuracy, safety, or reliability by us.</p>
+                <ul class="section-list">
+                    <li><strong>Absolute Waiver of Harm:</strong> We strictly declare that we hold <span class="highlight-crimson">zero liability</span> for any malware, phishing attempts, data breaches, financial loss, or psychological/physical harm resulting from navigating to external links or interacting with third-party advertisements displayed on this Site.</li>
+                    <li><strong>No Endorsement:</strong> We do not warrant, endorse, guarantee, or assume responsibility for the accuracy or reliability of any information offered by third-party websites linked through the Site. We will not be a party to or in any way be responsible for monitoring any transaction between you and third-party providers.</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <span class="section-index">03.0</span>
+                <h2 class="section-title">Client-Side Data Processing Waiver</h2>
+                <p class="section-text">PDFase functions on a strictly client-side architecture. Because your files are processed locally within your device's hardware and browser memory, we maintain no administrative control or backend fail-safes over your documents.</p>
+                <ul class="section-list">
+                    <li><strong>No File Liability:</strong> We accept absolute zero responsibility for file corruption, permanent data loss, disrupted business operations, or missed academic/professional deadlines resulting from the use, failure, or bugging of our web utilities.</li>
+                    <li><strong>Browser Overload:</strong> Processing large documents may cause your browser or device to freeze or crash. You execute these intensive local operations entirely at your own calculated risk.</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <span class="section-index">04.0</span>
+                <h2 class="section-title">Errors and Omissions Disclaimer</h2>
+                <p class="section-text">While we have made every attempt to ensure that the logic and scripts contained in this Site are flawless, Rupam Das is not responsible for any errors, bugs, or omissions in the resulting PDF files generated by these tools. Users are strictly advised to manually cross-verify all output documents before submitting them to official, legal, or high-stakes environments.</p>
+            </div>
+
+            <div class="legal-section">
+                <span class="section-index">05.0</span>
+                <h2 class="section-title">Binding Legal Acknowledgment</h2>
+                <p class="section-text">By continuing to load, view, or execute operations on this domain, you legally waive any right to hold the operator (Rupam Das) liable for negative outcomes of any kind. This waiver constitutes a legally binding agreement against any and all claims, lawsuits, or demands for damages.</p>
+            </div>
+
+            <div class="legal-section" style="margin-bottom: 0;">
+                <span class="section-index">06.0</span>
+                <h2 class="section-title">Contact</h2>
+                <p class="section-text">If you have inquiries regarding this disclaimer, you may direct them to:</p>
+                
+                <div class="legal-contact-box">
+                    <a href="mailto:namaste@rupamdas.in">namaste@rupamdas.in</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+            <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms & Conditions</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
+            </div>
+            <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+                &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+
+</body>
+</html>
