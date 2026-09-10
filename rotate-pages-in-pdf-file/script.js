@@ -32,7 +32,7 @@
         .file-info { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
         /* Bottom Action Box (Apply Changes) */
-        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px dashed var(--border-subtle); }
+        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2rem; padding-top: 1rem; }
 
         /* Document Grid */
         .doc-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; width: 100%; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; }
@@ -91,7 +91,7 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     let activePdfFile = null;
-    let rawPdfBytes = null;
+    let rawPdfBytes = null; // Deep cloned buffer strictly for PDF-lib saving
     let pageRotations = [];
 
     const dropzone = document.getElementById('pdf-dropzone');
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainContainer.insertBefore(workspaceContainer, dropzone.nextSibling);
 
     // ==========================================
-    // 3. BULLETPROOF EVENT LISTENERS
+    // 3. EVENT LISTENERS
     // ==========================================
     if (selectFilesBtn) {
         selectFilesBtn.addEventListener('click', (e) => {
@@ -195,24 +195,29 @@ document.addEventListener('DOMContentLoaded', () => {
         docGrid.innerHTML = '<div style="color: var(--text-muted); width: 100%; text-align: center; padding: 3rem 0;"><i class="fa-solid fa-circle-notch fa-spin"></i> Rendering pages...</div>';
 
         try {
-            rawPdfBytes = await activePdfFile.arrayBuffer();
-            await renderGrid(rawPdfBytes);
+            const rawBuffer = await activePdfFile.arrayBuffer();
+            
+            // Deep clone the buffer to keep it safe from PDF.js worker detachment
+            rawPdfBytes = rawBuffer.slice(0);
+            const typedarray = new Uint8Array(rawBuffer);
+
+            await renderGrid(typedarray);
         } catch (error) {
             console.error("Error reading file:", error);
             alert("Could not load the PDF. It may be corrupted.");
         }
     }
 
-    async function renderGrid(buffer) {
+    async function renderGrid(typedarray) {
         if (!window.pdfjsLib) {
-            setTimeout(() => renderGrid(buffer), 200); 
+            setTimeout(() => renderGrid(typedarray), 200); 
             return;
         }
 
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const loadingTask = pdfjsLib.getDocument({ data: buffer });
+        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
         const pdf = await loadingTask.promise;
         const totalPages = pdf.numPages;
         
@@ -289,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { PDFDocument, degrees } = window.PDFLib;
             
-            const pdfDoc = await PDFDocument.load(rawPdfBytes);
+            const pdfDoc = await PDFDocument.load(rawPdfBytes, { ignoreEncryption: true });
             const pages = pdfDoc.getPages();
 
             pages.forEach((page, index) => {
@@ -336,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Processing Error:', error);
-            alert('A critical error occurred. Make sure your PDF is not encrypted with a password.');
+            alert('A critical error occurred. Error: ' + error.message);
             actionBtn.disabled = false;
             actionBtn.innerHTML = '<i class="fa-solid fa-file-export"></i> Apply Changes & Download';
         }
