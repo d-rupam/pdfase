@@ -72,9 +72,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // THE FIX: We will store a deep clone of the file memory here.
     let safePdfBytes = null; 
-    
     let currentFileName = "";
     let totalPages = 0;
     let selectedPages = new Set();
@@ -175,14 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
             currentFileName = file.name;
             selectedPages.clear();
 
-            // 1. Read the file into memory
             const rawBuffer = await file.arrayBuffer();
-            
-            // 2. THE FIX: Create a deep clone (slice) of the memory for pdf-lib to use later.
-            // This makes it completely immune to PDF.js detaching or corrupting the buffer.
             safePdfBytes = rawBuffer.slice(0);
 
-            // 3. Pass the original buffer to PDF.js for rendering
             const typedarray = new Uint8Array(rawBuffer);
             pdfJsDoc = await pdfjsLib.getDocument(typedarray).promise;
             totalPages = pdfJsDoc.numPages;
@@ -315,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { PDFDocument } = window.PDFLib;
             
-            // Load the deep-cloned buffer. ignoreEncryption allows reading soft-locked files.
             const originalPdf = await PDFDocument.load(safePdfBytes, { ignoreEncryption: true });
             const newPdf = await PDFDocument.create();
 
@@ -331,7 +323,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = URL.createObjectURL(blob);
             
             const baseName = currentFileName.replace(/\.[^/.]+$/, "");
-            const finalFileName = `${baseName}_Extracted.pdf`;
+            
+            // UPDATED LOGIC HERE: Now includes PDFase in the output string
+            const finalFileName = `PDFase_${baseName}_Extracted.pdf`;
             
             setTimeout(() => {
                 dropzone.style.display = 'none';
@@ -363,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Extraction Error:', error);
-            // NOW it will tell us EXACTLY what broke if it fails again
             alert('Extraction Failed. Error: ' + error.message);
             
             splitBtn.disabled = false;
@@ -372,4 +365,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
-
