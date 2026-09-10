@@ -41,11 +41,55 @@
         .flow-page-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.8); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 2px 5px; border-radius: 3px; z-index: 5; }
 
         /* Blank Page Card (Inserted Interactively) */
-        .flow-blank-card { width: 110px; height: 155px; background-color: rgba(0, 255, 204, 0.03); border: 2px dashed var(--cyber-cyan); border-radius: 6px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .flow-blank-card span { font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--cyber-cyan); font-weight: 600; margin-top: 5px; }
-        .flow-blank-card i.fa-file { font-size: 1.8rem; color: rgba(0,255,204,0.4); }
+       /* Blank Page Card (Cyberpunk Dashed Border + Clean White Paper Inside) */
+        .flow-blank-card { 
+            width: 110px; 
+            height: 155px; 
+            background-color: #ffffff; 
+            border: 2px dashed var(--cyber-cyan); 
+            border-radius: 6px; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            user-select: none; 
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.15); 
+            flex-shrink: 0; 
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+        .flow-blank-card span { 
+            font-size: 0.7rem; 
+            font-family: 'JetBrains Mono', monospace; 
+            color: #333333; 
+            font-weight: 700; 
+            margin-top: 5px; 
+            letter-spacing: 0.5px;
+        }
+        .flow-blank-card i.fa-file { 
+            font-size: 1.8rem; 
+            color: #9ca3af; 
+        }
         
-        .flow-blank-delete { position: absolute; top: 4px; right: 4px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
+        .flow-blank-delete { 
+            position: absolute; 
+            top: 4px; 
+            right: 4px; 
+            background: #ff3366; 
+            color: #fff; 
+            border: none; 
+            border-radius: 50%; 
+            width: 22px; 
+            height: 22px; 
+            font-size: 0.7rem; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4); 
+            z-index: 10; 
+            transition: transform 0.2s; 
+        }
         .flow-blank-delete:hover { transform: scale(1.15); }
 
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
