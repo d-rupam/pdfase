@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimized Title & Meta Description -->
+    <title>Convert PNG to PDF Free | Combine Images Locally - PDFase</title>
+    <meta name="description" content="Securely convert and combine PNG images into a single PDF document. 100% free, client-side processing. Your files never leave your browser.">
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <!-- Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0KYK0PKV9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J0KYK0PKV9');
+    </script>
+
+    <!-- Schema.org JSON-LD (FAQ & HowTo for rich search snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "name": "Rupam Das",
+          "url": "https://rupamdas.in",
+          "jobTitle": "Undergraduate Microbiology Researcher",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Department of Microbiology, Dum Dum Motijheel College",
+            "url": "https://dumdummotijheelcollege.ac.in/"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Are my PNG images uploaded to a server when converting to PDF?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The PNG to PDF tool processes all images locally inside your web browser. Absolute data sovereignty is maintained, and your private files never leave your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I combine multiple PNGs into a single PDF?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! You can select or drag-and-drop multiple PNG images at once. The tool will combine all selected files into a single, multi-page PDF document."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Will the PDF preserve the high quality of my PNGs?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Our tool faithfully embeds your PNG images into the document, preserving the original resolution, sharp text, and clarity without aggressive lossy compression."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this tool support transparent PNG backgrounds?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. When generating the PDF, transparent backgrounds from your PNG files are supported and beautifully rendered onto the document pages."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this tool work offline?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Once the web application is loaded in your browser, the client-side JavaScript operates entirely independently of an internet connection."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Convert PNG Images to PDF Locally",
+          "description": "A simple guide to combining high-quality PNG images into a single PDF document directly in your browser without uploading data.",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "text": "Drag and drop your desired PNG files into the upload zone, or click 'Select images' to choose them manually."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Rearrange the order of your images if needed by dragging and dropping the thumbnails."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Click the 'Convert to PDF' button to begin generating your document."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Download the generated PDF file directly to your device."
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --bg-card: #121215;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --theme-color: #b829ff; /* Convert Category Color */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { background-color: var(--bg-header-footer); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .brand-highlight { color: var(--theme-color); }
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; padding: 3rem 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        /* --- TOOL HEADER & DROPZONE --- */
+        .tool-header { text-align: center; margin-bottom: 2.5rem; }
+        .tool-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-muted); }
+
+        .dropzone {
+            background-color: var(--bg-card);
+            border: 2px dashed rgba(184, 41, 255, 0.3); /* Match theme color */
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 4rem;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--theme-color);
+            background-color: rgba(184, 41, 255, 0.02); /* Match theme color */
+        }
+        .dropzone-icon { font-size: 4rem; color: var(--text-main); margin-bottom: 1.5rem; }
+        .dropzone-text { font-size: 1.25rem; font-weight: 500; margin-bottom: 1.5rem; color: #fff; }
+        .btn-upload {
+            background-color: var(--theme-color);
+            color: #fff; 
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(184, 41, 255, 0.3); } 
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 2rem;
+        }
+
+        /* --- INFO GRID (3 Features) --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .info-card { text-align: center; }
+        .info-card i { font-size: 1.8rem; color: var(--theme-color); margin-bottom: 1rem; }
+        .info-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem; font-weight: 600; }
+        .info-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+        /* --- LONG-FORM CONTENT SECTION (Beautiful Cards) --- */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+        .content-block {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--theme-color); 
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .content-block:hover {
+            border-color: rgba(184, 41, 255, 0.3); 
+            background-color: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .content-block h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .content-block h2 i { color: var(--theme-color); font-size: 1.3rem; }
+        .content-block p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .content-block p:last-child { margin-bottom: 0; }
+        
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1.5rem;
+        }
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .step-list li::before {
+            content: "\f058"; /* FontAwesome check-circle */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--theme-color);
+            font-size: 1.2rem;
+        }
+        .step-list strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-section { margin-bottom: 2rem; }
+        .faq-section h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; margin-bottom: 2rem; text-align: center; }
+        .faq-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .faq-item h3 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem; font-weight: 600; display: flex; gap: 10px; }
+        .faq-item h3 i { color: var(--theme-color); margin-top: 4px; }
+        .faq-item p { color: var(--text-muted); font-size: 0.9rem; padding-left: 1.8rem; }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.25rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+        .footer-links { display: flex; gap: 1.5rem; justify-content: flex-start; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+        .footer-text a { color: var(--theme-color); text-decoration: none; }
+        .footer-social { display: flex; justify-content: flex-end; }
+        .footer-social a { color: var(--text-muted); font-size: 1.3rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--theme-color); }
+
+        @media (max-width: 768px) {
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+            .footer-links, .footer-social { justify-content: center; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .dropzone { padding: 3rem 1.5rem; }
+            .content-block { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        
+        <!-- TOOL HEADER -->
+        <div class="tool-header">
+            <h1><i class="fa-solid fa-images" style="color: var(--theme-color);"></i> PNG to PDF</h1>
+            <p>Convert and combine PNG images into a single PDF document instantly.</p>
+        </div>
+
+      <!-- UPLOAD DROPZONE -->
+        <div class="dropzone" id="image-dropzone">
+            <i class="fa-regular fa-images dropzone-icon"></i>
+            <div class="dropzone-text">Drop your PNG images here (or paste using Ctrl+V)</div>
+            
+            <!-- Hidden file input linked to JS (Notice 'multiple' is added and filtered for PNG) -->
+            <input type="file" id="file-input" accept="image/png" multiple style="display: none;">
+            <button class="btn-upload" id="select-files-btn">Select PNGs</button>
+            
+            <br>
+            <div class="privacy-badge">
+                <i class="fa-solid fa-shield-halved"></i> Files are processed locally. Nothing is uploaded.
+            </div>
+        </div>
+
+        <!-- INFORMATION GRID (Core Features) -->
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Lightning Fast</h3>
+                <p>No more waiting for bulky images to upload to a remote server. By processing directly in your browser, generating PDFs takes only seconds.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-lock"></i>
+                <h3>Absolute Privacy</h3>
+                <p>Your privacy is guaranteed. Your personal files are processed directly within your local device memory and are completely invisible to the internet.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-layer-group"></i>
+                <h3>Easy Combination</h3>
+                <p>Select multiple PNGs at once, rearrange them instantly via drag-and-drop, and seamlessly compile them into a beautifully organized multi-page PDF.</p>
+            </div>
+        </div>
+
+        <!-- LONG-FORM CONTENT (Beautiful Cards for SEO & AdSense) -->
+        <div class="content-section">
+            
+  <!-- STEP BY STEP GUIDE -->
+        <div class="content-block">
+                <h2><i class="fa-solid fa-list-check"></i> Step-by-Step Guide to Converting PNGs to PDF Locally</h2>
+                <p>Our tool is designed to be simple and fast. Follow these easy steps to combine your images into a document:</p>
+                <ul class="step-list">
+                    <li><strong>Select your PNGs:</strong> Drag and drop your images into the upload box above, or click the 'Select PNGs' button to choose them from your device.</li>
+                    <li><strong>Rearrange the order:</strong> Drag and drop the image cards in the grid to arrange them exactly how you want them to appear in the PDF.</li>
+                    <li><strong>Convert to PDF:</strong> Click the 'Convert to PDF' button. Our tool will instantly generate a single document containing all your photos.</li>
+                    <li><strong>Download your document:</strong> Download the newly created PDF file straight to your computer or phone.</li>
+                </ul>
+            </div>
+            
+            <div class="content-block">
+                <h2><i class="fa-solid fa-microscope"></i> About the PNG to PDF Tool</h2>
+                <p>The PDFase PNG to PDF tool is designed specifically to handle lossless images and merge them into a single, highly-compatible document. While JPEGs are great for photos, PNGs are the standard for graphics, screenshots, and images with text where you need absolute clarity. This tool preserves that quality perfectly when binding them into a PDF.</p>
+                <p>Because everything happens directly inside your web browser, you completely skip the long upload times associated with traditional cloud converters. Your private images are entirely secure because they are never sent to or stored on external servers.</p>
+            </div>
+
+            <div class="content-block">
+                <h2><i class="fa-solid fa-dna"></i> Why Name it PDFase?</h2>
+                <p>In biology, an enzyme (which usually ends in "-ase") is a tiny, high-speed machine that attaches to raw materials to cut, build, or change them instantly. We applied this exact same idea to our digital tools. PDFase acts like a fast digital enzyme for your documents—modifying your files locally, instantly, and securely, without ever sending your private data over the internet.</p>
+            </div>
+
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Are my PNGs uploaded to a server when converting to PDF?</h3>
+                <p>No. The PNG to PDF tool processes all images locally inside your web browser. Absolute privacy is maintained, and your files never leave your device.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Can I combine multiple PNGs into a single PDF?</h3>
+                <p>Yes! You can select or drag-and-drop multiple PNG images at once. You can even rearrange their order before generating the multi-page PDF document.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Will the PDF compress or ruin the quality of my images?</h3>
+                <p>No. Our tool faithfully embeds your PNG images at high quality, preserving the original resolution and clarity in the final PDF document.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Does it support transparent backgrounds?</h3>
+                <p>Yes. If your PNG files have transparent backgrounds, the layout and quality are preserved perfectly when converted into standard document pages.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Does this tool work offline?</h3>
+                <p>Yes. Once the web page is fully loaded in your browser, the tool operates entirely offline without needing an active internet connection.</p>
+            </div>
+        </div>
+
+    </main>
+
+<!-- FOOTER START -->
+<footer class="footer">
+    <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+        <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms & Conditions</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+        <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+            &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+        </div>
+    </div>
+</footer>
+<!-- FOOTER END -->
+    
+    <!-- EXTERNAL TOOL LOGIC -->
+    <script src="script.js"></script>
+
+</body>
+</html>
