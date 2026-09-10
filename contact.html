@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - PDFase</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --cyber-cyan: #00ffcc;
+            --border-subtle: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { 
+            background-color: var(--bg-header-footer); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-subtle); 
+        }
+        .navbar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+        }
+        .brand-highlight { color: var(--cyber-cyan); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            transition: color 0.3s; 
+        }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; width: 100%; display: flex; justify-content: center; align-items: center; }
+
+        /* --- CONTACT MODULE STYLES --- */
+        .contact-container {
+            position: relative; 
+            max-width: 700px; 
+            width: 100%;
+            margin: 60px auto; 
+            padding: 0 20px; 
+            overflow: hidden; 
+            font-family: 'Space Grotesk', sans-serif !important;
+        }
+
+        .dendrite-synapse-node {
+            position: absolute; 
+            top: 15px; 
+            right: 15px; 
+            width: 100px; 
+            height: 100px; 
+            pointer-events: none; 
+            z-index: 2;
+        }
+
+        .synapse-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background-color: #1BE08A;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #1BE08A, 0 0 20px #0EB6D3;
+            animation: corePulse 3s ease-in-out infinite;
+        }
+
+        .synapse-wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(27, 224, 138, 0.4);
+            border-radius: 50%;
+            opacity: 0;
+            animation: synapseExpand 4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+        }
+
+        .wave-1 { animation-delay: 0s; }
+        .wave-2 { animation-delay: 1.3s; }
+        .wave-3 { animation-delay: 2.6s; }
+
+        @keyframes synapseExpand {
+            0% { width: 10px; height: 10px; opacity: 0.8; border-color: rgba(27, 224, 138, 0.8); }
+            50% { border-color: rgba(14, 182, 211, 0.5); }
+            100% { width: 100px; height: 100px; opacity: 0; border-color: rgba(255, 0, 77, 0); }
+        }
+
+        @keyframes corePulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; box-shadow: 0 0 15px #FF004D, 0 0 25px #1BE08A; }
+        }
+
+        .dendrite-input {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid #374151 !important;
+            color: #FFFFFF !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            padding: 10px 5px !important;
+            width: 100% !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .dendrite-input::placeholder {
+            font-weight: 400 !important;
+            color: #6b7280 !important;
+        }
+
+        .dendrite-input:focus {
+            outline: none !important;
+            border-bottom: 2px solid #0EB6D3 !important;
+            box-shadow: 0px 4px 12px -2px rgba(14, 182, 211, 0.4) !important;
+        }
+
+        .transmit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #0EB6D3, #1BE08A);
+            color: #0b0f19;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1px;
+            padding: 14px 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+        }
+
+        .transmit-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .telemetry-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+            gap: 25px;
+            transition: border-color 0.3s ease;
+        }
+
+        .telemetry-card:hover {
+            border-color: #374151;
+        }
+
+        .telemetry-details {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .map-wrapper {
+            flex: 1.2;
+            height: 170px;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #374151;
+            background: #000;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: invert(100%) hue-rotate(180deg) contrast(90%) brightness(85%);
+            transition: filter 0.3s ease;
+        }
+
+        .map-wrapper iframe:hover {
+            filter: invert(100%) hue-rotate(180deg) contrast(100%) brightness(95%);
+        }
+
+        .icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            color: #FF004D !important;
+            transition: all 0.3s ease;
+        }
+
+        .icon-wrapper svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .meta-label {
+            display: block;
+            font-size: 12px;
+            color: #FF004D !important;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .meta-value {
+            display: block;
+            font-size: 16px;
+            color: #e2e8f0 !important;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        @keyframes smoothPulse {
+            0%, 100% { opacity: 0.7; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .icon-pin svg {
+            animation: smoothPulse 3s ease-in-out infinite;
+        }
+
+        .email-link:hover { color: #1BE08A !important; }
+
+        .linkedin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #111827;
+            color: #e2e8f0 !important;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 900;
+            font-family: 'Space Grotesk', sans-serif !important;
+            letter-spacing: 0.5px;
+            border: 1px solid #374151;
+            transition: all 0.3s ease;
+        }
+
+        .linkedin-btn:hover {
+            background: #1e293b;
+            color: #ffffff !important;
+            border-color: #0a66c2;
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .linkedin-btn svg {
+            color: #0a66c2 !important;
+            transition: color 0.3s ease;
+        }
+        
+        .linkedin-btn:hover svg {
+            color: #3b82f6 !important;
+        }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.5rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-text a { color: var(--cyber-cyan); text-decoration: none; }
+
+        @media (max-width: 650px) {
+            .telemetry-card {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 20px;
+                padding: 20px;
+            }
+            .telemetry-details {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .map-wrapper {
+                width: 100%;
+                flex: none;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR START -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <main>
+        <div class="contact-container">
+
+            <div class="dendrite-synapse-node">
+                <div class="synapse-core"></div>
+                <div class="synapse-wave wave-1"></div>
+                <div class="synapse-wave wave-2"></div>
+                <div class="synapse-wave wave-3"></div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px; position: relative; z-index: 3;">
+                <h1 style="color: #FF004D !important; font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 15px;">
+                    // NODE_DENDRITE: RECEPTOR_GATEWAY
+                </h1>
+                <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1 !important;">
+                    In neural architecture, dendrites are highly specialized, sensory extensions engineered strictly to receive incoming transmissions and route them to the central body. This is the primary Dendrite of the network—the sole contact receptor for incoming queries, secure direct messages, and community integrations regarding PDFase.
+                </p>
+            </div>
+
+            <form id="mailto-form" onsubmit="launchNativeMail(event)" style="position: relative; z-index: 3; background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px;">
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-size: 12px; font-weight: 900 !important; color: #FACC15 !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                        // 01. IDENTIFIER (YOUR NAME)
+                    </label>
+                    <input type="text" id="sender-name" required class="dendrite-input" placeholder="e.g., Dr. Watson / Collaborator">
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-size: 12px; font-weight: 900 !important; color: #1BE08A !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                        // 02. RETURN_SIGNAL (YOUR EMAIL)
+                    </label>
+                    <input type="email" id="sender-email" required class="dendrite-input" placeholder="e.g., name@domain.com">
+                </div>
+
+                <button type="submit" class="transmit-btn">
+                    INITIALIZE MAIL APP ➔
+                </button>
+                
+                <div id="form-status" style="text-align: center; margin-top: 15px; font-size: 13px; font-weight: bold; display: none;"></div>
+            </form>
+
+            <div style="text-align: center; margin-bottom: 40px; position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                
+                <div style="font-size: 14px; color: #a0aec0;">
+                    <span style="text-transform: uppercase; letter-spacing: 1px; font-size: 11px; font-weight: bold;">Direct Neural Link</span><br>
+                    <a href="mailto:namaste@rupamdas.in" class="email-link" style="display: inline-block; margin-top: 5px; color: #0EB6D3 !important; text-decoration: none; font-size: 18px; font-weight: 900; letter-spacing: 0.5px; transition: color 0.3s ease;">
+                        namaste@rupamdas.in
+                    </a>
+                </div>
+
+                <div style="width: 50px; height: 1px; background: #374151;"></div>
+
+                <div style="font-size: 14px; color: #a0aec0;">
+                    <span style="display: block; margin-bottom: 12px; font-weight: bold;">Prefer a direct message or professional networking?</span>
+                    <a href="https://www.linkedin.com/in/rupaminsilico/" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                        CONNECT ON LINKEDIN
+                    </a>
+                </div>
+            </div>
+
+            <div class="telemetry-card">
+                <div class="telemetry-details">
+                    <div class="icon-wrapper icon-pin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="meta-label">// OPERATING_COORDINATES</span>
+                        <span class="meta-value">Dum Dum, Kolkata<br>West Bengal, India</span>
+                    </div>
+                </div>
+
+                <div class="map-wrapper">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58915.34874994085!2d88.3818588250588!3d22.64598385230532!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f89e6c605d82ff%3A0x1f6779d05c4879ee!2sDum%20Dum%2C%20Kolkata%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1788001091550!5m2!1sen!2sin" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+            <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms & Conditions</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
+            </div>
+            <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+                &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+
+    <script>
+        function launchNativeMail(event) {
+            event.preventDefault();
+            
+            const statusBox = document.getElementById('form-status');
+            
+            const nameField = document.getElementById('sender-name').value.trim();
+            const emailField = document.getElementById('sender-email').value.trim();
+            
+            const recipient = "namaste@rupamdas.in";
+            const subject = `[PDFase Signal] From: ${nameField} (${emailField})`;
+            
+            statusBox.style.display = "block";
+            statusBox.style.color = "#1BE08A !important";
+            statusBox.innerHTML = "// VERIFIED. OPENING MAIL APP... ✉️";
+
+            const mailtoURL = `mailto:${recipient}?subject=${encodeURIComponent(subject)}`;
+
+            const tempLink = document.createElement('a');
+            tempLink.href = mailtoURL;
+            tempLink.style.display = 'none';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+        }
+    </script>
+</body>
+</html>
