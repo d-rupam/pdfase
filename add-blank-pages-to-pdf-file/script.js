@@ -396,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dropzone.style.display = 'none';
                 topBar.style.display = 'none';
                 flowGrid.style.display = 'none';
+                actionContainer.style.display = 'none'; 
                 
                 const finalContainer = document.createElement('div');
                 finalContainer.style.width = '100%';
@@ -423,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 dropzone.parentNode.insertBefore(finalContainer, dropzone.nextSibling);
             }, 500);
-
+            
         } catch (error) {
             console.error('Generation Error:', error);
             alert('A critical error occurred while processing. Error: ' + error.message);
