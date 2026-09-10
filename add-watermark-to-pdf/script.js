@@ -63,7 +63,7 @@
         #live-preview-canvas { max-width: 100%; max-height: 500px; object-fit: contain; }
 
         /* Action Box */
-        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px dashed var(--border-subtle); }
+        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2.5rem; padding-top: 1rem; }
         
         .btn-action { background-color: #2ee310; color: #0b1121; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(46, 227, 16, 0.2); display: inline-flex; align-items: center; gap: 10px; }
         .btn-action:hover { background-color: #34fa14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 227, 16, 0.35); }
