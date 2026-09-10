@@ -68,7 +68,7 @@
 
         /* Inputs */
         .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+        .input-group label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
         .text-input { background: var(--bg-base); color: #fff; border: 1px solid var(--border-subtle); padding: 0.75rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; outline: none; }
         .text-input:focus { border-color: var(--theme-color); }
 
@@ -83,8 +83,8 @@
         .font-preview { font-size: 1.5rem; color: #fff; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* Drawing Canvas */
-        .draw-box { border: 1px solid var(--border-subtle); border-radius: 6px; background: #fff; height: 150px; cursor: crosshair; touch-action: none; }
-        .clear-btn { background: none; border: none; color: #ff3366; font-size: 0.85rem; font-weight: 600; cursor: pointer; align-self: flex-end; }
+        .draw-box { border: 1px solid var(--border-subtle); border-radius: 6px; background: #fff; height: 150px; width: 100%; cursor: crosshair; touch-action: none; }
+        .clear-btn { background: none; border: none; color: #ff3366; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 
         /* General Options (Pages, Size, Color) */
         .global-options { padding: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 1rem; background: rgba(0,0,0,0.2); }
@@ -98,7 +98,7 @@
         input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border-subtle); border-radius: 4px; }
 
         /* Action Buttons */
-        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-subtle); }
+        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2rem; padding-top: 1.5rem; }
         .btn-action { background-color: #2ee310; color: #0b1121; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px; }
         .btn-action:hover { background-color: #34fa14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 227, 16, 0.35); }
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.65rem 1.1rem; border-radius: 6px; cursor: pointer; }
@@ -117,8 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pdfDocProxy = null;
     let totalPages = 0;
     let currentPage = 1;
-    
-    let currentSignatureDataUrl = null; // Holds the active signature image (typed/drawn/uploaded)
+    let currentSignatureDataUrl = null; 
     
     // Draggable Overlay State
     let isDragging = false;
@@ -178,9 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="input-group">
                         <label>Signature Style</label>
-                        <div class="font-list" id="font-list-container">
-                            <!-- Injected dynamically -->
-                        </div>
+                        <div class="font-list" id="font-list-container"></div>
                     </div>
                 </div>
 
@@ -188,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="tab-content" id="tab-draw">
                     <div class="input-group">
                         <label>Draw Signature <button class="clear-btn" id="btn-clear-draw">Clear</button></label>
-                        <canvas class="draw-box" id="draw-canvas"></canvas>
+                        <canvas class="draw-box" id="draw-canvas" width="600" height="300"></canvas>
                     </div>
                 </div>
 
@@ -261,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const numSpan = document.getElementById('page-num');
     const countSpan = document.getElementById('page-count');
     
-    // Inputs
     const typeInput = document.getElementById('type-input');
     const sigColor = document.getElementById('sig-color');
     const sigScale = document.getElementById('sig-scale');
@@ -284,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         workspaceContainer.style.display = 'flex';
 
         const rawBuffer = await activePdfFile.arrayBuffer();
-        rawPdfBytes = rawBuffer.slice(0); // Clone for final processing
+        rawPdfBytes = rawBuffer.slice(0);
 
         if (!window.pdfjsLib) await new Promise(r => setTimeout(r, 300));
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -294,16 +290,15 @@ document.addEventListener('DOMContentLoaded', () => {
         countSpan.textContent = totalPages;
         
         renderPage(1);
-        generateTypeSignature(); // Initial signature creation
+        generateTypeSignature(); 
     }
 
     async function renderPage(num) {
         const page = await pdfDocProxy.getPage(num);
-        const viewport = page.getViewport({ scale: 1.5 }); // High res rendering
+        const viewport = page.getViewport({ scale: 1.5 });
         
         pdfRenderCanvas.width = viewport.width;
         pdfRenderCanvas.height = viewport.height;
-        // Make the canvas visually responsive
         pdfRenderCanvas.style.width = '100%';
         pdfRenderCanvas.style.height = 'auto';
 
@@ -314,7 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPrev.disabled = num <= 1;
         btnNext.disabled = num >= totalPages;
 
-        // Position signature overlay bottom-right by default on first load
         if(sigOverlay.style.display === 'none' || sigOverlay.style.display === '') {
             sigOverlay.style.display = 'block';
             setTimeout(() => {
@@ -329,25 +323,21 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPrev.addEventListener('click', () => { if(currentPage > 1) renderPage(currentPage - 1); });
     btnNext.addEventListener('click', () => { if(currentPage < totalPages) renderPage(currentPage + 1); });
 
-    // --- 3. SIGNATURE GENERATION (Offscreen Canvas -> DataURL) ---
-    
-    // Render Typed Signature
+    // --- 3. SIGNATURE GENERATION ---
     function generateTypeSignature() {
         const text = typeInput.value || ' ';
         const font = document.querySelector('input[name="font-choice"]:checked').value;
         const color = sigColor.value;
 
-        // Create temporary offscreen canvas to measure and draw text
         const tCanvas = document.createElement('canvas');
         const tCtx = tCanvas.getContext('2d');
-        const fontSize = 100; // High res
+        const fontSize = 100;
         tCtx.font = `${fontSize}px "${font}", cursive`;
         
         const metrics = tCtx.measureText(text);
         tCanvas.width = Math.max(metrics.width + 40, 100);
         tCanvas.height = fontSize * 1.5;
         
-        // Reset font after resize
         tCtx.font = `${fontSize}px "${font}", cursive`;
         tCtx.fillStyle = color;
         tCtx.textBaseline = 'middle';
@@ -360,10 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.font-preview').forEach(el => el.textContent = typeInput.value || 'Your Name');
         generateTypeSignature();
     });
+    
     sigColor.addEventListener('input', () => {
         const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
         if(activeTab === 'type') generateTypeSignature();
-        // (For drawing, changing color updates future strokes, for simplicity we leave existing drawn pixels)
     });
     
     sigScale.addEventListener('input', () => {
@@ -375,49 +365,50 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSignatureDataUrl = dataUrl;
         sigImage.src = dataUrl;
         
-        // Adjust physical width based on natural aspect ratio to avoid squishing
         const img = new Image();
         img.onload = () => {
             const aspect = img.width / img.height;
-            sigOverlay.style.height = '60px'; // Base visual height
+            sigOverlay.style.height = '60px'; 
             sigOverlay.style.width = (60 * aspect) + 'px';
         };
         img.src = dataUrl;
     }
 
-    // --- Drawing Canvas Logic ---
+    // --- Drawing Canvas Logic (Fixed) ---
     const drawCanvas = document.getElementById('draw-canvas');
     const drawCtx = drawCanvas.getContext('2d');
     let isDrawing = false;
     
-    // Fix canvas rendering resolution
-    setTimeout(() => {
-        drawCanvas.width = drawCanvas.offsetWidth * 2;
-        drawCanvas.height = drawCanvas.offsetHeight * 2;
-        drawCtx.scale(2, 2);
-        drawCtx.lineCap = 'round';
-        drawCtx.lineJoin = 'round';
-    }, 100);
+    drawCtx.lineCap = 'round';
+    drawCtx.lineJoin = 'round';
+
+    function getMousePos(e) {
+        const rect = drawCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (drawCanvas.width / rect.width),
+            y: (clientY - rect.top) * (drawCanvas.height / rect.height)
+        };
+    }
 
     function startDraw(e) { 
         isDrawing = true; 
+        const pos = getMousePos(e);
         drawCtx.beginPath(); 
-        drawCtx.strokeStyle = sigColor.value;
-        drawCtx.lineWidth = 3;
-        const rect = drawCanvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        drawCtx.moveTo(clientX - rect.left, clientY - rect.top); 
+        drawCtx.strokeStyle = sigColor.value || '#000';
+        drawCtx.lineWidth = 6; 
+        drawCtx.moveTo(pos.x, pos.y); 
     }
+    
     function draw(e) { 
         if(!isDrawing) return; 
         e.preventDefault();
-        const rect = drawCanvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        drawCtx.lineTo(clientX - rect.left, clientY - rect.top); 
+        const pos = getMousePos(e);
+        drawCtx.lineTo(pos.x, pos.y); 
         drawCtx.stroke(); 
     }
+    
     function stopDraw() { 
         if(isDrawing) {
             isDrawing = false; 
@@ -435,7 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-clear-draw').addEventListener('click', () => {
         drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        // Fallback to type signature if cleared
         generateTypeSignature();
     });
 
@@ -493,14 +483,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let dx = clientX - dragStartX;
         let dy = clientY - dragStartY;
 
-        // Boundary constraints
         const cRect = container.getBoundingClientRect();
         const rect = sigOverlay.getBoundingClientRect();
         
         let newLeft = initialOverlayLeft + dx;
         let newTop = initialOverlayTop + dy;
 
-        // Allow some overflow but keep it mostly within bounds
         newLeft = Math.max(-rect.width/2, Math.min(newLeft, cRect.width - rect.width/2));
         newTop = Math.max(-rect.height/2, Math.min(newTop, cRect.height - rect.height/2));
 
@@ -517,7 +505,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.removeEventListener('touchend', dragEnd);
     }
 
-
     // --- 5. FINAL PDF-LIB PROCESSING ---
     document.getElementById('btn-apply-sig').addEventListener('click', async () => {
         if(!currentSignatureDataUrl || !window.PDFLib) return;
@@ -530,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const { PDFDocument } = window.PDFLib;
             const pdfDoc = await PDFDocument.load(rawPdfBytes, { ignoreEncryption: true });
             
-            // Convert Base64 DataURL to Image for PDF-lib
             const imgBytes = await fetch(currentSignatureDataUrl).then(res => res.arrayBuffer());
             let pdfImage;
             if (currentSignatureDataUrl.startsWith('data:image/jpeg')) {
@@ -539,13 +525,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 pdfImage = await pdfDoc.embedPng(imgBytes);
             }
 
-            // Calculate Coordinates based on percentages of the visual canvas
             const cRect = container.getBoundingClientRect();
-            
-            // Get actual visual rect of the overlay (accounting for scale transform)
             const oRect = sigOverlay.getBoundingClientRect();
             
-            // Relative Position (0 to 1)
             const relX = (oRect.left - cRect.left) / cRect.width;
             const relY = (oRect.top - cRect.top) / cRect.height;
             const relWidth = oRect.width / cRect.width;
@@ -561,11 +543,9 @@ document.addEventListener('DOMContentLoaded', () => {
             targetPages.forEach(page => {
                 const { width, height } = page.getSize();
                 
-                // Map relative HTML coordinates to PDF physical dimensions
                 const finalWidth = relWidth * width;
                 const finalHeight = relHeight * height;
                 const finalX = relX * width;
-                // PDF-lib Y-axis is inverted (0 is bottom)
                 const finalY = height - (relY * height) - finalHeight;
 
                 page.drawImage(pdfImage, {
@@ -585,8 +565,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             workspaceContainer.innerHTML = `
                 <div class="success-message">
-                    <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
-                    <div class="success-title">Signature Applied!</div>
+                    <div style="color: var(--theme-color); font-size: 3rem; margin-bottom: 1rem;"><i class="fa-solid fa-circle-check"></i></div>
+                    <div style="font-size: 1.8rem; color: #fff; font-weight: 700; margin-bottom: 0.5rem;">Signature Applied!</div>
                     <div style="color: var(--text-muted); margin-bottom: 2rem;">Your document was processed locally & securely.</div>
                     
                     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
