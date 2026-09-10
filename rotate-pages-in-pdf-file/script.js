@@ -20,23 +20,26 @@
     style.innerHTML = `
         /* Dynamic Dropzone Shrinking */
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
-        .dropzone.has-files { display: none !important; } /* Hide completely when file is loaded */
+        .dropzone.has-files { display: none !important; }
 
         /* Main Workspace Container */
         .workspace-container { display: none; flex-direction: column; width: 100%; margin-bottom: 3rem; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Toolbar */
-        .toolbar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; background: rgba(255, 255, 255, 0.02); padding: 1rem 1.5rem; border: 1px solid var(--border-subtle); border-radius: 8px; }
+        /* Top Toolbar (File Info & Global Controls) */
+        .top-toolbar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; }
         .toolbar-group { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         .file-info { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
+        /* Bottom Action Box (Apply Changes) */
+        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px dashed var(--border-subtle); }
+
         /* Document Grid */
-        .doc-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; width: 100%; }
+        .doc-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; width: 100%; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; }
         
         /* Individual Page Card */
-        .page-card { width: 150px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; display: flex; flex-direction: column; align-items: center; padding: 12px; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
-        .page-card:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
+        .page-card { width: 150px; background-color: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 8px; display: flex; flex-direction: column; align-items: center; padding: 12px; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
+        .page-card:hover { border-color: rgba(57, 255, 20, 0.3); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(57, 255, 20, 0.1); }
 
         /* Card Controls */
         .rotate-controls { display: flex; justify-content: space-between; width: 100%; margin-bottom: 12px; padding: 0 10px; }
@@ -49,17 +52,16 @@
         
         .page-label { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
 
-        /* Secondary Toolbar Buttons */
-        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.75rem 1.25rem; font-size: 0.9rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-secondary:hover { border-color: var(--theme-color); color: var(--theme-color); background-color: rgba(255, 255, 255, 0.03); }
+        /* Buttons */
+        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.65rem 1.1rem; font-size: 0.85rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary:hover { border-color: var(--theme-color); color: var(--theme-color); background-color: rgba(57, 255, 20, 0.05); }
 
-        /* Eye-Friendly Balanced Solid Green Action Button (As Requested) */
         .btn-action { 
-            background-color: #2ee310; /* Comfortable dialed-back neon green */
-            color: #0b1121; /* Deep dark navy text for zero glare contrast */
+            background-color: #2ee310; 
+            color: #0b1121; 
             border: none; 
-            padding: 0.85rem 2.5rem; 
-            font-size: 1.05rem; 
+            padding: 1rem 3rem; 
+            font-size: 1.1rem; 
             font-weight: 700; 
             font-family: 'Space Grotesk', sans-serif; 
             border-radius: 8px; 
@@ -69,16 +71,16 @@
             text-decoration: none; 
             display: inline-flex; 
             align-items: center; 
-            gap: 8px; 
+            gap: 10px; 
         }
         .btn-action:hover { background-color: #34fa14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 227, 16, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Success Message UI */
+        /* Success UI */
         .success-message { width: 100%; text-align: center; margin-bottom: 2rem; }
         .success-icon { color: var(--theme-color); font-size: 3rem; margin-bottom: 1rem; }
         .success-title { font-size: 1.8rem; color: #fff; font-weight: 700; margin-bottom: 0.5rem; font-family: 'Space Grotesk', sans-serif; }
-        .file-flow { color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; background: rgba(255, 255, 255, 0.02); padding: 12px 24px; border-radius: 8px; border: 1px solid var(--border-subtle); }
+        .file-flow { color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; background: rgba(57, 255, 20, 0.03); padding: 12px 24px; border-radius: 8px; border: 1px solid rgba(57, 255, 20, 0.15); margin: 0 auto 2rem auto; width: max-content; }
     `;
     document.head.appendChild(style);
 })();
@@ -90,21 +92,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     let activePdfFile = null;
     let rawPdfBytes = null;
-    let pageRotations = []; // Array storing current rotation state for each page (e.g., 0, 90, 180, 270)
+    let pageRotations = [];
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
     const selectFilesBtn = document.getElementById('select-files-btn');
     const mainContainer = dropzone.parentNode;
 
-    // Create dynamic workspace container (Toolbar + Grid)
+    // Create dynamic workspace container
     const workspaceContainer = document.createElement('div');
     workspaceContainer.className = 'workspace-container';
     
-    // Inject Toolbar
-    const toolbar = document.createElement('div');
-    toolbar.className = 'toolbar';
-    toolbar.innerHTML = `
+    // Top Toolbar (Info & Global Rotations)
+    const topToolbar = document.createElement('div');
+    topToolbar.className = 'top-toolbar';
+    topToolbar.innerHTML = `
         <div class="toolbar-group">
             <span class="file-info" id="active-filename"><i class="fa-solid fa-file-pdf" style="color: var(--theme-color);"></i> document.pdf</span>
         </div>
@@ -115,21 +117,28 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn-secondary" id="btn-rotate-all-right" title="Rotate all pages right">
                 <i class="fa-solid fa-rotate-right"></i> Rotate all right
             </button>
-            <button class="btn-action" id="btn-apply-changes">
-                Apply changes
-            </button>
         </div>
     `;
     
-    // Inject Grid
+    // Grid Container
     const docGrid = document.createElement('div');
     docGrid.className = 'doc-grid';
     docGrid.id = 'document-grid';
 
-    workspaceContainer.appendChild(toolbar);
+    // Bottom Action Box (Apply Changes)
+    const bottomActionBox = document.createElement('div');
+    bottomActionBox.className = 'bottom-action-box';
+    bottomActionBox.innerHTML = `
+        <button class="btn-action" id="btn-apply-changes">
+            <i class="fa-solid fa-file-export"></i> Apply Changes & Download
+        </button>
+    `;
+
+    // Append in correct order (Top Bar -> Grid -> Bottom Action)
+    workspaceContainer.appendChild(topToolbar);
     workspaceContainer.appendChild(docGrid);
+    workspaceContainer.appendChild(bottomActionBox);
     
-    // Insert workspace right after dropzone
     mainContainer.insertBefore(workspaceContainer, dropzone.nextSibling);
 
     // ==========================================
@@ -164,10 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
     });
 
-    // Global Rotate Listeners
-    toolbar.querySelector('#btn-rotate-all-left').addEventListener('click', () => rotateAll(-90));
-    toolbar.querySelector('#btn-rotate-all-right').addEventListener('click', () => rotateAll(90));
-    toolbar.querySelector('#btn-apply-changes').addEventListener('click', executeFinalRotation);
+    // Rotation Bindings
+    topToolbar.querySelector('#btn-rotate-all-left').addEventListener('click', () => rotateAll(-90));
+    topToolbar.querySelector('#btn-rotate-all-right').addEventListener('click', () => rotateAll(90));
+    bottomActionBox.querySelector('#btn-apply-changes').addEventListener('click', executeFinalRotation);
 
     // ==========================================
     // 4. FILE HANDLING & THUMBNAIL RENDERING
@@ -181,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
         activePdfFile = file;
         document.getElementById('active-filename').innerHTML = `<i class="fa-solid fa-file-pdf" style="color: var(--theme-color);"></i> ${file.name}`;
         
-        // Hide dropzone, show workspace
         dropzone.classList.add('has-files');
         workspaceContainer.style.display = 'flex';
         docGrid.innerHTML = '<div style="color: var(--text-muted); width: 100%; text-align: center; padding: 3rem 0;"><i class="fa-solid fa-circle-notch fa-spin"></i> Rendering pages...</div>';
@@ -197,11 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function renderGrid(buffer) {
         if (!window.pdfjsLib) {
-            setTimeout(() => renderGrid(buffer), 200); // Wait for dependency to load
+            setTimeout(() => renderGrid(buffer), 200); 
             return;
         }
 
-        // Initialize PDF.js worker securely
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -209,15 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const pdf = await loadingTask.promise;
         const totalPages = pdf.numPages;
         
-        // Reset state
         pageRotations = new Array(totalPages).fill(0);
         docGrid.innerHTML = '';
 
-        // Render each page
         for (let i = 1; i <= totalPages; i++) {
             const page = await pdf.getPage(i);
-            
-            // Render at a lower scale for thumbnails to save memory/speed
             const viewport = page.getViewport({ scale: 0.8 }); 
             
             const canvas = document.createElement('canvas');
@@ -229,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
-            // Build Card Structure matching screenshot
             const card = document.createElement('div');
             card.className = 'page-card';
             card.innerHTML = `
@@ -253,8 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 5. ROTATION LOGIC (Visual UI)
     // ==========================================
-    
-    // Expose to global scope for inline onclick handlers
     window.rotateSinglePage = function(index, degrees) {
         pageRotations[index] = (pageRotations[index] + degrees) % 360;
         updateVisualCanvas(index);
@@ -289,28 +289,22 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { PDFDocument, degrees } = window.PDFLib;
             
-            // 1. Load Original Document
             const pdfDoc = await PDFDocument.load(rawPdfBytes);
             const pages = pdfDoc.getPages();
 
-            // 2. Apply Rotations
             pages.forEach((page, index) => {
-                // PDF-lib keeps track of existing rotation. Add our new relative rotation to it.
                 const currentRotationAngle = page.getRotation().angle;
                 const addedRotation = pageRotations[index];
                 
-                // Only modify if there is an actual change needed
                 if (addedRotation !== 0) {
                     page.setRotation(degrees(currentRotationAngle + addedRotation));
                 }
             });
 
-            // 3. Save modified PDF locally
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
-            // 4. Generate Output UI
             const baseName = activePdfFile.name.replace(/\.[^/.]+$/, "");
             const finalFileName = `PDFase_${baseName}_Rotated.pdf`;
 
@@ -321,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="success-title">Rotation Complete!</div>
                         <div style="color: var(--text-muted); margin-bottom: 1.5rem;">Your document has been successfully processed locally.</div>
                         
-                        <div class="file-flow" style="margin: 0 auto 2rem auto; width: max-content;">
+                        <div class="file-flow">
                             <span style="font-family: 'JetBrains Mono', monospace; color: #fff;">${finalFileName}</span>
                         </div>
 
@@ -344,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Processing Error:', error);
             alert('A critical error occurred. Make sure your PDF is not encrypted with a password.');
             actionBtn.disabled = false;
-            actionBtn.innerHTML = 'Apply changes';
+            actionBtn.innerHTML = '<i class="fa-solid fa-file-export"></i> Apply Changes & Download';
         }
     }
 
