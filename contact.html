@@ -72,60 +72,10 @@
             width: 100%;
             margin: 60px auto; 
             padding: 0 20px; 
-            overflow: hidden; 
             font-family: 'Space Grotesk', sans-serif !important;
         }
 
-        .dendrite-synapse-node {
-            position: absolute; 
-            top: 15px; 
-            right: 15px; 
-            width: 100px; 
-            height: 100px; 
-            pointer-events: none; 
-            z-index: 2;
-        }
-
-        .synapse-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background-color: #1BE08A;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #1BE08A, 0 0 20px #0EB6D3;
-            animation: corePulse 3s ease-in-out infinite;
-        }
-
-        .synapse-wave {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid rgba(27, 224, 138, 0.4);
-            border-radius: 50%;
-            opacity: 0;
-            animation: synapseExpand 4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
-        }
-
-        .wave-1 { animation-delay: 0s; }
-        .wave-2 { animation-delay: 1.3s; }
-        .wave-3 { animation-delay: 2.6s; }
-
-        @keyframes synapseExpand {
-            0% { width: 10px; height: 10px; opacity: 0.8; border-color: rgba(27, 224, 138, 0.8); }
-            50% { border-color: rgba(14, 182, 211, 0.5); }
-            100% { width: 100px; height: 100px; opacity: 0; border-color: rgba(255, 0, 77, 0); }
-        }
-
-        @keyframes corePulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; box-shadow: 0 0 15px #FF004D, 0 0 25px #1BE08A; }
-        }
-
-        .dendrite-input {
+        .gateway-input {
             background: transparent !important;
             border: none !important;
             border-bottom: 2px solid #374151 !important;
@@ -138,12 +88,12 @@
             transition: all 0.3s ease !important;
         }
 
-        .dendrite-input::placeholder {
+        .gateway-input::placeholder {
             font-weight: 400 !important;
             color: #6b7280 !important;
         }
 
-        .dendrite-input:focus {
+        .gateway-input:focus {
             outline: none !important;
             border-bottom: 2px solid #0EB6D3 !important;
             box-shadow: 0px 4px 12px -2px rgba(14, 182, 211, 0.4) !important;
@@ -305,7 +255,9 @@
         .footer-text { color: var(--text-muted); font-size: 0.85rem; }
         .footer-text a { color: var(--cyber-cyan); text-decoration: none; }
 
-        @media (max-width: 650px) {
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            .contact-container { margin: 30px auto; padding: 0 15px; }
             .telemetry-card {
                 flex-direction: column;
                 align-items: stretch;
@@ -321,6 +273,13 @@
                 flex: none;
                 height: 200px;
             }
+            .contact-form-box { padding: 20px !important; }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar { padding: 1rem; }
+            .nav-links { gap: 1rem; }
+            .linkedin-btn { width: 100%; padding: 12px 15px; font-size: 13px; }
         }
     </style>
 </head>
@@ -345,36 +304,29 @@
     <main>
         <div class="contact-container">
 
-            <div class="dendrite-synapse-node">
-                <div class="synapse-core"></div>
-                <div class="synapse-wave wave-1"></div>
-                <div class="synapse-wave wave-2"></div>
-                <div class="synapse-wave wave-3"></div>
-            </div>
-
             <div style="text-align: center; margin-bottom: 40px; position: relative; z-index: 3;">
-                <h1 style="color: #FF004D !important; font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 15px;">
-                    // NODE_DENDRITE: RECEPTOR_GATEWAY
+                <h1 style="color: #FF004D !important; font-size: clamp(20px, 5vw, 24px); font-weight: 900; letter-spacing: 1px; margin-bottom: 15px;">
+                    // SECURE_CONTACT_GATEWAY
                 </h1>
                 <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1 !important;">
-                    In neural architecture, dendrites are highly specialized, sensory extensions engineered strictly to receive incoming transmissions and route them to the central body. This is the primary Dendrite of the network—the sole contact receptor for incoming queries, secure direct messages, and community integrations regarding PDFase.
+                    This is the primary communication hub for the PDFase network. Securely route your inquiries, collaboration requests, bug reports, and community integrations directly to the developer.
                 </p>
             </div>
 
-            <form id="mailto-form" onsubmit="launchNativeMail(event)" style="position: relative; z-index: 3; background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px;">
+            <form id="mailto-form" onsubmit="launchNativeMail(event)" class="contact-form-box" style="position: relative; z-index: 3; background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px;">
                 
                 <div style="margin-bottom: 25px;">
                     <label style="display: block; font-size: 12px; font-weight: 900 !important; color: #FACC15 !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                         // 01. IDENTIFIER (YOUR NAME)
                     </label>
-                    <input type="text" id="sender-name" required class="dendrite-input" placeholder="e.g., Dr. Watson / Collaborator">
+                    <input type="text" id="sender-name" required class="gateway-input" placeholder="e.g., Dr. Watson / Collaborator">
                 </div>
 
                 <div style="margin-bottom: 25px;">
                     <label style="display: block; font-size: 12px; font-weight: 900 !important; color: #1BE08A !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                         // 02. RETURN_SIGNAL (YOUR EMAIL)
                     </label>
-                    <input type="email" id="sender-email" required class="dendrite-input" placeholder="e.g., name@domain.com">
+                    <input type="email" id="sender-email" required class="gateway-input" placeholder="e.g., name@domain.com">
                 </div>
 
                 <button type="submit" class="transmit-btn">
