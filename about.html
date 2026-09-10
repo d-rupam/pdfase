@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - PDFase</title>
+    
+    <!-- SEO SCHEMA DATA -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Rupam Das",
+      "url": "https://rupamdas.in",
+      "jobTitle": "Undergraduate Microbiology Researcher",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Department of Microbiology, Dum Dum Motijheel College",
+        "url": "https://dumdummotijheelcollege.ac.in/"
+      },
+      "alumniOf": [
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Dum Dum Motijheel College",
+          "url": "https://dumdummotijheelcollege.ac.in/",
+          "location": "Dum Dum, Kolkata, West Bengal"
+        },
+        {
+          "@type": "HighSchool",
+          "name": "PM SHRI Kendriya Vidyalaya Ordnance Factory Dum Dum",
+          "url": "https://ofdumdum.kvs.ac.in/",
+          "location": "Dum Dum, Kolkata, West Bengal"
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Dum Dum, Kolkata",
+        "addressRegion": "West Bengal",
+        "addressCountry": "IN"
+      }
+    }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --cyber-cyan: #00ffcc;
+            --border-subtle: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { 
+            background-color: var(--bg-header-footer); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-subtle); 
+        }
+        .navbar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+        }
+        .brand-highlight { color: var(--cyber-cyan); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            transition: color 0.3s; 
+        }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; width: 100%; display: flex; justify-content: center; }
+
+        /* --- ABOUT MODULE STYLES --- */
+        .about-container {
+            width: 100%; 
+            max-width: 900px; 
+            margin: 60px auto; 
+            padding: 0 20px; 
+        }
+
+        .section-tag {
+            color: #FF2A55;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        h1.page-title {
+            color: #ffffff; 
+            margin-bottom: 5px; 
+            font-size: clamp(24px, 4vw, 32px); 
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        h3.page-subtitle {
+            color: #1BE08A; 
+            margin-top: 5px; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 14px; 
+            font-weight: 400;
+        }
+
+        .content-text {
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 25px;
+            font-weight: 400;
+        }
+
+        .content-text strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .content-text .highlight {
+            color: #00E5FF;
+            font-weight: 600;
+        }
+
+        h2.section-header {
+            color: #00E5FF; 
+            border-bottom: 1px solid #1f2937; 
+            padding-bottom: 5px; 
+            margin-top: 50px; 
+            font-size: 20px; 
+            font-weight: 700;
+        }
+
+        /* METAPHOR BOX */
+        .metaphor-box {
+            background: rgba(0, 229, 255, 0.03); 
+            border: 1px dashed rgba(0, 229, 255, 0.3); 
+            border-radius: 8px; 
+            padding: 30px; 
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .metaphor-box::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #00E5FF;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .domain-node-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(27, 224, 138, 0.1);
+            color: #1BE08A;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #1BE08A;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            margin-top: 30px;
+        }
+
+        .domain-node-btn:hover {
+            background: #1BE08A;
+            color: #0b0f19;
+            box-shadow: 0 0 15px rgba(27, 224, 138, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* --- NEURAL LINK ARRAY STYLES --- */
+        .neural-link-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 60px auto 40px; 
+            max-width: 850px; 
+            padding: 22px;
+            background: #0b0f19;
+            border: 1px solid #1f2937;
+            border-top: 2px solid #1BE08A;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(27, 224, 138, 0.12), 
+                        0 15px 35px rgba(0, 0, 0, 0.6), 
+                        inset 0 0 20px rgba(27, 224, 138, 0.04);
+        }
+
+        .neural-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: #111827; 
+            border: 1px solid #1f2937;
+            border-radius: 8px; 
+            color: #8b949e; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .neural-icon svg {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .neural-icon:hover {
+            background: #111827;
+            transform: translateY(-3px);
+        }
+
+        .icon-linkedin:hover { border-color: #0a66c2; color: #0a66c2; box-shadow: 0 0 15px rgba(10, 102, 194, 0.3), inset 0 0 10px rgba(10, 102, 194, 0.1); }
+        .icon-github:hover { border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1); }
+        .icon-gitlab:hover { border-color: #fc6d26; color: #fc6d26; box-shadow: 0 0 15px rgba(252, 109, 38, 0.3), inset 0 0 10px rgba(252, 109, 38, 0.1); }
+        .icon-orcid:hover { border-color: #a6ce39; color: #a6ce39; box-shadow: 0 0 15px rgba(166, 206, 57, 0.3), inset 0 0 10px rgba(166, 206, 57, 0.1); }
+        .icon-medium:hover { border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1); }
+        .icon-devto:hover { border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1); }
+        .icon-x:hover { border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1); }
+        .icon-docker:hover { border-color: #2496ed; color: #2496ed; box-shadow: 0 0 15px rgba(36, 150, 237, 0.3), inset 0 0 10px rgba(36, 150, 237, 0.1); }
+        .icon-stackoverflow:hover { border-color: #f58025; color: #f58025; box-shadow: 0 0 15px rgba(245, 128, 37, 0.3), inset 0 0 10px rgba(245, 128, 37, 0.1); }
+        .icon-hackerrank:hover { border-color: #00EA64; color: #00EA64; box-shadow: 0 0 15px rgba(0, 234, 100, 0.3), inset 0 0 10px rgba(0, 234, 100, 0.1); }
+        .icon-youtube:hover { border-color: #ff0000; color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3), inset 0 0 10px rgba(255, 0, 0, 0.1); }
+        .icon-instagram:hover { border-color: #E1306C; color: #E1306C; box-shadow: 0 0 15px rgba(225, 48, 108, 0.3), inset 0 0 10px rgba(225, 48, 108, 0.1); }
+        .icon-kaggle:hover { border-color: #20beff; color: #20beff; box-shadow: 0 0 15px rgba(32, 190, 255, 0.3), inset 0 0 10px rgba(32, 190, 255, 0.1); }
+        .icon-huggingface:hover { border-color: #ffd21e; color: #ffd21e; box-shadow: 0 0 15px rgba(255, 210, 30, 0.3), inset 0 0 10px rgba(255, 210, 30, 0.1); }
+        .icon-quora:hover { border-color: #b92b27; color: #b92b27; box-shadow: 0 0 15px rgba(185, 43, 39, 0.3), inset 0 0 10px rgba(185, 43, 39, 0.1); }
+        .icon-figshare:hover { border-color: #c6164d; color: #c6164d; box-shadow: 0 0 15px rgba(198, 22, 77, 0.3), inset 0 0 10px rgba(198, 22, 77, 0.1); }
+        .icon-arattai:hover { border-color: #09b83e; color: #09b83e; box-shadow: 0 0 15px rgba(9, 184, 62, 0.3), inset 0 0 10px rgba(9, 184, 62, 0.1); }
+        .icon-discord:hover { border-color: #5865F2; color: #5865F2; box-shadow: 0 0 15px rgba(88, 101, 242, 0.3), inset 0 0 10px rgba(88, 101, 242, 0.1); }
+        .icon-reddit:hover { border-color: #ff4500; color: #ff4500; box-shadow: 0 0 15px rgba(255, 69, 0, 0.3), inset 0 0 10px rgba(255, 69, 0, 0.1); }
+        .icon-wikimedia:hover { border-color: #006699; color: #006699; box-shadow: 0 0 15px rgba(0, 102, 153, 0.3), inset 0 0 10px rgba(0, 102, 153, 0.1); }
+        .icon-pexels:hover { border-color: #05a081; color: #05a081; box-shadow: 0 0 15px rgba(5, 160, 129, 0.3), inset 0 0 10px rgba(5, 160, 129, 0.1); }
+        .icon-unsplash:hover { border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1); }
+        .icon-pinterest:hover { border-color: #e60023; color: #e60023; box-shadow: 0 0 15px rgba(230, 0, 35, 0.3), inset 0 0 10px rgba(230, 0, 35, 0.1); }
+        .icon-topmate:hover { border-color: #F84E4E; color: #F84E4E; box-shadow: 0 0 15px rgba(248, 78, 78, 0.3), inset 0 0 10px rgba(248, 78, 78, 0.1); }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.5rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-text a { color: var(--cyber-cyan); text-decoration: none; }
+
+        @media (max-width: 767px) {
+            .about-container { margin: 40px auto; }
+            .neural-link-array { gap: 12px; padding: 20px 15px; }
+            .neural-icon { width: 38px; height: 38px; }
+            .neural-icon svg { width: 18px; height: 18px; }
+            .metaphor-box { padding: 20px; }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar { padding: 1rem; }
+            .nav-links { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR START -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <main>
+        <div class="about-container">
+
+            <div class="section-tag">// ABOUT THE ARCHITECT</div>
+            <h1 class="page-title">Rupam Das: The Organism Learning to Code</h1>
+            <h3 class="page-subtitle">Microbiology Student | Systems Architect | Data Sovereign</h3>
+
+            <p class="content-text">
+                Welcome to my digital laboratory. I am an undergraduate Microbiology student at <strong>Dum Dum Motijheel College (WBSU)</strong> with a dual focus: bridging the gap between physical wet-lab protocols and digital computational pipelines. In the physical lab, I work with pipettes, microscopes, and microbial populations. In the digital realm, I am a self-taught systems architect building infrastructure for bioinformatics.
+            </p>
+            
+            <p class="content-text">
+                I have <strong>no formal Computer Science background</strong>. My academic foundation in 12th grade was strictly PCMB (Physics, Chemistry, Math, Biology) without any CS curriculum. However, by leveraging modern AI models like <strong>Gemini</strong> to accelerate logic structuring and problem-solving, I have bridged that gap to engineer robust, client-side tools entirely from scratch.
+            </p>
+
+            <div style="text-align: center;">
+                <a href="https://rupamdas.in" target="_blank" rel="noopener noreferrer" class="domain-node-btn" aria-label="Main Domain">
+                    > ACCESS_PRIMARY_NODE (rupamdas.in)
+                </a>
+            </div>
+
+            <div class="metaphor-box">
+                <div class="section-tag" style="margin-bottom: 5px;">// THE BIOLOGICAL CATALYST</div>
+                <h2 style="color: #F1F5F9; font-size: 24px; font-weight: 700; margin-top: 0; margin-bottom: 15px;">PDFase: The Digital Enzyme Hub</h2>
+                <p class="content-text" style="margin-top: 0; color: #94A3B8;">
+                    <strong>[ THE METAPHOR ]</strong> In cellular biochemistry, an enzyme (identified by the suffix "-ase") is a high-speed, specialized molecular machine that binds directly to a raw substrate to cut, synthesize, or structurally modify it in real-time.
+                </p>
+                <p class="content-text" style="margin-top: 15px; color: #94A3B8;">
+                    This subdomain functions as the active digital enzyme of my ecosystem. It hosts a suite of high-precision, serverless scripts engineered to cleave, ligate, and compress PDF substrates locally. Because these reactions execute entirely within the local browser memory, absolute <strong>Data Sovereignty</strong> is maintained. The raw document never leaves your machine, and the structural mutation is instantaneous.
+                </p>
+                <p class="content-text" style="margin-top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #00E5FF;">
+                    > DEVELOPMENT INITIALIZED: 09 SEPTEMBER 2026
+                </p>
+            </div>
+
+            <h2 class="section-header">> Academic Trajectory & Resilience</h2>
+            <p class="content-text">
+                My academic architecture is built on resilience and strategic pivoting. Overcoming the rigid constraints of the CBSE curriculum—rebuilding my chemistry foundations from the ground up to achieve an 85% aggregate—taught me the ruthless logic I now apply to coding. 
+            </p>
+            <p class="content-text">
+                When the 2026 NEET examinations faced timeline collapses and scheduling disruptions, I bypassed the delays, secured my position at WBSU, and immediately initiated my wet-lab and computational protocols. I prioritize sequencing genomes and writing code over waiting on systemic inefficiencies.
+            </p>
+
+            <h2 class="section-header">> The Wet-Lab Core</h2>
+            <p class="content-text">Biology is the ultimate legacy code. I am building my scientific foundation from the ground up:</p>
+            <ul style="padding-left: 20px; font-weight: 400; color: #cbd5e1; margin-top: 15px; line-height: 1.7;">
+                <li style="margin-bottom: 10px;"><strong>Microbiology (Major):</strong> Focusing on microbial culturing, antimicrobial resistance assays, and cellular mechanics.</li>
+                <li style="margin-bottom: 10px;"><strong>Zoology & Chemistry (Minors):</strong> Developing a deep understanding of animal physiology and chemical kinetics.</li>
+                <li style="margin-bottom: 10px;"><strong>The Computational Lens:</strong> Approaching the entire wet-lab curriculum through a tech-driven perspective to bridge physical science and software architecture.</li>
+            </ul>
+
+            <h2 class="section-header">> Self-Hosted Infrastructure</h2>
+            <p class="content-text">I operate on the principle of Data Sovereignty. My digital footprint is self-hosted, secured, and privately routed. My primary technical focuses include:</p>
+            <ul style="padding-left: 20px; font-weight: 400; color: #cbd5e1; margin-top: 15px; line-height: 1.7;">
+                <li style="margin-bottom: 10px;"><strong>Compiled Algorithms:</strong> Writing low-level logic for tasks where standard processing is insufficient for massive biological datasets.</li>
+                <li style="margin-bottom: 10px;"><strong>Data & ML Scripting:</strong> Exploring predictive models to anticipate microbial behavior.</li>
+                <li style="margin-bottom: 10px;"><strong>Statistical Computing:</strong> Translating raw biological metrics into interactive visualizations.</li>
+            </ul>
+
+            <!-- NEURAL LINK ARRAY (SOCIALS & REPOSITORIES) -->
+            <div class="neural-link-array">
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/in/rupaminsilico/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-linkedin" aria-label="LinkedIn Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+                <!-- GitHub -->
+                <a href="https://github.com/d-rupam" target="_blank" rel="noopener noreferrer" class="neural-icon icon-github" aria-label="GitHub Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+                <!-- GitLab -->
+                <a href="https://gitlab.com/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-gitlab" aria-label="GitLab Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.955 13.587l-1.342-4.135-2.664-8.204a.885.885 0 0 0-1.688 0l-2.663 8.204H8.402l-2.663-8.204a.885.885 0 0 0-1.688 0L1.387 9.452.045 13.587a.89.89 0 0 0 .319.988l11.631 8.448 11.642-8.448a.89.89 0 0 0 .318-.988z"/></svg>
+                </a>
+                <!-- ORCID -->
+                <a href="https://orcid.org/0009-0002-5319-3646" target="_blank" rel="noopener noreferrer" class="neural-icon icon-orcid" aria-label="ORCID Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>
+                </a>
+                <!-- Medium -->
+                <a href="https://rupaminsilico.medium.com/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-medium" aria-label="Medium Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+                </a>
+                <!-- Dev.to -->
+                <a href="https://dev.to/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-devto" aria-label="Dev.to Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 3.3v17.4h24V3.3H0zm8.25 13.86c-.22.22-.58.33-1.21.33H3.84V6.49h3.21c.54 0 .91.08 1.14.28.31.27.42.7.42 1.63v7.35c0 1.05-.12 1.25-.36 1.41zm4.84-.79c0 .64-.04.75-.24.93-.16.15-.36.2-.67.2-.38 0-.58-.08-.73-.28-.15-.19-.18-.38-.18-1.28v-3.79h-2.1v-2.1h2.1V7.93c0-1.04.14-1.28.45-1.54.26-.21.57-.28 1.05-.22l.53.06v2.02c-.22-.04-.37-.03-.49.03-.18.1-.21.24-.21.8v1.36h2.24v2.1h-2.24v3.58c0 .87 0 .89.24.96.15.04.38.04.65 0v2.09c-.19.04-.3.05-.4.05zm5.79-1.95c-.32.48-.82.78-1.42.84-.29.03-.68 0-.9-.07-.39-.12-.66-.35-.8-.67-.1-.23-.1-.3-.1-2v-4h2v3.7c0 1.04.05 1.25.29 1.48.2.2.49.25.75.14.33-.14.53-.41.6-.82.04-.25.04-.25.04-2.12v-2.38h2v4.8c0 3.32 0 3.35-.15 3.58-.16.24-.4.4-.73.47-.2.04-.63.04-.84 0-.31-.06-.5-.16-.69-.36l-.05-.05v-2z"/></svg>
+                </a>
+                <!-- X (Twitter) -->
+                <a href="https://x.com/RupamInSilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-x" aria-label="X Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                </a>
+                <!-- Docker Hub -->
+                <a href="https://hub.docker.com/u/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-docker" aria-label="Docker Hub Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.185m-2.954-2.716h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.185m-2.954 2.716h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.954 0h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m2.954-2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.185m-2.954 0h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.185M24 11.53c0-.18-.14-.325-.316-.325h-2.613c-.156 0-.294.1-.328.252-.403 1.83-2.025 3.208-3.957 3.208-2.228 0-4.041-1.81-4.041-4.032V9.45c0-.18-.145-.326-.325-.326H9.72c-.18 0-.325.146-.325.326v1.183c0 3.738 3.04 6.772 6.78 6.772 1.343 0 2.593-.393 3.636-1.066.602 1.106 1.764 1.849 3.092 1.849 1.936 0 3.51-1.572 3.51-3.508 0-1.077-.487-2.04-1.258-2.688.066-.312.1-.634.1-.962z"/></svg>
+                </a>
+                <!-- Stack Overflow -->
+                <a href="https://stackoverflow.com/users/33076406/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-stackoverflow" aria-label="Stack Overflow Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.725 0l-1.72 1.277 4.974 6.696 1.72-1.277L15.725 0zm3.38 7.12l-1.636 1.385 3.86 4.545 1.635-1.385-3.86-4.545zM17.3 11.235l-1.294 1.666 4.912 3.818 1.294-1.666-4.912-3.818zm1.09 5.378l-.946 1.874 5.56 2.805.946-1.874-5.56-2.805zm-10.97-1.127h9.09v2.138H7.42v-2.138zM5.28 21.61V14.15H3.142v9.598h13.364v-9.598h-2.138v7.46H5.28z"/></svg>
+                </a>
+                <!-- HackerRank -->
+                <a href="https://www.hackerrank.com/profile/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-hackerrank" aria-label="HackerRank Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.987 0C5.366 0 0 5.366 0 11.987s5.366 11.987 11.987 11.987 11.987-5.366 11.987-11.987S18.608 0 11.987 0zm4.5 17.53h-2.45v-4.8h-4.08v4.8H7.51V6.47h2.45v4.71h4.08V6.47h2.45v11.06z"/></svg>
+                </a>
+                <!-- YouTube -->
+                <a href="https://www.youtube.com/@RupamInSilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-youtube" aria-label="YouTube Channel">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.376.55 9.376.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/rupaminsilico/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-instagram" aria-label="Instagram Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <!-- Kaggle -->
+                <a href="https://www.kaggle.com/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-kaggle" aria-label="Kaggle Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.825 23.859c-.022.092-.117.141-.281.141h-3.139c-.187 0-.351-.082-.492-.248l-5.178-6.089-2.297 2.204v3.942c0 .128-.058.191-.174.191H4.372c-.116 0-.174-.063-.174-.191V.192C4.198.064 4.256 0 4.372 0h2.892c.116 0 .174.064.174.192v15.02l6.837-7.25c.14-.165.316-.248.527-.248h3.197c.164 0 .252.052.269.153.018.102-.023.176-.122.224l-5.741 5.46 6.302 7.151c.117.13.134.21.053.24z"/></svg>
+                </a>
+                <!-- Hugging Face -->
+                <a href="https://huggingface.co/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-huggingface" aria-label="Hugging Face Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.968 1.486a9.92 9.92 0 0 0-4.008.82 2.235 2.235 0 0 0-1.423-.42c-1.39.043-2.52 1.353-2.52 2.923 0 1.25.7 2.33 1.705 2.766A9.97 9.97 0 0 0 1.95 11.59a2.275 2.275 0 0 0-1.636 2.06c0 1.298 1.135 2.35 2.535 2.35.534 0 1.03-.176 1.442-.48a9.96 9.96 0 0 0 3.737 4.093c-.027.18-.042.364-.042.553 0 1.34 1.162 2.426 2.595 2.426 1.433 0 2.596-1.086 2.596-2.426 0-.17-.013-.338-.036-.502a9.917 9.917 0 0 0 3.82-3.87 2.448 2.448 0 0 0 1.574.57c1.39 0 2.518-1.127 2.518-2.518 0-1.03-.626-1.92-1.527-2.32a9.982 9.982 0 0 0-3.95-6.73 2.186 2.186 0 0 0 .153-.807c0-1.39-1.127-2.518-2.518-2.518a2.502 2.502 0 0 0-1.24.327 9.914 9.914 0 0 0-4.01-1.306Z"/></svg>
+                </a>
+                <!-- Quora -->
+                <a href="https://www.quora.com/profile/RupamInSilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-quora" aria-label="Quora Profile">
+                    <svg viewBox="0 0 448 512" fill="currentColor"><path d="M298.1 364.5c-20.9 22.5-47.5 35.8-77.9 36.8-54 1.7-93.5-31.5-103.8-82.7-4.2-21-4.2-46.7 0-67.7 10.3-51.3 49.8-84.4 103.8-82.7 54 1.7 93.5 31.5 103.8 82.7 4.2 21 4.2 46.7 0 67.7 1.5 7.6 3.8 14.8 7 21.6l14.7-21.7c8.3-12.4 16.5-24.8 24.8-37.1.6-1 2.3-1.6 3.6-1.5 7.3.3 14.7.4 22 .7 1.5 0 2.3 1 1.7 2.2-11.6 17.5-23.2 35-34.9 52.4-1.6 2.4-3.3 4.8-5 7.4 21 21.8 45.4 40.5 72.8 55.4 3.7 2 5.1 4.8 3.5 8.7-3.9 9.3-8.1 18.6-12.4 27.8-1 2.2-2.7 3.3-5 2.1-23.9-12-46-26.6-65.7-44.5-9.4 6-20.6 9.6-32.9 10.1-21 1-40.8-4.4-58.1-16.1l-16-16.1zM226.5 48.6c-76.3-2.3-146 36.7-184.2 101.4C4.1 214.8-3.3 296 14.7 369.3c21.8 89.2 102 153.8 193 154 79.5.2 147.8-38.3 184.6-103 26.6-46.7 38.6-99 35.4-152.1-4.9-82.7-47.5-151.7-116.3-191.1-26.4-15.1-55.3-25-84.9-28.5z"/></svg>
+                </a>
+                <!-- Figshare -->
+                <a href="https://figshare.com/authors/RUPAM_DAS/24561204" target="_blank" rel="noopener noreferrer" class="neural-icon icon-figshare" aria-label="Figshare Research Data">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 12a6 6 0 1 1 6 6 6 6 0 0 1-6-6zm11.3-4.2l-3.5 6h7l-3.5-6zM8 12a4 4 0 1 0 4-4 4 4 0 0 0-4 4z"/></svg>
+                </a>
+                <!-- Arattai -->
+                <a href="https://aratt.ai/@rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-arattai" aria-label="Arattai Channel">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 4.93 0 11c0 3.53 1.84 6.66 4.69 8.63L3.5 24l5.36-2.68C10 21.76 11 22 12 22c6.63 0 12-4.93 12-11S18.63 0 12 0zm-3 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                </a>
+                <!-- Discord -->
+                <a href="https://discord.com/users/1522414002922192899" target="_blank" rel="noopener noreferrer" class="neural-icon icon-discord" aria-label="Discord Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                </a>
+                <!-- Reddit -->
+                <a href="https://www.reddit.com/user/RupamInSilico/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-reddit" aria-label="Reddit Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.715 0-1.363.275-1.84.734-1.936-1.15-4.52-1.905-7.382-2.002l1.62-5.067 4.704 1.258c.015 1.07 .906 1.932 1.996 1.932 1.107 0 2.004-.897 2.004-2.004C22.441 2.878 21.544 1.98 20.437 1.98c-.89 0-1.642.584-1.914 1.385l-5.112-1.37c-.244-.064-.499.07-.577.307l-1.83 5.728c-2.92.05-5.56 1.102-7.534 2.274-.482-.472-1.144-.761-1.87-.761-1.465 0-2.658 1.187-2.658 2.646 0 .97.533 1.811 1.317 2.271-.052.282-.086.567-.086.857 0 3.911 4.808 7.093 10.719 7.093s10.72-3.182 10.72-7.093c0-.274-.029-.544-.075-.81.832-.447 1.405-1.312 1.405-2.318zm-17.224 1.816c0-.868.71-1.575 1.582-1.575.872 0 1.581.707 1.581 1.575s-.709 1.574-1.581 1.574-1.582-.706-1.582-1.574zm9.061 4.669c-1.797 1.797-5.59 1.782-7.234 0-.214-.234-.196-.605.038-.82.235-.213.606-.196.82.039 1.134 1.134 4.095 1.15 5.518 0 .23-.23.6-.237.828-.01.228.228.241.6.01.811zm.668-3.095c-.872 0-1.581-.706-1.581-1.574 0-.868.709-1.575 1.581-1.575.872 0 1.582.707 1.582 1.575s-.71 1.574-1.582 1.574z"/></svg>
+                </a>
+                <!-- Wikimedia Commons -->
+                <a href="https://commons.wikimedia.org/wiki/User:RupamInsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-wikimedia" aria-label="Wikimedia Commons">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.06 2h-1.63L13 14.56l-1.33-4.88 2.66-7.68h-1.66L10.3 8.84 8.78 2H6.9l4.5 12.87L9.67 21h1.56l2.37-7.93 2.1 7.93h1.66l6.64-19h-1.65l-4.7 13.84L15.35 2h-1.61l2.4 8.21L19.06 2z"/></svg>
+                </a>
+                <!-- Pexels -->
+                <a href="https://www.pexels.com/@rupam-das-2163528370/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-pexels" aria-label="Pexels Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 2.5h19v19h-19v-19zm13.1 8.6v-2.5h-3v-3H8v11h4.6v-3h3v-2.5z"/></svg>
+                </a>
+                <!-- Unsplash -->
+                <a href="https://unsplash.com/@rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-unsplash" aria-label="Unsplash Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 6.75V0h9v6.75h-9zM7.5 11.25H0V24h24V11.25h-7.5v6.75h-9v-6.75z"/></svg>
+                </a>
+                <!-- Topmate -->
+                <a href="https://topmate.io/rupaminsilico" target="_blank" rel="noopener noreferrer" class="neural-icon icon-topmate" aria-label="Topmate Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12 L21.5 6.5 A11 11 0 1 0 21.5 17.5 Z" /></svg>
+                </a>
+                <!-- Pinterest -->
+                <a href="https://in.pinterest.com/RupamInSilico/" target="_blank" rel="noopener noreferrer" class="neural-icon icon-pinterest" aria-label="Pinterest Profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.366 18.602 0 12.017 0z"/></svg>
+                </a>
+            </div>
+
+            <p style="font-size: 13px; color: #8b949e; text-align: center; border-top: 1px dashed #374151; padding-top: 25px; font-weight: 400; max-width: 600px; margin: 0 auto 30px auto;">
+                <strong style="color: #ff4500; font-weight: 700;">Biohazard & Server Warning:</strong> This infrastructure is fueled by raw curiosity and relentless documentation reading. May occasionally drop a database while trying to sequence a genome.
+            </p>
+
+        </div>
+    </main>
+
+    <!-- FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+            <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms & Conditions</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
+            </div>
+            <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+                &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+
+</body>
+</html>
