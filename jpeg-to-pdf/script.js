@@ -1,5 +1,5 @@
 // ==========================================
-// 1. INJECT DEPENDENCIES & STYLES
+// 1. INJECT DEPENDENCIES & STYLES (JPEG TO PDF)
 // ==========================================
 (function initEnvironment() {
     // Inject jsPDF for creating PDF documents locally
@@ -18,13 +18,13 @@
         /* A4 Grid Layout for the selected files */
         .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; }
         
-        /* Rigid Fixed-Height Card */
-        .a4-card { width: 120px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
+        /* Rigid Fixed-Height Cards */
+        .a4-card { width: 120px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(184, 41, 255, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(184, 41, 255, 0.15); }
+        .a4-card.dragging { opacity: 0.4; border-color: var(--theme-color); transform: scale(1.05); }
         
         .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; background: rgba(0,0,0,0.2); border-radius: 4px; overflow: hidden; }
-        .a4-thumbnail { width: 100%; height: 100%; object-fit: cover; }
-        .a4-icon { font-size: 2.5rem; color: var(--theme-color, #b829ff); transition: color 0.2s; }
+        .a4-thumbnail { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         
         .a4-name { 
             font-size: 0.75rem; 
@@ -43,10 +43,17 @@
             white-space: normal;
             line-height: 1.3;
             word-break: break-word;
+            pointer-events: none;
         }
         
         .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .a4-remove:hover { transform: scale(1.1); }
+
+        /* ADD MORE CARD STYLES */
+        .a4-add { border: 2px dashed rgba(184, 41, 255, 0.3); background: rgba(184, 41, 255, 0.02); color: var(--theme-color); cursor: pointer; box-shadow: none; display: flex; flex-direction: column; justify-content: center; }
+        .a4-add:hover { border-color: var(--theme-color); background: rgba(184, 41, 255, 0.05); transform: translateY(-3px); }
+        .a4-add .a4-icon { color: var(--theme-color); font-size: 2rem; margin-bottom: 5px; }
+        .a4-add .a4-name { color: var(--theme-color); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
 
         /* Force zero gap between Dropzone and Action Container */
         .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 0.5rem; justify-content: center; flex-direction: column; align-items: center; }
@@ -80,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. STATE MANAGEMENT & DOM SETUP
     // ==========================================
     let activeImageFiles = []; 
+    let draggedItemIndex = null;
 
     const dropzone = document.getElementById('image-dropzone');
     const fileInput = document.getElementById('file-input');
@@ -101,17 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnGroup = document.createElement('div');
         btnGroup.className = 'button-group';
         
-        const addMoreBtn = document.createElement('button');
-        addMoreBtn.className = 'btn-secondary';
-        addMoreBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add More';
-        addMoreBtn.addEventListener('click', () => fileInput.click());
-
         const convertBtn = document.createElement('button');
         convertBtn.className = 'btn-action';
         convertBtn.innerHTML = '<i class="fa-regular fa-file-pdf"></i> Convert to PDF';
         convertBtn.addEventListener('click', executeConversion);
         
-        btnGroup.appendChild(addMoreBtn);
         btnGroup.appendChild(convertBtn);
         actionContainer.appendChild(btnGroup);
     }
@@ -173,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Append new files to the existing array
         activeImageFiles = [...activeImageFiles, ...newFiles];
         renderFileCards();
     }
@@ -197,8 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
         activeImageFiles.forEach((file, index) => {
             const item = document.createElement('div');
             item.className = 'a4-card';
+            item.draggable = true;
+            item.dataset.index = index;
             
-            // Create a quick, temporary URL for the thumbnail preview
             const objectUrl = URL.createObjectURL(file);
 
             item.innerHTML = `
@@ -211,8 +213,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="a4-name" title="${file.name}">${file.name}</div>
             `;
 
+            // Drag and Drop reordering events
+            item.addEventListener('dragstart', () => { 
+                draggedItemIndex = index; 
+                setTimeout(() => item.classList.add('dragging'), 0); 
+            });
+            item.addEventListener('dragend', () => item.classList.remove('dragging'));
+            
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingEl = document.querySelector('.dragging');
+                if (!draggingEl) return;
+                
+                const bounding = item.getBoundingClientRect();
+                if (e.clientX > bounding.left + bounding.width / 2) {
+                    item.parentNode.insertBefore(draggingEl, item.nextSibling);
+                } else {
+                    item.parentNode.insertBefore(draggingEl, item);
+                }
+            });
+            
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const newOrderNodes = [...a4Grid.querySelectorAll('.a4-card:not(.a4-add)')];
+                activeImageFiles = newOrderNodes.map(node => activeImageFiles[node.dataset.index]);
+                renderFileCards(); 
+            });
+
             a4Grid.appendChild(item);
         });
+
+        // "Add More" Card Logic
+        const addMoreCard = document.createElement('div');
+        addMoreCard.className = 'a4-card a4-add';
+        addMoreCard.onclick = (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        };
+        addMoreCard.innerHTML = `
+            <div class="a4-icon-wrapper" style="height: auto; background: transparent;">
+                <i class="fa-solid fa-plus a4-icon"></i>
+            </div>
+            <div class="a4-name">Add More</div>
+        `;
+        a4Grid.appendChild(addMoreCard);
     }
 
     window.removeFile = function(event, index) {
@@ -262,15 +306,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const convertBtn = actionContainer.querySelector('.btn-action');
-        const addMoreBtn = actionContainer.querySelector('.btn-secondary');
         
         try {
             convertBtn.disabled = true;
-            addMoreBtn.style.display = 'none'; // Hide add more during processing
+            
+            // Hide the "Add More" card during processing
+            const addMoreCard = a4Grid.querySelector('.a4-add');
+            if (addMoreCard) addMoreCard.style.display = 'none';
+            
             convertBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...';
 
             const { jsPDF } = window.jspdf;
-            // Initialize an A4 PDF document
             const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
             
             const a4Width = 210; // mm
@@ -283,41 +329,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imgData = await readAsDataURL(file);
                 const dims = await getImageDimensions(imgData);
 
-                // Calculate scaling to fit image beautifully within A4, centering it
                 const imgRatio = dims.width / dims.height;
                 const a4Ratio = a4Width / a4Height;
                 
                 let renderWidth, renderHeight, x, y;
 
                 if (imgRatio > a4Ratio) {
-                    // Image is wider relative to A4, constrain by width
                     renderWidth = a4Width;
                     renderHeight = a4Width / imgRatio;
                     x = 0;
-                    y = (a4Height - renderHeight) / 2; // Center vertically
+                    y = (a4Height - renderHeight) / 2;
                 } else {
-                    // Image is taller relative to A4, constrain by height
                     renderHeight = a4Height;
                     renderWidth = a4Height * imgRatio;
                     y = 0;
-                    x = (a4Width - renderWidth) / 2; // Center horizontally
+                    x = (a4Width - renderWidth) / 2;
                 }
 
                 if (i > 0) {
                     pdf.addPage();
                 }
 
-                // Add image to current page
                 pdf.addImage(imgData, 'JPEG', x, y, renderWidth, renderHeight);
             }
 
             convertBtn.innerHTML = '<i class="fa-solid fa-box-archive fa-bounce"></i> Generating PDF...';
 
-            // Generate PDF Blob
             const pdfBlob = pdf.output('blob');
             const url = URL.createObjectURL(pdfBlob);
             
-            // Final filename logic
             const baseName = activeImageFiles.length === 1 
                 ? activeImageFiles[0].name.replace(/\.[^/.]+$/, "") 
                 : "Combined_Images";
@@ -353,8 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Conversion Error:', error);
             alert('An error occurred while building the PDF. One of the image formats might be unsupported.');
             convertBtn.disabled = false;
-            addMoreBtn.style.display = 'inline-flex';
             convertBtn.innerHTML = '<i class="fa-regular fa-file-pdf"></i> Convert to PDF';
+            
+            const addMoreCard = a4Grid.querySelector('.a4-add');
+            if (addMoreCard) addMoreCard.style.display = 'flex';
         }
     }
 
