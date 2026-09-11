@@ -250,21 +250,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const detectedFonts = new Set();
 
             for (let i = 1; i <= numPages; i++) {
-                const page = await pdfDoc.getPage(i);
-                
-                // Collect text/fonts via text content mapping
-                const textContent = await page.getTextContent();
-                if (textContent && textContent.items) {
-                    textContent.items.forEach(item => {
-                        if (item.str && item.str.trim().length > 0) {
-                            totalWords += item.str.split(/\s+/).length;
-                        }
-                        if (item.fontName) {
-                            detectedFonts.add(item.fontName);
-                        }
-                    });
+    const page = await pdfDoc.getPage(i);
+    
+    // Collect text/fonts via text content mapping
+    const textContent = await page.getTextContent();
+    if (textContent && textContent.items) {
+        for (const item of textContent.items) {
+            // 1. Count Words
+            if (item.str && item.str.trim().length > 0) {
+                totalWords += item.str.split(/\s+/).length;
+            }
+            
+            // 2. Resolve Actual Font Names
+            if (item.fontName) {
+                try {
+                    // Look up the actual font object using the internal ID
+                    const fontObj = page.commonObjs.get(item.fontName);
+                    
+                    if (fontObj && fontObj.name) {
+                        // Remove PDF subset prefixes (e.g., "ABCDEF+Roboto-Bold" -> "Roboto-Bold")
+                        const cleanName = fontObj.name.includes('+') ? fontObj.name.split('+')[1] : fontObj.name;
+                        detectedFonts.add(cleanName);
+                    } else {
+                        // Fallback if the font name is completely stripped
+                        detectedFonts.add(item.fontName); 
+                    }
+                } catch (e) {
+                    detectedFonts.add(item.fontName);
                 }
             }
+        }
+    }
+}
 
             const fontList = detectedFonts.size > 0 ? Array.from(detectedFonts).join(', ') : 'Standard System Fonts';
             const fileSizeMB = (mainPdfFile.size / (1024 * 1024)).toFixed(2) + ' MB';
