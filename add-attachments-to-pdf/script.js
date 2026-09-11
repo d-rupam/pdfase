@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.className = 'attachment-item';
             item.innerHTML = `
                 <span><i class="fa-solid fa-file" style="color: var(--theme-color); margin-right: 6px;"></i> ${file.name}</span>
-                <button style="background:transparent; border:none; color:#ff3366; cursor:pointer; font-size:0.9rem;" onclick="removeAttachment(${index})" title="Remove">
+                <button type="button" style="background:transparent; border:none; color:#ff3366; cursor:pointer; font-size:0.9rem;" onclick="removeAttachment(${index})" title="Remove">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             `;
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = document.createElement('div');
         item.className = 'a4-card';
         item.innerHTML = `
-            <button class="a4-remove" onclick="removeMainFile(event)" title="Remove File">
+            <button type="button" class="a4-remove" onclick="removeMainFile(event)" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="a4-icon-wrapper">
@@ -267,12 +267,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.removeMainFile = function(event) {
-        event.stopPropagation(); event.preventDefault();
-        mainPdfFile = null; loadedPdfDoc = null; attachedFiles = [];
+        if (event) { event.stopPropagation(); event.preventDefault(); }
+        mainPdfFile = null; 
+        loadedPdfDoc = null; 
+        attachedFiles = [];
         renderFileCard();
+        
+        // Restore dropzone visibility properly on reset
+        dropzone.style.display = 'block';
+        initAttachmentUI();
     };
 
-    window.resetTool = function() { window.location.reload(); };
+    window.resetTool = function() { 
+        mainPdfFile = null;
+        loadedPdfDoc = null;
+        attachedFiles = [];
+        window.location.reload(); 
+    };
 
     // ==========================================
     // 4. CLIENT-SIDE EMBEDDING LOGIC
@@ -291,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const attFile = attachedFiles[i];
                 const attBuffer = await attFile.arrayBuffer();
                 
-                // Embed attachment natively using pdf-lib attach API
+                // Embed attachment natively using pdf-lib attach API safely
                 await loadedPdfDoc.attach(attBuffer, attFile.name, {
                     mimeType: attFile.type || 'application/octet-stream',
                     description: `Attached file: ${attFile.name}`,
@@ -328,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <a href="${url}" download="${finalFileName}" class="btn-action">
                             <i class="fa-solid fa-download"></i> Download Updated PDF
                         </a>
-                        <button class="btn-secondary" onclick="resetTool()">
+                        <button type="button" class="btn-secondary" onclick="resetTool()">
                             <i class="fa-solid fa-rotate-right"></i> Attach More
                         </button>
                     </div>
