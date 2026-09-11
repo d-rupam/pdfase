@@ -2,13 +2,6 @@
 // 1. INJECT DEPENDENCIES & STYLES (REMOVE PASSWORD)
 // ==========================================
 (function initEnvironment() {
-    // Inject QPDF WASM for robust client-side decryption
-    if (!window.QPDF) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/qpdf-wasm@1.0.0/dist/qpdf.js';
-        document.head.appendChild(script);
-    }
-
     const style = document.createElement('style');
     style.innerHTML = `
         /* Dynamic Dropzone Shrinking */
@@ -102,6 +95,30 @@
         .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #ffbf00); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
     `;
     document.head.appendChild(style);
+
+    // Standard UNPKG script loading to match the working encryption pattern
+    const qpdfScript = document.createElement('script');
+    qpdfScript.src = 'https://unpkg.com/@jspawn/qpdf-wasm/qpdf.js';
+    
+    qpdfScript.onload = () => {
+        const factory = window.qpdf || window.qpdfWasm || window.Module;
+        if (typeof factory === 'function') {
+            factory({
+                locateFile: (path) => {
+                    if (path.endsWith('.wasm')) {
+                        return 'https://unpkg.com/@jspawn/qpdf-wasm/' + path;
+                    }
+                    return path;
+                }
+            }).then(instance => {
+                window.qpdfEngine = instance;
+                console.log("✅ QPDF Decryption Engine Loaded Successfully");
+            }).catch(err => {
+                console.error("❌ WASM Instantiation Error:", err);
+            });
+        }
+    };
+    document.head.appendChild(qpdfScript);
 })();
 
 // ==========================================
@@ -109,9 +126,6 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ==========================================
-    // 2. STATE MANAGEMENT & DOM SETUP
-    // ==========================================
     let activePdfFile = null; 
 
     const dropzone = document.getElementById('pdf-dropzone');
@@ -160,11 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
         actionBtn.addEventListener('click', executeDecryption);
         
         btnGroup.appendChild(actionBtn);
-        
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
 
-        // --- Logic Component Bindings ---
         const passInput = optionsPanel.querySelector('#pdf-password');
         const toggleBtn = optionsPanel.querySelector('#toggle-pass-btn');
         const eyeIcon = optionsPanel.querySelector('#toggle-eye-icon');
@@ -179,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Allow hitting Enter to trigger decryption
         passInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -244,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
         activePdfFile = file;
         renderFileCard();
         
-        // Auto focus password input after file drop
         setTimeout(() => {
             const passInput = document.getElementById('pdf-password');
             if(passInput) passInput.focus();
@@ -269,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const item = document.createElement('div');
         item.className = 'a4-card';
-
         item.innerHTML = `
             <button class="a4-remove" onclick="removeFile(event)" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
@@ -279,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="a4-name" title="${activePdfFile.name}">${activePdfFile.name}</div>
         `;
-
         a4Grid.appendChild(item);
     }
 
@@ -296,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE DECRYPTION LOGIC (QPDF-WASM)
+    // 5. CLIENT-SIDE DECRYPTION LOGIC (WASM VFS)
     // ==========================================
     async function executeDecryption() {
         if (!activePdfFile) {
@@ -313,8 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!window.qpdf) {
-            alert('Decryption Engine is still loading. Please wait a moment.');
+        if (!window.qpdfEngine) {
+            alert('Decryption Engine is still initializing. Please wait a moment.');
             return;
         }
 
@@ -327,26 +335,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
             
-            // QPDF WASM Client-Side Implementation
-            const pdf = await window.qpdf.create();
+            // Write encrypted file to virtual filesystem
+            window.qpdfEngine.FS.writeFile('/input_locked.pdf', uint8Array);
             
-            // Attempt to load the encrypted PDF buffer with the provided password
+            // Execute decryption via QPDF CLI arguments matching the working pattern
             try {
-                await pdf.read(uint8Array, password);
-            } catch (readErr) {
-                console.error("Read Error:", readErr);
-                alert("Incorrect password. The document could not be unlocked.");
-                actionBtn.disabled = false;
-                actionBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Unlock PDF';
-                if(passwordInput) {
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                }
-                return;
+                window.qpdfEngine.callMain([
+                    '--decrypt',
+                    `--password=${password}`,
+                    '/input_locked.pdf',
+                    '/output_unlocked.pdf'
+                ]);
+            } catch (cliErr) {
+                console.error("CLI Decryption Error:", cliErr);
+                throw new Error("Incorrect password or corrupted file.");
             }
             
-            // QPDF automatically saves unencrypted unless specifically instructed to encrypt
-            const decryptedBytes = await pdf.save();
+            // Read unlocked bytes from virtual filesystem
+            const decryptedBytes = window.qpdfEngine.FS.readFile('/output_unlocked.pdf');
+            
+            // Cleanup VFS memory
+            window.qpdfEngine.FS.unlink('/input_locked.pdf');
+            window.qpdfEngine.FS.unlink('/output_unlocked.pdf');
 
             const blob = new Blob([decryptedBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -382,10 +392,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Decryption Error:', error);
-            alert('A critical error occurred. Ensure your uploaded PDF file is uncorrupted.');
+            alert('Incorrect password or the document could not be unlocked.');
             actionBtn.disabled = false;
             actionBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Unlock PDF';
+            if(passwordInput) {
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
         }
     }
 
-}); // End of DOMContentLoaded
+});
