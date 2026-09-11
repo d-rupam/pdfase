@@ -2,7 +2,6 @@
 // 1. INJECT DEPENDENCIES & STYLES (SCAN TO PDF)
 // ==========================================
 (function initEnvironment() {
-    // Inject pdf-lib for compiling the final PDF
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -15,49 +14,28 @@
         .scanner-container.active { padding: 1rem; border-color: var(--theme-color); }
         
         /* Gallery Grid */
-        .gallery-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; margin-top: 2rem; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; }
-        .gallery-grid:empty { display: none; }
+        .gallery-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; box-sizing: border-box; }
+        .gallery-grid:empty { display: none; margin: 0; padding: 0; border: none; }
         
         /* Image Thumbnail Card */
-        .scan-card { width: 140px; height: 190px; background-color: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 8px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; overflow: hidden; padding: 5px; }
+        .scan-card { width: 130px; height: 180px; background-color: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 8px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; overflow: hidden; padding: 5px; box-sizing: border-box; }
         .scan-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
         
-        .scan-img { max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 4px; }
-        
+        .scan-img { max-width: 100%; max-height: 130px; object-fit: contain; border-radius: 4px; }
         .scan-label { font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 8px; font-weight: 600; }
         
         .scan-remove { position: absolute; top: -5px; right: -5px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .scan-remove:hover { transform: scale(1.1); }
 
-        /* Action Container */
-        .action-container { margin-top: 1.5rem; display: none; gap: 1.5rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; width: 100%; }
+        /* Action Container - Fixed Margins for Mobile */
+        .action-container { margin-top: 1rem; margin-bottom: 4rem; display: none; gap: 1.5rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; width: 100%; box-sizing: border-box; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
 
         /* Eye-Friendly Balanced Amber Action Button */
-        .btn-action { 
-            background-color: #e6ac00; 
-            color: #050505; 
-            border: none; 
-            padding: 0.85rem 2.5rem; 
-            font-size: 1.05rem; 
-            font-weight: 700; 
-            font-family: 'Space Grotesk', sans-serif; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); 
-            text-decoration: none; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        .btn-action:hover { 
-            background-color: #ffbf00;
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); 
-        }
+        .btn-action { background-color: #e6ac00; color: #050505; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-action:hover { background-color: #ffbf00; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -75,9 +53,6 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ==========================================
-    // 2. STATE MANAGEMENT & DOM SETUP
-    // ==========================================
     let capturedImages = [];
     let videoStream = null;
 
@@ -88,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnStartCamera = document.getElementById('btn-start-camera');
     const btnCapture = document.getElementById('btn-capture');
 
-    // Create Gallery and Action areas dynamically
+    // Dynamically insert gallery and action container exactly after the scanner
     const galleryGrid = document.createElement('div');
     galleryGrid.className = 'gallery-grid';
     
@@ -111,12 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGenerate = actionContainer.querySelector('#btn-generate-pdf');
     const btnCancel = actionContainer.querySelector('#btn-cancel-scan');
 
+    // UI HELPER: Hides text-heavy sections on mobile to prevent overlapping
+    function togglePageContent(show) {
+        const sections = document.querySelectorAll('.info-grid, .content-section, .faq-section');
+        sections.forEach(sec => {
+            sec.style.display = show ? '' : 'none';
+        });
+    }
+
     // ==========================================
-    // 3. CAMERA LOGIC (WebRTC)
+    // CAMERA LOGIC (WebRTC)
     // ==========================================
     btnStartCamera.addEventListener('click', async () => {
         try {
-            // Prioritize the rear camera on mobile devices for document scanning
+            // Prioritize the rear camera on mobile devices
             const constraints = {
                 video: {
                     facingMode: 'environment',
@@ -129,18 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
             videoStream = await navigator.mediaDevices.getUserMedia(constraints);
             videoElem.srcObject = videoStream;
             
-            // Check if it's the front camera. If it's front, mirror it. If rear, don't mirror (so text reads normally).
+            // Mirror only if it's a front-facing camera
             const track = videoStream.getVideoTracks()[0];
             const settings = track.getSettings();
             if (settings.facingMode === 'user') {
                 videoElem.style.transform = 'scaleX(-1)';
             } else {
-                videoElem.style.transform = 'none'; // Essential for reading text correctly
+                videoElem.style.transform = 'none';
             }
 
             idleUI.style.display = 'none';
             cameraWrapper.style.display = 'block';
             scannerContainer.classList.add('active');
+            
+            // Hide heavy text content for a clean workspace
+            togglePageContent(false);
 
         } catch (error) {
             console.error('Camera access denied or unavailable.', error);
@@ -163,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stopCamera();
         capturedImages = [];
         updateGallery();
+        togglePageContent(true); // Bring text back
     });
 
     window.resetTool = function() {
@@ -170,22 +157,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 4. CAPTURE LOGIC
+    // CAPTURE LOGIC
     // ==========================================
     btnCapture.addEventListener('click', () => {
         if (!videoElem.videoWidth) return;
 
-        // Visual flash effect
         cameraWrapper.style.opacity = '0.3';
         setTimeout(() => cameraWrapper.style.opacity = '1', 100);
 
-        // Draw video frame to hidden canvas
         const canvas = document.createElement('canvas');
         canvas.width = videoElem.videoWidth;
         canvas.height = videoElem.videoHeight;
         const ctx = canvas.getContext('2d');
 
-        // Handle mirroring if it was applied to the video element
         if (videoElem.style.transform === 'scaleX(-1)') {
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
@@ -193,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
         
-        // Export high-quality JPEG
         const imgDataUrl = canvas.toDataURL('image/jpeg', 0.95);
         
         capturedImages.push({
@@ -205,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 5. GALLERY UI RENDERING
+    // GALLERY UI RENDERING
     // ==========================================
     function updateGallery() {
         galleryGrid.innerHTML = '';
@@ -232,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             galleryGrid.appendChild(card);
         });
 
-        // Bind delete buttons
         const delBtns = galleryGrid.querySelectorAll('.scan-remove');
         delBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -244,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. CLIENT-SIDE PDF COMPILATION (PDF-LIB)
+    // CLIENT-SIDE PDF COMPILATION
     // ==========================================
     btnGenerate.addEventListener('click', async () => {
         if (capturedImages.length === 0) return;
@@ -260,27 +242,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const pdfDoc = await PDFDocument.create();
 
             for (const imgObj of capturedImages) {
-                // Fetch the base64 string back into an array buffer
                 const imgBytes = await fetch(imgObj.dataUrl).then(res => res.arrayBuffer());
-                
-                // Embed the JPEG into the PDF
                 const pdfImage = await pdfDoc.embedJpg(imgBytes);
-                
-                // Get image dimensions
                 const imgDims = pdfImage.scale(1);
                 
-                // Standard A4 dimensions (in points)
                 const A4_WIDTH = 595.28;
                 const A4_HEIGHT = 841.89;
-
                 const page = pdfDoc.addPage([A4_WIDTH, A4_HEIGHT]);
 
-                // Calculate scaling to fit the image entirely inside the A4 page
                 const scale = Math.min(A4_WIDTH / imgDims.width, A4_HEIGHT / imgDims.height);
                 const drawWidth = imgDims.width * scale;
                 const drawHeight = imgDims.height * scale;
                 
-                // Center the image on the page
                 const xPos = (A4_WIDTH - drawWidth) / 2;
                 const yPos = (A4_HEIGHT - drawHeight) / 2;
 
@@ -292,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Export New Document
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -300,12 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const timestamp = new Date().toISOString().slice(0,10);
             const finalFileName = `PDFase_Scan_${timestamp}.pdf`;
             
-            // Stop Camera gracefully
             stopCamera();
             scannerContainer.style.display = 'none';
             galleryGrid.style.display = 'none';
 
-            // Show Success UI
             actionContainer.innerHTML = `
                 <div class="success-message">
                     <i class="fa-solid fa-circle-check"></i> PDF Successfully Created!
@@ -336,4 +306,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-}); // End of DOMContentLoaded
+});
