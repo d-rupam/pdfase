@@ -2,10 +2,18 @@
 // 1. INJECT DEPENDENCIES & STYLES (FLATTEN PDF)
 // ==========================================
 (function initEnvironment() {
+    // 1. pdf-lib to construct the final document
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
+    }
+    
+    // 2. pdf.js to rasterize/snapshot the pages into un-copyable images
+    if (!window.pdfjsLib) {
+        const pdfjsScript = document.createElement('script');
+        pdfjsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        document.head.appendChild(pdfjsScript);
     }
 
     const style = document.createElement('style');
@@ -56,7 +64,7 @@
         .options-panel p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0; }
 
         .btn-action { background-color: #32e011; color: #050505; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(50, 224, 17, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-action:hover { background-color: #39ff14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(57, 255, 20, 0.35); }
+        .btn-action:hover:not(:disabled) { background-color: #39ff14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(57, 255, 20, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -98,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
-            <p><i class="fa-solid fa-layer-group" style="color: var(--theme-color);"></i> Ready to bake interactive form fields and annotations into static vectors.</p>
+            <p><i class="fa-solid fa-layer-group" style="color: var(--theme-color);"></i> Ready to render documents into static images. Text will be un-copyable and links will be disabled.</p>
         `;
 
         const btnGroup = document.createElement('div');
@@ -154,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        if (!window.PDFLib) {
-            alert('Engine is still loading. Please wait.');
+        if (!window.PDFLib || !window.pdfjsLib) {
+            alert('Engines are still loading. Please wait.');
             return;
         }
 
@@ -206,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rawPdfBuffer = null; 
         renderFileCard();
         
-        dropzone.style.display = 'block';
+        dropzone.style.display = 'flex';
         actionContainer.innerHTML = '';
     };
 
@@ -217,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 4. CLIENT-SIDE FLATTENING LOGIC
+    // 4. CLIENT-SIDE RASTERIZATION LOGIC
     // ==========================================
     async function executeFlattening() {
         if (!rawPdfBuffer || !mainPdfFile) return alert('Please upload a PDF file first.');
@@ -226,23 +234,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             actionBtn.disabled = true;
-            actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Flattening Document...';
+            actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Preparing to Flatten...';
 
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            
+            // 1. Read document with PDF.js to convert to images
+            const typedarray = new Uint8Array(rawPdfBuffer.slice(0));
+            const pdfJsDoc = await window.pdfjsLib.getDocument(typedarray).promise;
+            const numPages = pdfJsDoc.numPages;
+
+            // 2. Create brand new blank PDF with PDF-lib
             const { PDFDocument } = window.PDFLib;
-            const pdfDoc = await PDFDocument.load(rawPdfBuffer, { ignoreEncryption: true });
+            const newPdf = await PDFDocument.create();
 
-            // Flatten interactive form fields if present in the document
-            try {
-                const form = pdfDoc.getForm();
-                if (form) {
-                    form.flatten();
-                }
-            } catch (formErr) {
-                // Document may not contain an interactive form structure; continue safely
-                console.log("No form fields detected or form already flat:", formErr);
+            // 3. Loop through every page, render to canvas, and embed as image
+            for (let i = 1; i <= numPages; i++) {
+                actionBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Flattening Page ${i} of ${numPages}...`;
+                
+                const page = await pdfJsDoc.getPage(i);
+                
+                // Scale 2.5 ensures text remains readable and crisp after becoming an image
+                const viewport = page.getViewport({ scale: 2.5 }); 
+                
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                // Convert canvas to compressed JPEG
+                const imgDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                const imgBytes = await fetch(imgDataUrl).then(res => res.arrayBuffer());
+                
+                // Embed JPEG into the new PDF
+                const pdfImage = await newPdf.embedJpg(imgBytes);
+
+                // Add a page matching the original document's physical dimensions (scale 1.0)
+                const origViewport = page.getViewport({ scale: 1.0 });
+                const newPage = newPdf.addPage([origViewport.width, origViewport.height]);
+
+                // Draw the high-res image onto the standard sized page
+                newPage.drawImage(pdfImage, {
+                    x: 0,
+                    y: 0,
+                    width: origViewport.width,
+                    height: origViewport.height,
+                });
             }
 
-            const pdfBytes = await pdfDoc.save();
+            actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving File...';
+
+            const pdfBytes = await newPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
