@@ -2,14 +2,12 @@
 // 1. INJECT DEPENDENCIES & STYLES (COMPRESS PDF)
 // ==========================================
 (function initEnvironment() {
-    // 1. pdf-lib for building the final optimized PDF
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
     }
 
-    // 2. pdf.js for rendering and rasterizing the original PDF
     if (!window.pdfjsLib) {
         const pdfScript = document.createElement('script');
         pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
@@ -49,23 +47,19 @@
         .settings-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-main); font-size: 0.9rem; font-weight: 600; }
         .settings-header span { color: var(--theme-color); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
         
-        /* Custom Range Slider */
         input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--theme-color); margin-top: -5px; box-shadow: 0 0 10px rgba(255, 191, 0, 0.5); }
         
-        /* Target Size Input Group */
         .target-size-wrapper { display: flex; gap: 10px; align-items: center; }
         .target-size-wrapper input[type="number"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; width: 100%; transition: border-color 0.2s; }
         .target-size-wrapper input[type="number"]:focus { border-color: var(--theme-color); }
         .target-size-wrapper select { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; outline: none; cursor: pointer; }
 
-        /* Checkboxes */
         .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; cursor: pointer; }
         .checkbox-group input { accent-color: var(--theme-color); width: 16px; height: 16px; cursor: pointer; }
         .checkbox-group label { color: var(--text-main); font-size: 0.85rem; cursor: pointer; user-select: none; }
 
-        /* Progress Bar UI */
         .progress-wrapper { width: 100%; display: none; flex-direction: column; gap: 8px; margin-top: 10px; }
         .progress-text { font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-align: center; }
         .progress-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
@@ -82,7 +76,6 @@
         .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(255, 191, 0, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255, 191, 0, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
         .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #ffbf00); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-        
         .size-badge { background: rgba(255, 191, 0, 0.15); color: var(--theme-color); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
     `;
     document.head.appendChild(style);
@@ -110,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     actionContainer.className = 'action-container';
     dropzone.parentNode.insertBefore(actionContainer, dropzone.nextSibling);
 
-    // Format bytes helper
     function formatBytes(bytes, decimals = 2) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -126,12 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
-            <!-- Original Size Indicator -->
             <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: -5px;">
                 Original Size: <strong id="orig-size-display" style="color: #fff;">0 MB</strong>
             </div>
 
-            <!-- Quality Slider -->
             <div class="settings-row">
                 <div class="settings-header">
                     <label><i class="fa-solid fa-image"></i> Image Quality</label>
@@ -140,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="range" id="compress-quality" min="10" max="100" value="60">
             </div>
 
-            <!-- Resolution Slider -->
             <div class="settings-row">
                 <div class="settings-header">
                     <label><i class="fa-solid fa-compress"></i> Resolution (DPI)</label>
@@ -149,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="range" id="compress-scale" min="1" max="3" value="2" step="1">
             </div>
 
-            <!-- Grayscale & Needed Size -->
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; align-items: flex-end;">
                 <div style="flex: 1; min-width: 150px;">
                     <div class="settings-header" style="margin-bottom: 8px;">
@@ -166,20 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="checkbox-group" style="padding-bottom: 8px;">
                     <input type="checkbox" id="compress-grayscale">
-                    <label for="compress-grayscale">Convert to Grayscale (Saves Space)</label>
+                    <label for="compress-grayscale">Convert to Grayscale</label>
                 </div>
             </div>
 
-            <!-- Progress UI -->
             <div class="progress-wrapper" id="compress-progress-wrapper">
                 <div class="progress-text" id="compress-progress-text">Initializing Engine...</div>
                 <div class="progress-track">
                     <div class="progress-fill" id="compress-progress-fill"></div>
                 </div>
-            </div>
-            
-            <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 5px;">
-                Note: Client-side compression works by rasterizing document pages into highly optimized JPEGs.
             </div>
         `;
 
@@ -195,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
 
-        // Bind Sliders to Labels
         const qSlider = optionsPanel.querySelector('#compress-quality');
         const qVal = optionsPanel.querySelector('#quality-val');
         qSlider.addEventListener('input', () => qVal.innerText = qSlider.value + '%');
@@ -212,16 +194,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initCompressUI();
 
     // ==========================================
-    // 3. FILE EVENT LISTENERS
+    // 3. BULLETPROOF EVENT LISTENERS
     // ==========================================
     if (selectFilesBtn) {
         selectFilesBtn.addEventListener('click', (e) => {
-            e.preventDefault(); e.stopPropagation(); fileInput.click();
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            fileInput.click();
         });
     }
 
     dropzone.addEventListener('click', (e) => {
-        if (!activePdfFile && e.target !== fileInput) fileInput.click();
+        if (!activePdfFile && e.target !== fileInput) {
+            fileInput.click();
+        }
     });
 
     fileInput.addEventListener('change', (e) => {
@@ -231,12 +217,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'););
+    dropzone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        dropzone.classList.add('dragover'); 
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+    
     dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
     });
 
     window.addEventListener('paste', (e) => {
@@ -286,12 +281,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.removeFile = function(event) {
-        event.stopPropagation(); event.preventDefault();
-        activePdfFile = null; originalSizeBytes = 0;
+        event.stopPropagation(); 
+        event.preventDefault();
+        activePdfFile = null; 
+        originalSizeBytes = 0;
         renderFileCard();
     };
 
-    window.resetTool = function() { window.location.reload(); };
+    window.resetTool = function() { 
+        window.location.reload(); 
+    };
 
     // ==========================================
     // 4. CLIENT-SIDE COMPRESSION LOGIC
@@ -305,14 +304,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressText = document.getElementById('compress-progress-text');
         const progressFill = document.getElementById('compress-progress-fill');
 
-        // Grab User Settings
         let quality = parseInt(document.getElementById('compress-quality').value) / 100;
-        let scaleLvl = parseInt(document.getElementById('compress-scale').value); // 1, 2, or 3
+        let scaleLvl = parseInt(document.getElementById('compress-scale').value);
         const isGrayscale = document.getElementById('compress-grayscale').checked;
         const targetInput = document.getElementById('target-size-input').value;
         const targetUnit = document.getElementById('target-size-unit').value;
 
-        // Target Size Override Algorithm (Estimation)
         if (targetInput && !isNaN(targetInput) && targetInput > 0) {
             let targetBytes = parseFloat(targetInput) * (targetUnit === 'MB' ? 1048576 : 1024);
             let ratio = targetBytes / originalSizeBytes;
@@ -322,16 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Adjust quality and scale strictly based on requested ratio
             if (ratio < 0.2) { scaleLvl = 1; quality = 0.3; }
             else if (ratio < 0.5) { scaleLvl = 1; quality = 0.5; }
             else if (ratio < 0.8) { scaleLvl = 2; quality = 0.6; }
             else { scaleLvl = 2; quality = 0.8; }
-            
-            console.log(`Target Mode override: Scale set to ${scaleLvl}, Quality to ${quality}`);
         }
 
-        // Map Scale Level to DPI float
         const viewportScale = scaleLvl === 1 ? 1.0 : (scaleLvl === 2 ? 1.5 : 2.0);
 
         try {
@@ -339,53 +332,46 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Compressing...';
             progressWrapper.style.display = 'flex';
 
-            // 1. Setup PDF.js Worker
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
             const sourcePdf = await loadingTask.promise;
             const totalPages = sourcePdf.numPages;
 
-            // 2. Setup PDF-lib Target Document
             const { PDFDocument } = window.PDFLib;
             const newPdf = await PDFDocument.create();
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-            // 3. Iterate over and compress pages
             for (let i = 1; i <= totalPages; i++) {
                 progressText.innerText = `Processing Page ${i} of ${totalPages}...`;
-                progressFill.style.width = \`\${(i / totalPages) * 100}%\`;
+                progressFill.style.width = `${(i / totalPages) * 100}%`;
                 
                 const page = await sourcePdf.getPage(i);
                 const viewport = page.getViewport({ scale: viewportScale }); 
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
 
-                // Render page to canvas
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
-                // Apply Grayscale Filter if selected
                 if (isGrayscale) {
                     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     const data = imgData.data;
                     for (let j = 0; j < data.length; j += 4) {
                         const avg = (data[j] + data[j + 1] + data[j + 2]) / 3;
-                        data[j] = avg;       // Red
-                        data[j + 1] = avg;   // Green
-                        data[j + 2] = avg;   // Blue
+                        data[j] = avg;       
+                        data[j + 1] = avg;   
+                        data[j + 2] = avg;   
                     }
                     ctx.putImageData(imgData, 0, 0);
                 }
 
-                // Compress canvas to JPEG Data URL
                 const imgDataUrl = canvas.toDataURL('image/jpeg', quality);
                 const imgBytes = await fetch(imgDataUrl).then(res => res.arrayBuffer());
 
-                // Embed into new PDF
                 const pdfImage = await newPdf.embedJpg(imgBytes);
-                const origViewport = page.getViewport({ scale: 1.0 }); // Keep original physical size
+                const origViewport = page.getViewport({ scale: 1.0 });
                 
                 const newPage = newPdf.addPage([origViewport.width, origViewport.height]);
                 newPage.drawImage(pdfImage, {
@@ -398,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             progressText.innerText = "Finalizing File...";
 
-            // Export compressed document
             const pdfBytes = await newPdf.save();
             const newSizeBytes = pdfBytes.length;
             const sizeSaved = originalSizeBytes - newSizeBytes;
@@ -453,4 +438,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-}); // End of DOMContentLoaded
+});
