@@ -19,10 +19,10 @@
         
         /* Rigid Fixed-Height Cards matching Ecosystem standards */
         .a4-card { width: 110px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; margin-top: 5px; }
-        .a4-card:hover { border-color: rgba(184, 41, 255, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(184, 41, 255, 0.15); }
+        .a4-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
         
         .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
-        .a4-icon { font-size: 2.2rem; color: var(--theme-color, #b829ff); transition: color 0.2s; }
+        .a4-icon { font-size: 2.2rem; color: var(--theme-color, #ffbf00); transition: color 0.2s; }
         
         /* Fixed multi-line text truncation matching ecosystem standards */
         .a4-name { 
@@ -52,20 +52,20 @@
 
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
-        .options-panel { background: rgba(184, 41, 255, 0.02); border: 1px solid rgba(184, 41, 255, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: center; width: 100%; max-width: 450px; font-family: 'Space Grotesk', sans-serif; text-align: center; }
+        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: center; width: 100%; max-width: 450px; font-family: 'Space Grotesk', sans-serif; text-align: center; }
         .options-panel p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0; }
 
-        .btn-action { background-color: #b829ff; color: #fff; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(184, 41, 255, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-action:hover { background-color: #c74dff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184, 41, 255, 0.35); }
+        .btn-action { background-color: #e6ac00; color: #050505; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-action:hover { background-color: #ffbf00; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-secondary:hover { border-color: var(--theme-color, #b829ff); color: var(--theme-color, #b829ff); background-color: rgba(184, 41, 255, 0.05); }
+        .btn-secondary:hover { border-color: var(--theme-color, #ffbf00); color: var(--theme-color, #ffbf00); background-color: rgba(255, 191, 0, 0.05); }
         
-        .success-message { width: 100%; text-align: center; color: var(--theme-color, #b829ff); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
-        .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(184, 41, 255, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(184, 41, 255, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
+        .success-message { width: 100%; text-align: center; color: var(--theme-color, #ffbf00); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(255, 191, 0, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255, 191, 0, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
         .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-        .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #b829ff); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #ffbf00); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
     `;
     document.head.appendChild(style);
 })();
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="file-flow">
                         <span class="file-flow-name">${mainPdfFile.name}</span>
-                        <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #b829ff); margin: 0 10px;"></i>
+                        <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #ffbf00); margin: 0 10px;"></i>
                         <span class="file-flow-final">${finalFileName}</span>
                     </div>
                     <div class="button-group" style="margin-top: 5px;">
