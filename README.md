@@ -4,6 +4,8 @@
 [![Vanilla JS](https://img.shields.io/badge/Tech_Stack-Vanilla_JS_%7C_HTML_%7C_CSS-f7df1e?style=for-the-badge&logo=javascript&logoColor=black)]()
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted_On-Cloudflare_Pages-f38020?style=for-the-badge&logo=cloudflare&logoColor=white)]()
 
+![PDFase Frontend](assets/frontend.png)
+
 ### // THE BIOLOGICAL CATALYST
 **[ THE METAPHOR ]** In cellular biochemistry, an enzyme (identified by the suffix "-ase") is a high-speed, specialized molecular machine that binds directly to a raw substrate to cut, synthesize, or structurally modify it in real-time.
 
@@ -77,7 +79,7 @@ This entire ecosystem-comprising nearly 40 complex, client-side data manipulatio
 
 Instead of getting bogged down in memorizing vanilla JavaScript syntax, API boilerplate, or canvas coordinate math, I leveraged **Google Gemini** as my "junior developer." I defined the structural logic, the biological metaphors, the UI/UX ecosystem, and the strict privacy parameters (zero-server data processing). Gemini acted as my syntax translator, allowing me to build at the speed of thought. 
 
-The scientific method-running a test, observing the output, refining the prompt, and iterating (over 260+ commits)-is language-agnostic. This project proves that with modern AI, domain experts can architect complex software tools tailored perfectly to their own industry's needs.
+The scientific method-running a test, observing the output, refining the prompt, and iterating (over 270+ commits)-is language-agnostic. This project proves that with modern AI, domain experts can architect complex software tools tailored perfectly to their own industry's needs.
 
 ## 🚀 Technical Stack
 * **Core Logic:** Vanilla JavaScript (ES6+), HTML5, CSS3.
