@@ -261,22 +261,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalWords += item.str.split(/\s+/).length;
             }
             
-            // 2. Resolve Actual Font Names
-            if (item.fontName) {
-                try {
-                    // Look up the actual font object using the internal ID
-                    const fontObj = page.commonObjs.get(item.fontName);
+            // 2. Resolve Actual Font Names via the styles dictionary
+            if (item.fontName && textContent.styles && textContent.styles[item.fontName]) {
+                const fontStyle = textContent.styles[item.fontName];
+                
+                if (fontStyle.fontFamily) {
+                    let cleanName = fontStyle.fontFamily;
                     
-                    if (fontObj && fontObj.name) {
-                        // Remove PDF subset prefixes (e.g., "ABCDEF+Roboto-Bold" -> "Roboto-Bold")
-                        const cleanName = fontObj.name.includes('+') ? fontObj.name.split('+')[1] : fontObj.name;
-                        detectedFonts.add(cleanName);
-                    } else {
-                        // Fallback if the font name is completely stripped
-                        detectedFonts.add(item.fontName); 
+                    // Remove PDF subset prefixes (e.g., "ABCDEF+Roboto" -> "Roboto")
+                    if (cleanName.includes('+')) {
+                        cleanName = cleanName.split('+')[1];
                     }
-                } catch (e) {
-                    detectedFonts.add(item.fontName);
+                    
+                    // Strip out any weird quotes pdf.js sometimes adds
+                    cleanName = cleanName.replace(/['"]/g, '').trim();
+                    
+                    detectedFonts.add(cleanName);
+                } else {
+                    // Absolute fallback
+                    detectedFonts.add(item.fontName); 
                 }
             }
         }
