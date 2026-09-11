@@ -1,13 +1,32 @@
 // ==========================================
-// 1. INJECT DEPENDENCIES & STYLES (ADD PASSWORD)
+// 1. LOCAL WASM INITIALIZATION & STYLES
 // ==========================================
 (function initEnvironment() {
-    // Inject QPDF WASM
-    if (!window.QPDF) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/qpdf-wasm@1.0.0/dist/qpdf.js';
-        document.head.appendChild(script);
-    }
+    // WebAssembly MUST be hosted locally to work securely offline and avoid CDN CORS blocking.
+    const qpdfScript = document.createElement('script');
+    qpdfScript.src = '/assets/qpdf.js'; 
+    
+    qpdfScript.onload = () => {
+        // Emscripten exposes the module factory. We configure locateFile to route the binary path.
+        if (typeof Module !== 'undefined' || typeof qpdf === 'function') {
+            const factory = typeof qpdf === 'function' ? qpdf : Module;
+            factory({
+                locateFile: (path) => {
+                    if(path.endsWith('.wasm')) return '/assets/' + path;
+                    return path;
+                },
+                noInitialRun: true
+            }).then(instance => {
+                window.qpdfEngine = instance;
+            });
+        }
+    };
+    
+    qpdfScript.onerror = () => {
+        console.warn("Local qpdf.js not found. Please download the QPDF WASM files to your /assets/ folder.");
+    };
+    
+    document.head.appendChild(qpdfScript);
 
     const style = document.createElement('style');
     style.innerHTML = `
@@ -74,7 +93,6 @@
         .btn-secondary:hover { border-color: var(--theme-color, #ffbf00); color: var(--theme-color, #ffbf00); background-color: rgba(255, 191, 0, 0.05); }
         
         .success-message { width: 100%; text-align: center; color: var(--theme-color, #ffbf00); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
-        
         .file-flow { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; background: rgba(255, 191, 0, 0.03); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255, 191, 0, 0.2); text-align: center; max-width: 100%; word-break: break-word; }
         .file-flow-name { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #ffbf00); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
@@ -83,7 +101,7 @@
 })();
 
 // ==========================================
-// WAIT FOR HTML DOM TO FULLY LOAD
+// 2. STATE MANAGEMENT & DOM SETUP
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -92,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
     const selectFilesBtn = document.getElementById('select-files-btn');
-
     const defaultDropzoneElements = Array.from(dropzone.children).filter(el => el.id !== 'file-input');
 
     const a4Grid = document.createElement('div');
@@ -158,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actionBtn.addEventListener('click', executeEncryption);
         
         btnGroup.appendChild(actionBtn);
-        
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
 
@@ -281,6 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initPasswordUI();
 
+    // ==========================================
+    // 3. FILE EVENT LISTENERS
+    // ==========================================
     if (selectFilesBtn) {
         selectFilesBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
@@ -326,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Invalid format. Please select a PDF document.');
             return;
         }
-        
         activePdfFile = file;
         renderFileCard();
     }
@@ -349,7 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const item = document.createElement('div');
         item.className = 'a4-card';
-
         item.innerHTML = `
             <button class="a4-remove" onclick="removeFile(event)" title="Remove File">
                 <i class="fa-solid fa-xmark"></i>
@@ -359,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="a4-name" title="${activePdfFile.name}">${activePdfFile.name}</div>
         `;
-
         a4Grid.appendChild(item);
     }
 
@@ -375,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE ENCRYPTION LOGIC
+    // 5. CLIENT-SIDE ENCRYPTION LOGIC (Emscripten VFS)
     // ==========================================
     async function executeEncryption() {
         if (!activePdfFile) {
@@ -392,12 +408,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!window.QPDF) {
-            alert('Encryption Engine is still loading. Please wait a moment.');
+        const actionBtn = actionContainer.querySelector('.btn-action');
+
+        // Check if the local WebAssembly engine successfully initialized
+        if (!window.qpdfEngine) {
+            alert("CRITICAL SETUP MISSING:\\n\\nThe QPDF WebAssembly engine is not running. You must download the 'qpdf.js' and 'qpdf.wasm' files and place them in your local /assets/ directory.\\n\\nPublic CDNs cannot serve WASM binaries reliably for offline applications.");
             return;
         }
-
-        const actionBtn = actionContainer.querySelector('.btn-action');
         
         try {
             actionBtn.disabled = true;
@@ -406,13 +423,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
             
-            // Wait for QPDF WASM module to be completely ready
-            const pdf = await window.QPDF.create();
+            // 1. Write the unencrypted file into Emscripten's virtual offline filesystem
+            window.qpdfEngine.FS.writeFile('/input.pdf', uint8Array);
             
-            await pdf.read(uint8Array);
-            await pdf.encrypt(password, password, 256); // 256-bit AES Encryption
+            // 2. Execute the CLI command internally via WASM
+            // Equivalent to running: qpdf --encrypt pass pass 256 -- input.pdf output.pdf
+            window.qpdfEngine.callMain([
+                '--encrypt', 
+                password, 
+                password, 
+                '256', 
+                '--', 
+                '/input.pdf', 
+                '/output.pdf'
+            ]);
             
-            const encryptedBytes = await pdf.save();
+            // 3. Read the encrypted file back out of virtual memory
+            const encryptedBytes = window.qpdfEngine.FS.readFile('/output.pdf');
+            
+            // 4. Cleanup memory to prevent browser crashing on multiple uses
+            window.qpdfEngine.FS.unlink('/input.pdf');
+            window.qpdfEngine.FS.unlink('/output.pdf');
 
             const blob = new Blob([encryptedBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
