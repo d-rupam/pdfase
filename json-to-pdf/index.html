@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimized Title & Meta Description -->
+    <title>JSON to PDF Report Generator Free | Convert Data to PDF Locally - PDFase</title>
+    <meta name="description" content="Compile raw JSON data structures or tabular payloads into formatted, printable PDF report documents instantly. 100% free, private browser-based tool.">
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <!-- Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0KYK0PKV9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J0KYK0PKV9');
+    </script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "name": "Rupam Das",
+          "url": "https://rupamdas.in",
+          "jobTitle": "Undergraduate Microbiology Researcher",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Department of Microbiology, Dum Dum Motijheel College",
+            "url": "https://dumdummotijheelcollege.ac.in/"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Are my data payloads uploaded to a server when generating PDFs?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The JSON-to-PDF compiler runs completely client-side within your browser. Your data files never leave your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What formats of JSON files are supported?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Standard JSON data structures, logs, or flat object arrays can be loaded and transformed into printable reports."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --bg-card: #121215;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --theme-color: #b829ff; /* Purple / Convert Category Color */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { background-color: var(--bg-header-footer); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .brand-highlight { color: var(--theme-color); }
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; padding: 3rem 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        /* --- TOOL HEADER & DROPZONE --- */
+        .tool-header { text-align: center; margin-bottom: 2.5rem; }
+        .tool-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-muted); }
+
+        .dropzone {
+            background-color: var(--bg-card);
+            border: 2px dashed rgba(184, 41, 255, 0.3);
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 4rem;
+            cursor: pointer;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--theme-color);
+            background-color: rgba(184, 41, 255, 0.02);
+        }
+        .dropzone-icon { font-size: 4rem; color: var(--text-main); margin-bottom: 1.5rem; }
+        .dropzone-text { font-size: 1.25rem; font-weight: 500; margin-bottom: 1.5rem; color: #fff; }
+        .btn-upload {
+            background-color: var(--theme-color);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(184, 41, 255, 0.3); } 
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 2rem;
+        }
+
+        /* --- INFO GRID --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .info-card { text-align: center; }
+        .info-card i { font-size: 1.8rem; color: var(--theme-color); margin-bottom: 1rem; }
+        .info-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem; font-weight: 600; }
+        .info-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+        /* --- LONG-FORM CONTENT --- */
+        .content-section { margin-bottom: 4rem; }
+        .content-block {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .content-block h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .content-block h2 i { color: var(--theme-color); font-size: 1.3rem; }
+        .content-block p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1rem; }
+        .content-block p:last-child { margin-bottom: 0; }
+        
+        .step-list { list-style: none; padding: 0; margin-top: 1.5rem; }
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .step-list li::before {
+            content: "\f058"; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--theme-color);
+            font-size: 1.2rem;
+        }
+        .step-list strong { color: #fff; font-weight: 600; }
+
+        /* --- FAQ SECTION --- */
+        .faq-section { margin-bottom: 2rem; }
+        .faq-section h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; margin-bottom: 2rem; text-align: center; }
+        .faq-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .faq-item h3 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem; font-weight: 600; display: flex; gap: 10px; }
+        .faq-item h3 i { color: var(--theme-color); margin-top: 4px; }
+        .faq-item p { color: var(--text-muted); font-size: 0.9rem; padding-left: 1.8rem; }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.25rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+        .footer-links { display: flex; gap: 1.5rem; justify-content: flex-start; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+        .footer-text a { color: var(--theme-color); text-decoration: none; }
+        .footer-social { display: flex; justify-content: flex-end; }
+        .footer-social a { color: var(--text-muted); font-size: 1.3rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--theme-color); }
+
+        @media (max-width: 768px) {
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+            .footer-links, .footer-social { justify-content: center; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .dropzone { padding: 3rem 1.5rem; }
+            .content-block { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        
+        <!-- TOOL HEADER -->
+        <div class="tool-header">
+            <h1><i class="fa-solid fa-file-code" style="color: var(--theme-color);"></i> JSON to PDF Report Generator</h1>
+            <p>Compile raw data payloads and structured objects into clean, formatted PDF reports.</p>
+        </div>
+
+      <!-- UPLOAD DROPZONE -->
+        <div class="dropzone" id="pdf-dropzone">
+            <i class="fa-solid fa-file-code dropzone-icon"></i>
+            <div class="dropzone-text">Drop your JSON file here (or select file)</div>
+            
+            <input type="file" id="file-input" accept=".json" style="display: none;">
+            <button class="btn-upload" id="select-files-btn">Select file</button>
+            
+            <br>
+            <div class="privacy-badge">
+                <i class="fa-solid fa-shield-halved"></i> Files are processed locally. Nothing is uploaded.
+            </div>
+        </div>
+
+        <!-- INFORMATION GRID -->
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fa-solid fa-table-cells"></i>
+                <h3>Structured Compiling</h3>
+                <p>Instantly transform raw computational outputs, experimental logs, or object arrays into readable printable layouts.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-user-shield"></i>
+                <h3>Absolute Privacy</h3>
+                <p>Your datasets and parameters never leave your local browser machine memory.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Instant Generation</h3>
+                <p>Compile report documents client-side without waiting for external server processing.</p>
+            </div>
+        </div>
+
+        <!-- LONG-FORM CONTENT -->
+        <div class="content-section">
+            
+            <div class="content-block">
+                <h2><i class="fa-solid fa-list-check"></i> How to Compile JSON to PDF</h2>
+                <p>Generating reports takes seconds:</p>
+                <ul class="step-list">
+                    <li><strong>Upload your JSON file:</strong> Drop your structured data file into the browser drop zone.</li>
+                    <li><strong>Compile Report:</strong> Click the generation button to format parameters into a printable PDF layout.</li>
+                    <li><strong>Download PDF:</strong> Save your newly structured report document straight to your machine.</li>
+                </ul>
+            </div>
+            
+            <div class="content-block">
+                <h2><i class="fa-solid fa-microscope"></i> About the JSON Report Generator</h2>
+                <p><a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">Researchers</a> and bioinformaticians frequently output experimental statistics, gene configurations, or dataset parameters as raw JSON. This tool turns text payloads into neat, documented PDF report sheets locally.</p>
+            </div>
+
+            <div class="content-block">
+                <h2><i class="fa-solid fa-dna"></i> Why Name it PDFase?</h2>
+                <p>In biochemistry, an enzyme (ending in "-ase") is a specialized molecular machine that binds to a substrate to instantly modify or convert it. PDFase operates as a high-speed digital enzyme for data transformation—executing compiling tasks securely on your hardware.</p>
+            </div>
+
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Are my data payloads uploaded to a server when generating PDFs?</h3>
+                <p>No. The JSON-to-PDF compiler runs completely client-side within your browser. Your data files never leave your device.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> What formats of JSON files are supported?</h3>
+                <p>Standard JSON data structures, logs, or flat object arrays can be loaded and transformed into printable reports.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Does this tool work offline?</h3>
+                <p>Yes. Once loaded, the browser client operates completely independently of an active internet connection.</p>
+            </div>
+        </div>
+
+    </main>
+
+<!-- FOOTER START -->
+<footer class="footer">
+    <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+        <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms & Conditions</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+        <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+            &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+        </div>
+    </div>
+</footer>
+<!-- FOOTER END -->
+    
+    <!-- EXTERNAL TOOL LOGIC -->
+    <script src="script.js"></script>
+
+</body>
+</html>
