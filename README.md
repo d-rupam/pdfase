@@ -15,7 +15,7 @@ Because these reactions execute entirely within the local browser memory, absolu
 
 ---
 
-## 🛠️ The Complete Enzyme Catalog (37 Tools)
+## 🛠️ The Complete Enzyme Catalog (45 Tools)
 
 ### 🟦 Organize PDF
 * **Merge PDF:** Combine several PDF files to one.
@@ -57,10 +57,10 @@ Because these reactions execute entirely within the local browser memory, absolu
 * **Invert PDF colors:** Turn white paper backgrounds into dark mode for easier reading.
 
 ### 🟨 Protect and Optimize
-* **Inspect PDF file:** Examine the internal structure.
 * **Zip PDF:** Create a zip archive of one or more PDF files.
 * **Add attachments to PDF:** Embed files inside a PDF document.
 * **Compress PDF:** Reduce PDF file size with adjustable compression.
+* **PDF metadata viewer:** Read hidden document properties, author details, and creation data.
 * **Edit metadata in PDF:** Modify the metadata fields like title, author etc.
 * **Remove metadata from PDF:** Delete document information and hidden metadata.
 * **Add password to PDF:** Protect a PDF file with a password.
@@ -68,6 +68,7 @@ Because these reactions execute entirely within the local browser memory, absolu
 * **Scan to PDF:** Capture pages with camera and create a PDF.
 * **OCR PDF:** Make scanned PDFs searchable.
 * **PDF font & preflight checker:** Audit embedded fonts, color spaces, and layout compliance.
+* **Inspect PDF file:** Examine the internal structure.
 
 ---
 
@@ -75,7 +76,7 @@ Because these reactions execute entirely within the local browser memory, absolu
 
 I am an undergraduate Microbiology student, not a formally trained computer scientist. 
 
-This entire ecosystem-comprising nearly 40 complex, client-side data manipulation tools-was architected and built in an intense **3-day sprint**. 
+This entire ecosystem-comprising  about 45 complex, client-side data manipulation tools-was architected and built in an intense **3-day sprint**. 
 
 Instead of getting bogged down in memorizing vanilla JavaScript syntax, API boilerplate, or canvas coordinate math, I leveraged **Google Gemini** as my "junior developer." I defined the structural logic, the biological metaphors, the UI/UX ecosystem, and the strict privacy parameters (zero-server data processing). Gemini acted as my syntax translator, allowing me to build at the speed of thought. 
 
