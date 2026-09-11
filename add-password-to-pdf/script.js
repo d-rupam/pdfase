@@ -2,8 +2,7 @@
 // 1. INJECT DEPENDENCIES & STYLES (ADD PASSWORD)
 // ==========================================
 (function initEnvironment() {
-    // Inject QPDF WASM (The industry standard for client-side PDF cryptography)
-    // We swap out pdf-lib here because pdf-lib cannot write encrypted files.
+    // Inject QPDF WASM
     if (!window.QPDF) {
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/qpdf-wasm@1.0.0/dist/qpdf.js';
@@ -12,49 +11,23 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Dynamic Dropzone Shrinking */
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
         .dropzone.has-files { padding: 1.25rem 1rem 0.25rem 1rem !important; margin-bottom: 0 !important; cursor: default; }
 
-        /* A4 Grid Layout for the selected file */
         .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; }
-        
-        /* Rigid Fixed-Height Card */
         .a4-card { width: 120px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
-        
         .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .a4-icon { font-size: 2.5rem; color: var(--theme-color, #ffbf00); transition: color 0.2s; }
-        
-        .a4-name { 
-            font-size: 0.75rem; 
-            color: var(--text-main); 
-            font-weight: 500; 
-            width: 100%; 
-            height: 38px; 
-            margin-top: 5px;
-            padding-top: 6px; 
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            line-height: 1.3;
-            word-break: break-word;
-        }
-        
+        .a4-name { font-size: 0.75rem; color: var(--text-main); font-weight: 500; width: 100%; height: 38px; margin-top: 5px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.3; word-break: break-word; }
         .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .a4-remove:hover { transform: scale(1.1); }
 
-        /* Force zero gap between Dropzone and Action Container */
         .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
-        /* Options Panel for Password Input */
         .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; width: 100%; max-width: 420px; font-family: 'Space Grotesk', sans-serif; position: relative; }
         .options-panel label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         
@@ -62,55 +35,18 @@
         .options-panel input[type="password"], .options-panel input[type="text"] { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.6rem 4.5rem 0.6rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; }
         .options-panel input:focus { border-color: var(--theme-color, #ffbf00); }
         
-        /* Multi-action icons container on right side of main input */
         .input-actions-right { position: absolute; right: 10px; display: flex; align-items: center; gap: 6px; }
         
         .toggle-password, .copy-password-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; padding: 2px; }
         .toggle-password:hover, .copy-password-btn:hover { color: var(--theme-color, #ffbf00); }
 
-        /* Clean Modern Generator Pill Button */
-        .gen-toggle-btn { 
-            background: rgba(255, 191, 0, 0.08); 
-            border: 1px solid rgba(255, 191, 0, 0.25); 
-            color: var(--theme-color, #ffbf00); 
-            font-size: 0.75rem; 
-            font-family: 'Space Grotesk', sans-serif; 
-            cursor: pointer; 
-            font-weight: 600; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 5px; 
-            transition: background-color 0.2s ease, border-color 0.2s ease; 
-            box-shadow: none !important;
-        }
+        .gen-toggle-btn { background: rgba(255, 191, 0, 0.08); border: 1px solid rgba(255, 191, 0, 0.25); color: var(--theme-color, #ffbf00); font-size: 0.75rem; font-family: 'Space Grotesk', sans-serif; cursor: pointer; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; transition: background-color 0.2s ease, border-color 0.2s ease; box-shadow: none !important; }
         .gen-toggle-btn:hover { background: rgba(255, 191, 0, 0.15); border-color: var(--theme-color); color: #fff; transform: none !important; }
 
-        /* Embedded Password Generator Drawer */
         .password-generator-box { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 191, 0, 0.3); border-radius: 8px; padding: 1.1rem 1rem 1rem 1rem; margin-top: 0.25rem; display: none; flex-direction: column; gap: 0.75rem; font-family: 'Space Grotesk', sans-serif; position: relative; }
         .password-generator-box.active { display: flex; }
         
-        /* Pro-Grade Circular Floating Close Button on Top Right Edge */
-        .gen-close-btn { 
-            position: absolute; 
-            top: -10px; 
-            right: -10px; 
-            background: #1a1a1e; 
-            border: 1px solid rgba(255, 191, 0, 0.3); 
-            color: var(--text-muted); 
-            width: 24px; 
-            height: 24px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            font-size: 0.75rem; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4); 
-            transition: all 0.2s; 
-            z-index: 5;
-        }
+        .gen-close-btn { position: absolute; top: -10px; right: -10px; background: #1a1a1e; border: 1px solid rgba(255, 191, 0, 0.3); color: var(--text-muted); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: all 0.2s; z-index: 5; }
         .gen-close-btn:hover { background: #ff3366; border-color: #ff3366; color: #fff; transform: scale(1.1); }
 
         .gen-preview-row { display: flex; gap: 8px; align-items: center; }
@@ -130,29 +66,8 @@
         .btn-use-gen { background: var(--theme-color, #ffbf00); color: #050505; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: transform 0.1s, background-color 0.2s; text-align: center; margin-top: 4px; box-shadow: 0 2px 8px rgba(255, 191, 0, 0.2); }
         .btn-use-gen:hover { background-color: #ffd233; transform: translateY(-1px); }
 
-        /* Eye-Friendly Balanced Amber Action Button */
-        .btn-action { 
-            background-color: #e6ac00; 
-            color: #050505; 
-            border: none; 
-            padding: 0.85rem 2.5rem; 
-            font-size: 1.05rem; 
-            font-weight: 700; 
-            font-family: 'Space Grotesk', sans-serif; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); 
-            text-decoration: none; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        .btn-action:hover { 
-            background-color: #ffbf00;
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); 
-        }
+        .btn-action { background-color: #e6ac00; color: #050505; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-action:hover { background-color: #ffbf00; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -172,9 +87,6 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ==========================================
-    // 2. STATE MANAGEMENT & DOM SETUP
-    // ==========================================
     let activePdfFile = null; 
 
     const dropzone = document.getElementById('pdf-dropzone');
@@ -250,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
 
-        // --- Logic Component Bindings ---
         const passInput = optionsPanel.querySelector('#pdf-password');
         const toggleBtn = optionsPanel.querySelector('#toggle-pass-btn');
         const eyeIcon = optionsPanel.querySelector('#toggle-eye-icon');
@@ -370,9 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initPasswordUI();
 
-    // ==========================================
-    // 3. BULLETPROOF EVENT LISTENERS 
-    // ==========================================
     if (selectFilesBtn) {
         selectFilesBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
@@ -413,9 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.clipboardData && e.clipboardData.files.length > 0) handleFile(e.clipboardData.files[0]);
     });
 
-    // ==========================================
-    // 4. FILE HANDLING & UI RENDERING
-    // ==========================================
     function handleFile(file) {
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
             alert('Invalid format. Please select a PDF document.');
@@ -470,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE ENCRYPTION LOGIC (QPDF-WASM)
+    // 5. CLIENT-SIDE ENCRYPTION LOGIC
     // ==========================================
     async function executeEncryption() {
         if (!activePdfFile) {
@@ -487,8 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!window.qpdf) {
-            // Note: Ensuring the WASM script is available in window
+        if (!window.QPDF) {
             alert('Encryption Engine is still loading. Please wait a moment.');
             return;
         }
@@ -502,18 +406,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
             
-            // QPDF WASM Client-Side Implementation
-            // qpdf-wasm wraps the core C++ QPDF engine for browser use.
-            const pdf = await window.qpdf.create();
+            // Wait for QPDF WASM module to be completely ready
+            const pdf = await window.QPDF.create();
             
-            // Load the unencrypted PDF buffer into the engine
             await pdf.read(uint8Array);
+            await pdf.encrypt(password, password, 256); // 256-bit AES Encryption
             
-            // Apply AES-256 Encryption
-            // 256 indicates AES 256-bit encryption (the highest standard).
-            await pdf.encrypt(password, password, 256);
-            
-            // Output the encrypted bytes
             const encryptedBytes = await pdf.save();
 
             const blob = new Blob([encryptedBytes], { type: 'application/pdf' });
