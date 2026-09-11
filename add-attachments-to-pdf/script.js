@@ -80,7 +80,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     let mainPdfFile = null; 
-    let loadedPdfDoc = null;
+    let rawPdfBuffer = null;
     let attachedFiles = [];
 
     const dropzone = document.getElementById('pdf-dropzone');
@@ -223,10 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const arrayBuffer = await file.arrayBuffer();
-            const { PDFDocument } = window.PDFLib;
-            loadedPdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-            
+            rawPdfBuffer = await file.arrayBuffer();
             mainPdfFile = file;
             renderFileCard();
             initAttachmentUI();
@@ -269,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.removeMainFile = function(event) {
         if (event) { event.stopPropagation(); event.preventDefault(); }
         mainPdfFile = null; 
-        loadedPdfDoc = null; 
+        rawPdfBuffer = null; 
         attachedFiles = [];
         renderFileCard();
         
@@ -279,16 +276,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.resetTool = function() { 
         mainPdfFile = null;
-        loadedPdfDoc = null;
+        rawPdfBuffer = null;
         attachedFiles = [];
         window.location.reload(); 
     };
 
     // ==========================================
-    // 4. CLIENT-SIDE EMBEDDING LOGIC
+    // 4. CLIENT-SIDE EMBEDDING LOGIC (Fresh Load)
     // ==========================================
     async function executeEmbedding() {
-        if (!loadedPdfDoc || !mainPdfFile) return alert('Please upload a main PDF file first.');
+        if (!rawPdfBuffer || !mainPdfFile) return alert('Please upload a main PDF file first.');
         if (attachedFiles.length === 0) return alert('Please select at least one file to attach.');
 
         const actionBtn = actionContainer.querySelector('.btn-action');
@@ -297,11 +294,15 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.disabled = true;
             actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Embedding Files...';
 
+            const { PDFDocument } = window.PDFLib;
+            // Always initialize a brand new independent instance from the raw buffer copy
+            const freshPdfDoc = await PDFDocument.load(rawPdfBuffer, { ignoreEncryption: true });
+
             for (let i = 0; i < attachedFiles.length; i++) {
                 const attFile = attachedFiles[i];
                 const attBuffer = await attFile.arrayBuffer();
                 
-                await loadedPdfDoc.attach(attBuffer, attFile.name, {
+                await freshPdfDoc.attach(attBuffer, attFile.name, {
                     mimeType: attFile.type || 'application/octet-stream',
                     description: `Attached file: ${attFile.name}`,
                     creationDate: new Date(),
@@ -309,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            const pdfBytes = await loadedPdfDoc.save();
+            const pdfBytes = await freshPdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
