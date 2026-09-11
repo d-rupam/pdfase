@@ -1,29 +1,25 @@
 // ==========================================
-// 1. LOCAL WASM INITIALIZATION & STYLES
+// 1. INJECT DEPENDENCIES & STYLES (ADD PASSWORD)
 // ==========================================
 (function initEnvironment() {
-    // WebAssembly MUST be hosted locally to work securely offline and avoid CDN CORS blocking.
+    // Inject the @jspawn/qpdf-wasm package the user found
     const qpdfScript = document.createElement('script');
-    qpdfScript.src = '/assets/qpdf.js'; 
+    qpdfScript.src = 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/qpdf.js'; 
     
     qpdfScript.onload = () => {
-        // Emscripten exposes the module factory. We configure locateFile to route the binary path.
-        if (typeof Module !== 'undefined' || typeof qpdf === 'function') {
-            const factory = typeof qpdf === 'function' ? qpdf : Module;
-            factory({
+        // Initialize the WebAssembly module and point it to the CDN binary
+        if (typeof qpdf === 'function') {
+            qpdf({
                 locateFile: (path) => {
-                    if(path.endsWith('.wasm')) return '/assets/' + path;
+                    if (path.endsWith('.wasm')) {
+                        return 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/' + path;
+                    }
                     return path;
-                },
-                noInitialRun: true
+                }
             }).then(instance => {
                 window.qpdfEngine = instance;
             });
         }
-    };
-    
-    qpdfScript.onerror = () => {
-        console.warn("Local qpdf.js not found. Please download the QPDF WASM files to your /assets/ folder.");
     };
     
     document.head.appendChild(qpdfScript);
@@ -391,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE ENCRYPTION LOGIC (Emscripten VFS)
+    // 4. CLIENT-SIDE ENCRYPTION LOGIC (WASM VFS)
     // ==========================================
     async function executeEncryption() {
         if (!activePdfFile) {
@@ -410,9 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const actionBtn = actionContainer.querySelector('.btn-action');
 
-        // Check if the local WebAssembly engine successfully initialized
         if (!window.qpdfEngine) {
-            alert("CRITICAL SETUP MISSING:\\n\\nThe QPDF WebAssembly engine is not running. You must download the 'qpdf.js' and 'qpdf.wasm' files and place them in your local /assets/ directory.\\n\\nPublic CDNs cannot serve WASM binaries reliably for offline applications.");
+            alert("Encryption Engine is still initializing. Please wait a few seconds and try again.");
             return;
         }
         
@@ -423,11 +418,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const arrayBuffer = await activePdfFile.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
             
-            // 1. Write the unencrypted file into Emscripten's virtual offline filesystem
+            // Write the unencrypted file into Emscripten's virtual filesystem
             window.qpdfEngine.FS.writeFile('/input.pdf', uint8Array);
             
-            // 2. Execute the CLI command internally via WASM
-            // Equivalent to running: qpdf --encrypt pass pass 256 -- input.pdf output.pdf
+            // Execute the QPDF encryption command internally via WASM
             window.qpdfEngine.callMain([
                 '--encrypt', 
                 password, 
@@ -438,10 +432,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 '/output.pdf'
             ]);
             
-            // 3. Read the encrypted file back out of virtual memory
+            // Read the encrypted file back out
             const encryptedBytes = window.qpdfEngine.FS.readFile('/output.pdf');
             
-            // 4. Cleanup memory to prevent browser crashing on multiple uses
+            // Cleanup memory to prevent freezing on multiple files
             window.qpdfEngine.FS.unlink('/input.pdf');
             window.qpdfEngine.FS.unlink('/output.pdf');
 
@@ -485,4 +479,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-}); // End of DOMContentLoaded
+});
