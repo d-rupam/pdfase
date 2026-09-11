@@ -1,15 +1,13 @@
 // ==========================================
-// 1. INJECT DEPENDENCIES & STYLES
+// 1. INJECT DEPENDENCIES & STYLES (CROP PDF)
 // ==========================================
 (function initEnvironment() {
-    // 1. pdf-lib for editing the internal bounding boxes
     if (!window.PDFLib) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
         document.head.appendChild(script);
     }
 
-    // 2. pdf.js for rendering the visual viewer canvas
     if (!window.pdfjsLib) {
         const pdfScript = document.createElement('script');
         pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
@@ -18,6 +16,8 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
+        :root { --theme-color: #39ff14; }
+
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; cursor: pointer; }
         .dropzone.has-files { display: none !important; }
 
@@ -27,21 +27,32 @@
         .top-toolbar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; }
         .file-info { color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
-        /* Main Workspace: Left Canvas, Right Controls */
+        /* Main Workspace Layout */
         .crop-workspace { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; width: 100%; align-items: start; }
         @media (max-width: 900px) { .crop-workspace { grid-template-columns: 1fr; } }
 
-        /* --- Viewer Area (Left) --- */
+        /* Viewer Panel */
         .viewer-panel { display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%; }
         
-        .canvas-wrapper { position: relative; background: #e0e0e0; border: 1px solid var(--border-subtle); border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: inline-block; user-select: none; touch-action: none; overflow: hidden; }
+        .canvas-wrapper { position: relative; background: #1a1a1a; border: 1px solid var(--border-subtle); border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: inline-block; user-select: none; touch-action: none; overflow: hidden; max-width: 100%; }
         #pdf-render-canvas { display: block; max-width: 100%; height: auto; }
+
+        /* Interactive Crop Overlay */
+        #draw-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         
-        /* Interactive Overlay for Drawing Crop Box */
-        #draw-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; z-index: 10; background: rgba(0,0,0,0.4); }
+        /* The Crop Box with 8 Handles */
+        .crop-box { position: absolute; border: 2px solid var(--theme-color); background: rgba(57, 255, 20, 0.05); pointer-events: auto; cursor: move; box-shadow: 0 0 0 9999px rgba(0,0,0,0.65); }
         
-        /* Visual Crop Box (Highlights the kept area) */
-        .crop-box { position: absolute; background-color: transparent; border: 2px dashed var(--theme-color); box-shadow: 0 0 0 9999px rgba(0,0,0,0.6); pointer-events: none; }
+        /* Resize Handles */
+        .crop-handle { position: absolute; width: 12px; height: 12px; background: #fff; border: 2px solid var(--theme-color); border-radius: 50%; z-index: 15; }
+        .handle-nw { top: -6px; left: -6px; cursor: nwse-resize; }
+        .handle-ne { top: -6px; right: -6px; cursor: nesw-resize; }
+        .handle-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+        .handle-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+        .handle-n  { top: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+        .handle-s  { bottom: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+        .handle-w  { top: calc(50% - 6px); left: -6px; cursor: ew-resize; }
+        .handle-e  { top: calc(50% - 6px); right: -6px; cursor: ew-resize; }
 
         /* Pagination Controls */
         .pagination-controls { display: flex; gap: 1rem; align-items: center; background: var(--bg-card); padding: 0.5rem 1.5rem; border-radius: 20px; border: 1px solid var(--border-subtle); }
@@ -50,7 +61,7 @@
         .page-btn:disabled { color: #444; cursor: not-allowed; }
         .page-info { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-main); }
 
-        /* --- Controls Panel (Right) --- */
+        /* Controls Panel */
         .controls-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
         .controls-panel h3 { color: #fff; font-size: 1.1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
         
@@ -61,17 +72,16 @@
         .input-group select { background: var(--bg-base); color: #fff; border: 1px solid var(--border-subtle); padding: 0.75rem 1rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; transition: border-color 0.2s; width: 100%; cursor: pointer; }
         .input-group select:focus { border-color: var(--theme-color); }
 
-        .panel-btn { background-color: transparent; color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); padding: 0.75rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-        .panel-btn:hover { background-color: rgba(255, 51, 102, 0.1); border-color: #ff3366; }
+        .panel-btn { background-color: transparent; color: var(--theme-color); border: 1px solid rgba(57, 255, 20, 0.3); padding: 0.75rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+        .panel-btn:hover { background-color: rgba(57, 255, 20, 0.1); border-color: var(--theme-color); }
 
-        /* Action Box */
-        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2rem; padding-top: 1rem; }
+        .bottom-action-box { width: 100%; display: flex; justify-content: center; margin-top: 2rem; padding-top: 1rem; flex-direction: column; align-items: center; gap: 12px; }
         
-        .btn-action { background-color: #2ee310; color: #0b1121; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(46, 227, 16, 0.2); display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-action { background-color: #32e011; color: #0b1121; border: none; padding: 1rem 3rem; font-size: 1.1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(46, 227, 16, 0.2); display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
         .btn-action:hover { background-color: #34fa14; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 227, 16, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
         
-        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.65rem 1.1rem; font-size: 0.85rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); padding: 0.65rem 1.1rem; font-size: 0.85rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
         .btn-secondary:hover { border-color: var(--theme-color); color: var(--theme-color); background-color: rgba(57, 255, 20, 0.05); }
 
         .success-message { width: 100%; text-align: center; margin-bottom: 2rem; }
@@ -79,28 +89,26 @@
     document.head.appendChild(style);
 })();
 
+// ==========================================
+// STATE MANAGEMENT & INITIALIZATION
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Core State
     let activePdfFile = null;
     let rawPdfBytes = null;
     let pdfDocProxy = null;
     let totalPages = 0;
     let currentPage = 1;
     
-    // Holds the relative crop coordinates: { relX, relY, relW, relH }
-    let activeCropBox = null; 
-    
-    // Drawing State
-    let isDrawing = false;
-    let startX = 0, startY = 0;
+    // Crop Box state stored as proportions [0 to 1] relative to rendered canvas dimensions
+    let cropBox = { x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
     const selectFilesBtn = document.getElementById('select-files-btn');
     const mainContainer = dropzone.parentNode;
 
-    // --- 1. BUILD UI ---
+    // Build Workspace UI
     const workspaceContainer = document.createElement('div');
     workspaceContainer.className = 'workspace-container';
     
@@ -111,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="crop-workspace">
-            
-            <!-- LEFT: Viewer Panel -->
             <div class="viewer-panel">
                 <div class="canvas-wrapper" id="canvas-wrapper">
                     <canvas id="pdf-render-canvas"></canvas>
@@ -126,11 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- RIGHT: Controls Panel -->
             <div class="controls-panel">
                 <div>
-                    <h3><i class="fa-solid fa-crop" style="color: var(--theme-color);"></i> Crop Tools</h3>
-                    <p class="info-text">Click and drag your mouse over the document preview to draw the exact area you want to keep.</p>
+                    <h3><i class="fa-solid fa-crop" style="color: var(--theme-color);"></i> Precision Cropper</h3>
+                    <p class="info-text">Drag the border lines or use the 8 handles to isolate the exact page section you want to keep.</p>
                 </div>
                 
                 <div class="input-group">
@@ -142,12 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
-                    <button class="panel-btn" id="btn-clear-box">
-                        <i class="fa-solid fa-eraser"></i> Clear Selection
+                    <button class="panel-btn" id="btn-reset-box">
+                        <i class="fa-solid fa-rotate-left"></i> Reset to Full Page
                     </button>
-                    <p class="info-text" style="font-size: 0.75rem; color: #555; text-align: center; margin-top: 10px;">
-                        <i class="fa-solid fa-circle-info"></i> Content outside the box will be trimmed.
-                    </p>
                 </div>
             </div>
         </div>
@@ -161,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     mainContainer.insertBefore(workspaceContainer, dropzone.nextSibling);
 
-    // Elements
     const pdfRenderCanvas = document.getElementById('pdf-render-canvas');
     const pdfRenderCtx = pdfRenderCanvas.getContext('2d');
     const drawOverlay = document.getElementById('draw-overlay');
@@ -172,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const numSpan = document.getElementById('page-num');
     const countSpan = document.getElementById('page-count');
     
-    // --- 2. UPLOAD & PDF.JS RENDERING ---
+    // File upload listeners
     if(selectFilesBtn) selectFilesBtn.addEventListener('click', (e) => { e.preventDefault(); fileInput.click(); });
     dropzone.addEventListener('click', (e) => { if (!activePdfFile && e.target !== fileInput) fileInput.click(); });
     fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
 
     async function handleFile(file) {
-        if (file.type !== 'application/pdf') return alert('Please select a valid PDF.');
+        if (file.type !== 'application/pdf') return alert('Please select a valid PDF document.');
         activePdfFile = file;
         document.getElementById('active-filename').innerHTML = `<i class="fa-solid fa-file-pdf" style="color: var(--theme-color);"></i> ${file.name}`;
         
@@ -207,8 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         pdfRenderCanvas.width = viewport.width;
         pdfRenderCanvas.height = viewport.height;
-        pdfRenderCanvas.style.width = '100%';
-        pdfRenderCanvas.style.height = 'auto';
 
         await page.render({ canvasContext: pdfRenderCtx, viewport: viewport }).promise;
         
@@ -217,141 +216,141 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPrev.disabled = num <= 1;
         btnNext.disabled = num >= totalPages;
 
-        redrawVisualBox();
+        renderCropBoxUI();
     }
 
     btnPrev.addEventListener('click', () => { if(currentPage > 1) renderPage(currentPage - 1); });
     btnNext.addEventListener('click', () => { if(currentPage < totalPages) renderPage(currentPage + 1); });
 
-    // --- 3. INTERACTIVE DRAWING LOGIC ---
-    function getPointerPos(e) {
-        const rect = drawOverlay.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
-        };
+    // ==========================================
+    // INTERACTIVE 8-HANDLE CROP BOX CONTROLLER
+    // ==========================================
+    function renderCropBoxUI() {
+        drawOverlay.innerHTML = '';
+        const rect = pdfRenderCanvas.getBoundingClientRect();
+        
+        const boxEl = document.createElement('div');
+        boxEl.className = 'crop-box';
+        boxEl.style.left = (cropBox.x * rect.width) + 'px';
+        boxEl.style.top = (cropBox.y * rect.height) + 'px';
+        boxEl.style.width = (cropBox.w * rect.width) + 'px';
+        boxEl.style.height = (cropBox.h * rect.height) + 'px';
+
+        // Create 8 Handles
+        const handles = ['nw', 'ne', 'se', 'sw', 'n', 's', 'w', 'e'];
+        handles.forEach(h => {
+            const handle = document.createElement('div');
+            handle.className = `crop-handle handle-${h}`;
+            handle.dataset.handle = h;
+            boxEl.appendChild(handle);
+        });
+
+        drawOverlay.appendChild(boxEl);
+        initDragAndResize(boxEl);
     }
 
-    drawOverlay.addEventListener('mousedown', startDrawing);
-    drawOverlay.addEventListener('mousemove', draw);
-    window.addEventListener('mouseup', stopDrawing); 
-    
-    drawOverlay.addEventListener('touchstart', startDrawing, {passive: false});
-    drawOverlay.addEventListener('touchmove', draw, {passive: false});
-    window.addEventListener('touchend', stopDrawing);
+    function initDragAndResize(boxEl) {
+        let isInteracting = false;
+        let actionType = null; // 'drag' or handle name ('nw', 'ne', etc.)
+        let startX = 0, startY = 0;
+        let startBox = { ...cropBox };
 
-    function startDrawing(e) {
-        if(e.button !== 0 && e.type !== 'touchstart') return; 
-        
-        drawOverlay.innerHTML = ''; // Clear previous box
-        activeCropBox = null;
-        isDrawing = true;
-        
-        const pos = getPointerPos(e);
-        startX = pos.x;
-        startY = pos.y;
+        boxEl.addEventListener('mousedown', startInteraction);
+        boxEl.addEventListener('touchstart', startInteraction, { passive: false });
 
-        const box = document.createElement('div');
-        box.className = 'crop-box';
-        box.id = 'current-crop-box';
-        box.style.left = startX + 'px';
-        box.style.top = startY + 'px';
-        box.style.width = '0px';
-        box.style.height = '0px';
-        
-        // Remove the darkened background to replace it with the box shadow technique
-        drawOverlay.style.background = 'transparent';
-        drawOverlay.appendChild(box);
-    }
-
-    function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault(); 
-        
-        const pos = getPointerPos(e);
-        const box = document.getElementById('current-crop-box');
-        if(!box) return;
-
-        const width = Math.abs(pos.x - startX);
-        const height = Math.abs(pos.y - startY);
-        const left = Math.min(pos.x, startX);
-        const top = Math.min(pos.y, startY);
-
-        box.style.width = width + 'px';
-        box.style.height = height + 'px';
-        box.style.left = left + 'px';
-        box.style.top = top + 'px';
-    }
-
-    function stopDrawing() {
-        if (!isDrawing) return;
-        isDrawing = false;
-        
-        const box = document.getElementById('current-crop-box');
-        if (box) {
-            const w = parseFloat(box.style.width);
-            const h = parseFloat(box.style.height);
+        function startInteraction(e) {
+            e.stopPropagation();
+            isInteracting = true;
             
-            if (w < 10 || h < 10) {
-                drawOverlay.innerHTML = '';
-                drawOverlay.style.background = 'rgba(0,0,0,0.4)'; // Reset dark overlay
-                activeCropBox = null;
-                return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            startX = clientX;
+            startY = clientY;
+            startBox = { ...cropBox };
+
+            if (e.target.classList.contains('crop-handle')) {
+                actionType = e.target.dataset.handle;
+            } else {
+                actionType = 'drag';
             }
 
-            const overlayRect = drawOverlay.getBoundingClientRect();
-            activeCropBox = {
-                relX: parseFloat(box.style.left) / overlayRect.width,
-                relY: parseFloat(box.style.top) / overlayRect.height,
-                relW: w / overlayRect.width,
-                relH: h / overlayRect.height
-            };
+            window.addEventListener('mousemove', onInteracting);
+            window.addEventListener('touchmove', onInteracting, { passive: false });
+            window.addEventListener('mouseup', stopInteraction);
+            window.addEventListener('touchend', stopInteraction);
+        }
+
+        function onInteracting(e) {
+            if (!isInteracting) return;
+            e.preventDefault();
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const rect = pdfRenderCanvas.getBoundingClientRect();
+            const dx = (clientX - startX) / rect.width;
+            const dy = (clientY - startY) / rect.height;
+
+            let { x, y, w, h } = startBox;
+
+            if (actionType === 'drag') {
+                x = Math.max(0, Math.min(1 - w, startBox.x + dx));
+                y = Math.max(0, Math.min(1 - h, startBox.y + dy));
+            } else {
+                // Resize based on handle
+                if (actionType.includes('w')) {
+                    const newX = Math.max(0, Math.min(startBox.x + startBox.w - 0.05, startBox.x + dx));
+                    w = startBox.w + (startBox.x - newX);
+                    x = newX;
+                }
+                if (actionType.includes('e')) {
+                    w = Math.max(0.05, Math.min(1 - startBox.x, startBox.w + dx));
+                }
+                if (actionType.includes('n')) {
+                    const newY = Math.max(0, Math.min(startBox.y + startBox.h - 0.05, startBox.y + dy));
+                    h = startBox.h + (startBox.y - newY);
+                    y = newY;
+                }
+                if (actionType.includes('s')) {
+                    h = Math.max(0.05, Math.min(1 - startBox.y, startBox.h + dy));
+                }
+            }
+
+            cropBox = { x, y, w, h };
+            
+            // Real-time DOM update without full re-render
+            boxEl.style.left = (cropBox.x * rect.width) + 'px';
+            boxEl.style.top = (cropBox.y * rect.height) + 'px';
+            boxEl.style.width = (cropBox.w * rect.width) + 'px';
+            boxEl.style.height = (cropBox.h * rect.height) + 'px';
+        }
+
+        function stopInteraction() {
+            isInteracting = false;
+            window.removeEventListener('mousemove', onInteracting);
+            window.removeEventListener('touchmove', onInteracting);
+            window.removeEventListener('mouseup', stopInteraction);
+            window.removeEventListener('touchend', stopInteraction);
         }
     }
 
-    function redrawVisualBox() {
-        drawOverlay.innerHTML = '';
-        if (!activeCropBox) {
-            drawOverlay.style.background = 'rgba(0,0,0,0.4)';
-            return;
-        }
+    window.addEventListener('resize', () => { if (activePdfFile) renderCropBoxUI(); });
 
-        drawOverlay.style.background = 'transparent';
-        const overlayRect = drawOverlay.getBoundingClientRect();
-        const box = document.createElement('div');
-        box.className = 'crop-box';
-        box.id = 'current-crop-box';
-        
-        box.style.left = (activeCropBox.relX * overlayRect.width) + 'px';
-        box.style.top = (activeCropBox.relY * overlayRect.height) + 'px';
-        box.style.width = (activeCropBox.relW * overlayRect.width) + 'px';
-        box.style.height = (activeCropBox.relH * overlayRect.height) + 'px';
-        
-        drawOverlay.appendChild(box);
-    }
-
-    window.addEventListener('resize', () => { if(activePdfFile) redrawVisualBox(); });
-
-    document.getElementById('btn-clear-box').addEventListener('click', () => {
-        activeCropBox = null;
-        redrawVisualBox();
+    document.getElementById('btn-reset-box').addEventListener('click', () => {
+        cropBox = { x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
+        renderCropBoxUI();
     });
 
-    // --- 4. FINAL PDF-LIB PROCESSING ---
+    // ==========================================
+    // PDF-LIB TRIMMING & EXPORT
+    // ==========================================
     document.getElementById('btn-apply-crop').addEventListener('click', async () => {
-        
-        if(!activeCropBox) {
-            alert('Please draw a crop selection over the document first.');
-            return;
-        }
-
-        if(!window.PDFLib) return;
+        if (!window.PDFLib) return;
         
         const btn = document.getElementById('btn-apply-crop');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Trimming...';
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Trimming Document...';
 
         try {
             const { PDFDocument } = window.PDFLib;
@@ -364,15 +363,12 @@ document.addEventListener('DOMContentLoaded', () => {
             targetPages.forEach(page => {
                 const { width, height } = page.getSize();
                 
-                // Convert relative visual coords to absolute physical PDF coords
-                const cropWidth = activeCropBox.relW * width;
-                const cropHeight = activeCropBox.relH * height;
-                
-                const cropX = activeCropBox.relX * width;
-                // PDF-lib Y starts from bottom-left corner
-                const cropY = height - (activeCropBox.relY * height) - cropHeight;
+                // Convert visual proportions to physical PDF points
+                const cropWidth = cropBox.w * width;
+                const cropHeight = cropBox.h * height;
+                const cropX = cropBox.x * width;
+                const cropY = height - (cropBox.y * height) - cropHeight; // PDF origin is bottom-left
 
-                // Adjust bounding boxes to enforce visual cropping
                 page.setCropBox(cropX, cropY, cropWidth, cropHeight);
                 page.setMediaBox(cropX, cropY, cropWidth, cropHeight);
             });
@@ -384,11 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const baseName = activePdfFile.name.replace(/\.[^/.]+$/, "");
             const finalFileName = `PDFase_${baseName}_Cropped.pdf`;
 
+            const stealthAttribution = Math.random() > 0.5 
+                ? `<div style="margin-top: 15px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Processed securely via <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">PDFase Engine</a></div>`
+                : `<div style="margin-top: 15px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Client utility crafted by <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">Rupam Das</a></div>`;
+
             workspaceContainer.innerHTML = `
-                <div class="success-message">
+                <div class="success-message" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 3rem 1rem;">
                     <div style="color: var(--theme-color); font-size: 3rem; margin-bottom: 1rem;"><i class="fa-solid fa-circle-check"></i></div>
                     <div style="font-size: 1.8rem; color: #fff; font-weight: 700; margin-bottom: 0.5rem;">Document Cropped!</div>
-                    <div style="color: var(--text-muted); margin-bottom: 2rem;">Successfully trimmed ${scope === 'all' ? 'all pages' : 'the current page'}.</div>
+                    <div style="color: var(--text-muted); margin-bottom: 2rem;">Successfully trimmed ${scope === 'all' ? 'all pages' : 'the active page'}.</div>
                     
                     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                         <a href="${url}" download="${finalFileName}" class="btn-action">
@@ -398,12 +398,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <i class="fa-solid fa-rotate-right"></i> Crop Another
                         </button>
                     </div>
+                    ${stealthAttribution}
                 </div>
             `;
             
         } catch (error) {
             console.error('Processing Error:', error);
-            alert('An error occurred. Make sure your PDF is not password protected.');
+            alert('An error occurred. Make sure your PDF is not password-protected.');
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-scissors"></i> Crop Document & Download';
         }
