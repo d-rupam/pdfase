@@ -3,6 +3,7 @@
 [![Local First](https://img.shields.io/badge/Architecture-100%25_Local_Browser-success?style=for-the-badge)](https://pdfase.rupamdas.in/)
 [![Vanilla JS](https://img.shields.io/badge/Tech_Stack-Vanilla_JS_%7C_HTML_%7C_CSS-f7df1e?style=for-the-badge&logo=javascript&logoColor=black)]()
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted_On-Cloudflare_Pages-f38020?style=for-the-badge&logo=cloudflare&logoColor=white)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ![PDFase Frontend](assets/frontend.png)
 
@@ -76,11 +77,11 @@ Because these reactions execute entirely within the local browser memory, absolu
 
 I am an undergraduate Microbiology student, not a formally trained computer scientist. 
 
-This entire ecosystem-comprising  about 45 complex, client-side data manipulation tools-was architected and built in an intense **3-day sprint**. 
+This entire ecosystem—comprising about 45 complex, client-side data manipulation tools—was architected and built in an intense **3-day sprint**. 
 
 Instead of getting bogged down in memorizing vanilla JavaScript syntax, API boilerplate, or canvas coordinate math, I leveraged **Google Gemini** as my "junior developer." I defined the structural logic, the biological metaphors, the UI/UX ecosystem, and the strict privacy parameters (zero-server data processing). Gemini acted as my syntax translator, allowing me to build at the speed of thought. 
 
-The scientific method-running a test, observing the output, refining the prompt, and iterating (about 300 commits)-is language-agnostic. This project proves that with modern AI, domain experts can architect complex software tools tailored perfectly to their own industry's needs.
+The scientific method—running a test, observing the output, refining the prompt, and iterating (about 300 commits)—is language-agnostic. This project proves that with modern AI, domain experts can architect complex software tools tailored perfectly to their own industry's needs.
 
 ## 🚀 Technical Stack
 * **Core Logic:** Vanilla JavaScript (ES6+), HTML5, CSS3.
@@ -95,6 +96,9 @@ Because PDFase is 100% client-side, there is no backend server or Node.js enviro
 2. Open the directory.
 3. Serve using any local web server (e.g., Python: `python -m http.server 5500` or VS Code Live Server).
 4. Navigate to `http://localhost:5500`.
+
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).
 
 ---
 *Engineered by [Rupam Das](https://rupamdas.in)*
