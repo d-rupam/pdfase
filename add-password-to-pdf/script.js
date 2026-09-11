@@ -73,24 +73,39 @@
     `;
     document.head.appendChild(style);
 
-    // Modern Dynamic Import to bypass global variable binding issues
-    import('https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/qpdf.js')
-        .then(async (module) => {
-            const qpdfFactory = module.default || module;
-            window.qpdfEngine = await qpdfFactory({
+    // 1. Load the script using UNPKG instead of jsDelivr to avoid ES6 MIME type blocks
+    const qpdfScript = document.createElement('script');
+    qpdfScript.src = 'https://unpkg.com/@jspawn/qpdf-wasm/qpdf.js';
+    
+    qpdfScript.onload = () => {
+        // 2. Emscripten attaches to window.qpdf, window.qpdfWasm, or window.Module
+        const factory = window.qpdf || window.qpdfWasm || window.Module;
+        
+        if (typeof factory === 'function') {
+            factory({
                 locateFile: (path) => {
                     if (path.endsWith('.wasm')) {
-                        return 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/' + path;
+                        // Point exactly to the binary on the CDN
+                        return 'https://unpkg.com/@jspawn/qpdf-wasm/' + path;
                     }
                     return path;
                 }
+            }).then(instance => {
+                window.qpdfEngine = instance;
+                console.log("✅ QPDF WASM Engine Loaded Successfully");
+            }).catch(err => {
+                console.error("❌ WASM Instantiation Error:", err);
             });
-            console.log("✅ QPDF WASM Engine Loaded Successfully");
-        })
-        .catch(err => {
-            console.error("❌ QPDF Engine failed to load:", err);
-            alert("Failed to initialize the encryption engine. Please check your internet connection and try again.");
-        });
+        } else {
+            console.error("❌ Script loaded, but Emscripten factory not found.");
+        }
+    };
+
+    qpdfScript.onerror = () => {
+        console.error("❌ Network error: Failed to download qpdf.js");
+    };
+
+    document.head.appendChild(qpdfScript);
 })();
 
 // ==========================================
@@ -404,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionBtn = actionContainer.querySelector('.btn-action');
 
         if (!window.qpdfEngine) {
-            alert("Encryption Engine is still initializing. Please wait a few seconds and try again.");
+            alert("Encryption Engine is still initializing. Check your browser console (F12) for errors.");
             return;
         }
         
