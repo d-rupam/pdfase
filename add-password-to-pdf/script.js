@@ -2,28 +2,6 @@
 // 1. INJECT DEPENDENCIES & STYLES (ADD PASSWORD)
 // ==========================================
 (function initEnvironment() {
-    // Inject the @jspawn/qpdf-wasm package the user found
-    const qpdfScript = document.createElement('script');
-    qpdfScript.src = 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/qpdf.js'; 
-    
-    qpdfScript.onload = () => {
-        // Initialize the WebAssembly module and point it to the CDN binary
-        if (typeof qpdf === 'function') {
-            qpdf({
-                locateFile: (path) => {
-                    if (path.endsWith('.wasm')) {
-                        return 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/' + path;
-                    }
-                    return path;
-                }
-            }).then(instance => {
-                window.qpdfEngine = instance;
-            });
-        }
-    };
-    
-    document.head.appendChild(qpdfScript);
-
     const style = document.createElement('style');
     style.innerHTML = `
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
@@ -94,6 +72,25 @@
         .file-flow-final { color: #fff; font-weight: 700; border-bottom: 1px dashed var(--theme-color, #ffbf00); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
     `;
     document.head.appendChild(style);
+
+    // Modern Dynamic Import to bypass global variable binding issues
+    import('https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/qpdf.js')
+        .then(async (module) => {
+            const qpdfFactory = module.default || module;
+            window.qpdfEngine = await qpdfFactory({
+                locateFile: (path) => {
+                    if (path.endsWith('.wasm')) {
+                        return 'https://cdn.jsdelivr.net/npm/@jspawn/qpdf-wasm/' + path;
+                    }
+                    return path;
+                }
+            });
+            console.log("✅ QPDF WASM Engine Loaded Successfully");
+        })
+        .catch(err => {
+            console.error("❌ QPDF Engine failed to load:", err);
+            alert("Failed to initialize the encryption engine. Please check your internet connection and try again.");
+        });
 })();
 
 // ==========================================
