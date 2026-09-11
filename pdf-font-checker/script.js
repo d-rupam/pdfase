@@ -305,7 +305,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="preflight-metrics">
                             <div class="metric-row"><span class="metric-label">Pages:</span> <span class="metric-val">${numPages}</span></div>
                             <div class="metric-row"><span class="metric-label">Word Count:</span> <span class="metric-val">~${totalWords}</span></div>
-                            <div class="metric-row"><span class="metric-label">Fonts:</span> <span class="metric-val">${detectedFonts.size} detected</span></div>
+                            
+                            <!-- UPDATED FONT ROW -->
+                            <div class="metric-row" style="height: auto; align-items: flex-start; padding: 8px 10px;">
+                                <span class="metric-label">Fonts (${detectedFonts.size}):</span> 
+                                <span class="metric-val" style="font-size: 0.75rem; text-align: right; max-width: 65%; word-break: break-word; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
+                                    ${fontList}
+                                </span>
+                            </div>
+                            <!-- END UPDATED FONT ROW -->
+
                             <div class="metric-row"><span class="metric-label">Compliance:</span> <span class="metric-val" style="color: #34d399;">PASSED</span></div>
                         </div>
                     </div>
