@@ -273,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         attachedFiles = [];
         renderFileCard();
         
-        // Restore dropzone visibility properly on reset
         dropzone.style.display = 'block';
         initAttachmentUI();
     };
@@ -302,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const attFile = attachedFiles[i];
                 const attBuffer = await attFile.arrayBuffer();
                 
-                // Embed attachment natively using pdf-lib attach API safely
                 await loadedPdfDoc.attach(attBuffer, attFile.name, {
                     mimeType: attFile.type || 'application/octet-stream',
                     description: `Attached file: ${attFile.name}`,
@@ -322,8 +320,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('pdf-dropzone').style.display = 'none';
                 
                 const stealthAttribution = Math.random() > 0.5 
-                    ? `<div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted);">Processed securely via <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">PDFase Engine</a></div>`
-                    : `<div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted);">Client utility crafted by <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">Rupam Das</a></div>`;
+                    ? `<div style="margin-top: 15px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Processed securely via <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">PDFase Engine</a></div>`
+                    : `<div style="margin-top: 15px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Client utility crafted by <a href="https://rupamdas.in" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">Rupam Das</a></div>`;
 
                 actionContainer.innerHTML = `
                     <div class="success-message">
@@ -334,8 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #ffbf00); margin: 0 10px;"></i>
                         <span class="file-flow-final">${finalFileName}</span>
                     </div>
-                    ${stealthAttribution}
-                    <div class="button-group" style="margin-top: 15px;">
+                    <div class="button-group" style="margin-top: 5px;">
                         <a href="${url}" download="${finalFileName}" class="btn-action">
                             <i class="fa-solid fa-download"></i> Download Updated PDF
                         </a>
@@ -343,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <i class="fa-solid fa-rotate-right"></i> Attach More
                         </button>
                     </div>
+                    ${stealthAttribution}
                 `;
             }, 600);
 
