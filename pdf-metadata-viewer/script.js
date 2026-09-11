@@ -11,7 +11,7 @@
     const style = document.createElement('style');
     style.innerHTML = `
         /* Dynamic Dropzone Shrinking */
-        .dropzone.has-files { padding: 2rem 1rem 1rem 1rem !important; cursor: default; border: 1px solid var(--border-subtle); background-color: var(--bg-card); }
+        .dropzone.has-files { padding: 2rem 1rem 1rem 1rem !important; margin-bottom: 0 !important; cursor: default; border: 1px solid var(--border-subtle); background-color: var(--bg-card); }
         .dropzone.has-files .dropzone-icon, 
         .dropzone.has-files .dropzone-text, 
         .dropzone.has-files .btn-upload, 
@@ -51,11 +51,23 @@
         .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .a4-remove:hover { transform: scale(1.1); }
 
-        /* Action UI */
-        .action-container { margin-top: 1.5rem !important; display: none; flex-direction: column; align-items: center; gap: 1rem; animation: fadeIn 0.4s ease; max-width: 600px; margin: 0 auto; width: 100%; }
+        /* Action UI with strictly enforced bottom margin so it doesn't hit info grid */
+        .action-container { 
+            margin-top: 2rem !important; 
+            margin-bottom: 4rem !important; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 1.5rem; 
+            animation: fadeIn 0.4s ease; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            width: 100%; 
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; width: 100%; text-align: left; }
+        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; width: 100%; text-align: left; margin-bottom: 1rem; }
         .preflight-report-title { font-size: 0.95rem; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255, 191, 0, 0.2); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
         .preflight-metrics { display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
@@ -164,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         a4Grid.innerHTML = '';
         if (!mainPdfFile) {
             dropzone.classList.remove('has-files');
+            // Restore default margin when file is removed
+            dropzone.style.marginBottom = ''; 
             a4Grid.style.display = 'none';
             actionContainer.style.display = 'none';
             return;
@@ -220,12 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const { PDFDocument } = window.PDFLib;
-            // Load without updating metadata so we read exactly what is currently inside
             const pdfDoc = await PDFDocument.load(rawPdfBuffer, { updateMetadata: false });
             
             const formatData = (data) => data ? data : '<span style="color:var(--text-muted)">Not set</span>';
             
-            // Build the metadata dictionary
             const metadata = {
                 "File Name": mainPdfFile.name,
                 "File Size": (mainPdfFile.size / 1024).toFixed(2) + ' KB',
@@ -250,8 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
-            // Render the results
             setTimeout(() => {
+                // Hide the dropzone entirely to give the results absolute focus (matches font checker behavior)
+                dropzone.style.display = 'none';
+                
                 actionContainer.innerHTML = `
                     <div class="options-panel">
                         <div class="preflight-report-title">
@@ -261,13 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${metricsHtml}
                         </div>
                     </div>
-                    <div style="margin-top: 1rem;">
-                        <button class="btn-secondary" onclick="resetTool()">
+                    <div>
+                        <button class="btn-secondary" onclick="resetToolAndShowDropzone()">
                             <i class="fa-solid fa-rotate-right"></i> Check Another File
                         </button>
                     </div>
                 `;
-            }, 300); // Slight delay for UI smoothness
+            }, 300);
 
         } catch (error) {
             console.error('Metadata Read Error:', error);
@@ -275,5 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Extract Metadata';
             btn.disabled = false;
         }
+    }
+    
+    window.resetToolAndShowDropzone = function() {
+        dropzone.style.display = 'block';
+        window.removeMainFile();
     }
 });
