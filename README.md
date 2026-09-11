@@ -73,7 +73,7 @@ Because these reactions execute entirely within the local browser memory, absolu
 
 I am an undergraduate Microbiology student, not a formally trained computer scientist. 
 
-This entire ecosystem—comprising nearly 40 complex, client-side data manipulation tools—was architected and built in an intense **3-day sprint**. 
+This entire ecosystem-comprising nearly 40 complex, client-side data manipulation tools—was architected and built in an intense **3-day sprint**. 
 
 Instead of getting bogged down in memorizing vanilla JavaScript syntax, API boilerplate, or canvas coordinate math, I leveraged **Google Gemini** as my "junior developer." I defined the structural logic, the biological metaphors, the UI/UX ecosystem, and the strict privacy parameters (zero-server data processing). Gemini acted as my syntax translator, allowing me to build at the speed of thought. 
 
