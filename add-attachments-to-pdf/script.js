@@ -10,16 +10,41 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
+        /* Dynamic Dropzone Shrinking with top clearance for delete buttons */
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
-        .dropzone.has-files { padding: 1.25rem 1rem 0.25rem 1rem !important; margin-bottom: 0 !important; cursor: default; }
+        .dropzone.has-files { padding: 2rem 1rem 1rem 1rem !important; margin-bottom: 0 !important; cursor: default; }
 
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; max-height: 220px; overflow-y: auto; }
-        .a4-card { width: 110px; height: 150px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 8px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
+        /* A4 Grid Layout with top padding so badges/cross buttons are never clipped */
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 10px 0 0 0; margin: 0; max-height: 240px; overflow-y: auto; }
+        
+        /* Rigid Fixed-Height Cards matching Merge Tool */
+        .a4-card { width: 110px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; margin-top: 5px; }
         .a4-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
-        .a4-icon-wrapper { height: 80px; display: flex; align-items: center; justify-content: center; width: 100%; }
+        
+        .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .a4-icon { font-size: 2.2rem; color: var(--theme-color, #ffbf00); transition: color 0.2s; }
-        .a4-name { font-size: 0.7rem; color: var(--text-main); font-weight: 500; width: 100%; height: 35px; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.2; word-break: break-word; }
-        .a4-remove { position: absolute; top: -6px; right: -6px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
+        
+        /* Fixed multi-line text truncation matching Merge tool */
+        .a4-name { 
+            font-size: 0.75rem; 
+            color: var(--text-main); 
+            font-weight: 500; 
+            width: 100%; 
+            height: 38px; 
+            margin-top: 5px; 
+            padding-top: 6px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.05); 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: normal; 
+            line-height: 1.3; 
+            word-break: break-word; 
+        }
+        
+        .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .a4-remove:hover { transform: scale(1.1); }
 
         .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
