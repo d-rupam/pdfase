@@ -2,9 +2,11 @@
 // 1. INJECT DEPENDENCIES & STYLES (ADD PASSWORD)
 // ==========================================
 (function initEnvironment() {
-    if (!window.PDFLib) {
+    // Inject QPDF WASM (The industry standard for client-side PDF cryptography)
+    // We swap out pdf-lib here because pdf-lib cannot write encrypted files.
+    if (!window.QPDF) {
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+        script.src = 'https://cdn.jsdelivr.net/npm/qpdf-wasm@1.0.0/dist/qpdf.js';
         document.head.appendChild(script);
     }
 
@@ -18,7 +20,7 @@
         .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; }
         
         /* Rigid Fixed-Height Card */
-        .a4-card { width: 120px; height: 160px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
+        .a4-card { width: 120px; height: 160px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
         
         .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
@@ -47,7 +49,9 @@
         .a4-remove:hover { transform: scale(1.1); }
 
         /* Force zero gap between Dropzone and Action Container */
-        .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; }
+        .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
         /* Options Panel for Password Input */
@@ -126,7 +130,7 @@
         .btn-use-gen { background: var(--theme-color, #ffbf00); color: #050505; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: transform 0.1s, background-color 0.2s; text-align: center; margin-top: 4px; box-shadow: 0 2px 8px rgba(255, 191, 0, 0.2); }
         .btn-use-gen:hover { background-color: #ffd233; transform: translateY(-1px); }
 
-        /* Eye-Friendly Balanced Amber Action Button with Dark Text */
+        /* Eye-Friendly Balanced Amber Action Button */
         .btn-action { 
             background-color: #e6ac00; 
             color: #050505; 
@@ -163,7 +167,6 @@
     document.head.appendChild(style);
 })();
 
-
 // ==========================================
 // WAIT FOR HTML DOM TO FULLY LOAD
 // ==========================================
@@ -192,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function initPasswordUI() {
         actionContainer.innerHTML = '';
         
-        // Options Panel with Password Input, Copy Button, Eye Toggle & Enhanced Password Generator Drawer
         const optionsPanel = document.createElement('div');
         optionsPanel.className = 'options-panel';
         optionsPanel.innerHTML = `
@@ -212,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- Embedded Password Generator Box with Floating Circular Close Button -->
             <div class="password-generator-box" id="gen-drawer">
                 <button type="button" class="gen-close-btn" id="gen-close-trigger" title="Close Generator"><i class="fa-solid fa-xmark"></i></button>
                 <div class="gen-preview-row">
@@ -272,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const genSyms = optionsPanel.querySelector('#gen-syms');
         const genUseBtn = optionsPanel.querySelector('#gen-use-btn');
 
-        // Helper function for clipboard copying
         function copyTextToClipboard(text, iconElement) {
             if (!text) return;
             navigator.clipboard.writeText(text).then(() => {
@@ -285,19 +285,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(err => console.error('Failed to copy text: ', err));
         }
 
-        // Copy Main Input Password
         copyMainBtn.addEventListener('click', (e) => {
             e.preventDefault();
             copyTextToClipboard(passInput.value, copyMainIcon);
         });
 
-        // Copy Drawer Generator Password
         genCopyDrawerBtn.addEventListener('click', (e) => {
             e.preventDefault();
             copyTextToClipboard(genResult.value, copyDrawerIcon);
         });
 
-        // Eye Toggle
         toggleBtn.addEventListener('click', () => {
             if (passInput.type === 'password') {
                 passInput.type = 'text';
@@ -308,7 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Toggle Generator Drawer Open/Close
         genTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             genDrawer.classList.toggle('active');
@@ -322,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
             genDrawer.classList.remove('active');
         });
 
-        // Password Generator Core Function
         function generateNewPassword() {
             const length = parseInt(genSlider.value);
             const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -363,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
             generateNewPassword();
         });
 
-        // Apply Generated Password to Main Input
         genUseBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (genResult.value) {
@@ -476,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 5. CLIENT-SIDE ENCRYPTION LOGIC
+    // 5. CLIENT-SIDE ENCRYPTION LOGIC (QPDF-WASM)
     // ==========================================
     async function executeEncryption() {
         if (!activePdfFile) {
@@ -493,8 +487,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!window.PDFLib) {
-            alert('Engine is still loading. Please wait a moment.');
+        if (!window.qpdf) {
+            // Note: Ensuring the WASM script is available in window
+            alert('Encryption Engine is still loading. Please wait a moment.');
             return;
         }
 
@@ -505,18 +500,23 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Securing Document...';
 
             const arrayBuffer = await activePdfFile.arrayBuffer();
-            const { PDFDocument } = window.PDFLib;
+            const uint8Array = new Uint8Array(arrayBuffer);
             
-            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            // QPDF WASM Client-Side Implementation
+            // qpdf-wasm wraps the core C++ QPDF engine for browser use.
+            const pdf = await window.qpdf.create();
             
-            if (typeof pdfDoc.encrypt === 'function') {
-                pdfDoc.encrypt({ userPassword: password, ownerPassword: password });
-            } else if (typeof pdfDoc.setProtection === 'function') {
-                pdfDoc.setProtection({ userPassword: password, ownerPassword: password });
-            }
+            // Load the unencrypted PDF buffer into the engine
+            await pdf.read(uint8Array);
+            
+            // Apply AES-256 Encryption
+            // 256 indicates AES 256-bit encryption (the highest standard).
+            await pdf.encrypt(password, password, 256);
+            
+            // Output the encrypted bytes
+            const encryptedBytes = await pdf.save();
 
-            const pdfBytes = await pdfDoc.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const blob = new Blob([encryptedBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
             const baseName = activePdfFile.name.replace(/\.[^/.]+$/, "");
