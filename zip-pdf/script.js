@@ -2,7 +2,6 @@
 // 1. INJECT DEPENDENCIES & STYLES (ZIP PDF)
 // ==========================================
 (function initEnvironment() {
-    // Inject JSZip library for creating zip archives entirely client-side
     if (!window.JSZip) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
@@ -11,26 +10,55 @@
 
     const style = document.createElement('style');
     style.innerHTML = `
+        /* Dynamic Dropzone Shrinking */
         .dropzone { transition: padding 0.3s ease, min-height 0.3s ease; -webkit-tap-highlight-color: transparent; cursor: pointer; }
         .dropzone.has-files { padding: 1.25rem 1rem 0.25rem 1rem !important; margin-bottom: 0 !important; cursor: default; }
 
-        .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; max-height: 240px; overflow-y: auto; }
-        .a4-card { width: 110px; height: 150px; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; position: relative; padding: 8px; text-align: center; display: block; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
+        /* A4 Grid Layout inside Dropzone */
+        .a4-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; width: 100%; padding: 0; margin: 0; max-height: 320px; overflow-y: auto; }
+        
+        /* Rigid Fixed-Height Cards matching Merge Tool */
+        .a4-card { width: 110px; height: 160px; background-color: var(--bg-card, #121215); border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05)); border-radius: 6px; position: relative; padding: 10px; text-align: center; display: block; cursor: grab; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: none; }
         .a4-card:hover { border-color: rgba(255, 191, 0, 0.5); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(255, 191, 0, 0.15); }
-        .a4-icon-wrapper { height: 80px; display: flex; align-items: center; justify-content: center; width: 100%; }
-        .a4-icon { font-size: 2.2rem; color: var(--theme-color, #ffbf00); transition: color 0.2s; }
-        .a4-name { font-size: 0.7rem; color: var(--text-main); font-weight: 500; width: 100%; height: 35px; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.2; word-break: break-word; }
-        .a4-remove { position: absolute; top: -6px; right: -6px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
+        .a4-card.dragging { opacity: 0.4; border-color: var(--theme-color, #ffbf00); transform: scale(1.05); }
+        
+        .a4-icon-wrapper { height: 90px; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .a4-icon { font-size: 2.5rem; color: var(--text-muted, #888); transition: color 0.2s; }
+        .a4-card:hover .a4-icon { color: var(--theme-color, #ffbf00); }
+        
+        .a4-name { 
+            font-size: 0.75rem; 
+            color: var(--text-main, #e0e0e0); 
+            font-weight: 500; 
+            width: 100%; 
+            height: 38px; 
+            margin-top: 5px; 
+            padding-top: 6px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.05); 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: normal; 
+            line-height: 1.3; 
+            word-break: break-word; 
+        }
+        
+        .a4-remove { position: absolute; top: -8px; right: -8px; background: #ff3366; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; transition: transform 0.2s; }
         .a4-remove:hover { transform: scale(1.1); }
 
+        .a4-add { border: 2px dashed rgba(255, 191, 0, 0.3); background: rgba(255, 191, 0, 0.02); color: var(--theme-color, #ffbf00); cursor: pointer; box-shadow: none; display: flex; flex-direction: column; justify-content: center; height: 160px; }
+        .a4-add:hover { border-color: var(--theme-color, #ffbf00); background: rgba(255, 191, 0, 0.05); transform: translateY(-3px); }
+        .a4-add .a4-icon { color: var(--theme-color, #ffbf00); font-size: 2rem; margin-bottom: 5px; height: auto; }
+        .a4-add .a4-name { color: var(--theme-color, #ffbf00); font-weight: 600; border-top: none; height: auto; margin-top: 0; padding-top: 0; display: block; }
+
+        /* Action Container */
         .action-container { margin-top: 1rem !important; margin-bottom: 3rem; display: none; gap: 1rem; justify-content: center; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .button-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         
-        .options-panel { background: rgba(255, 191, 0, 0.02); border: 1px solid rgba(255, 191, 0, 0.15); padding: 1.25rem 1.5rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; align-items: center; width: 100%; max-width: 420px; font-family: 'Space Grotesk', sans-serif; text-align: center; }
-        .options-panel p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0; }
-
         .btn-action { background-color: #e6ac00; color: #050505; border: none; padding: 0.85rem 2.5rem; font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(230, 172, 0, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-action:hover { background-color: #ffbf00; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 191, 0, 0.35); }
         .btn-action:disabled { background-color: #222; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -51,7 +79,8 @@
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    let activeFiles = []; 
+    let pdfFiles = []; 
+    let draggedItemIndex = null;
 
     const dropzone = document.getElementById('pdf-dropzone');
     const fileInput = document.getElementById('file-input');
@@ -69,13 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initZipUI() {
         actionContainer.innerHTML = '';
-        
-        const optionsPanel = document.createElement('div');
-        optionsPanel.className = 'options-panel';
-        optionsPanel.innerHTML = `
-            <p><i class="fa-solid fa-file-zipper" style="color: var(--theme-color);"></i> Ready to bundle <strong id="file-count-badge" style="color:#fff;">0</strong> PDF file(s) into a compressed ZIP package.</p>
-        `;
-
         const btnGroup = document.createElement('div');
         btnGroup.className = 'button-group';
         
@@ -85,23 +107,26 @@ document.addEventListener('DOMContentLoaded', () => {
         actionBtn.addEventListener('click', executeZipArchiving);
         
         btnGroup.appendChild(actionBtn);
-        actionContainer.appendChild(optionsPanel);
         actionContainer.appendChild(btnGroup);
     }
 
     initZipUI();
 
     // ==========================================
-    // 3. FILE EVENT LISTENERS
+    // 3. EVENT LISTENERS
     // ==========================================
     if (selectFilesBtn) {
         selectFilesBtn.addEventListener('click', (e) => {
-            e.preventDefault(); e.stopPropagation(); fileInput.click();
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.click();
         });
     }
 
     dropzone.addEventListener('click', (e) => {
-        if (e.target !== fileInput && !e.target.closest('.a4-card')) fileInput.click();
+        if (pdfFiles.length === 0 && e.target !== fileInput) {
+            fileInput.click();
+        }
     });
 
     fileInput.addEventListener('change', (e) => {
@@ -125,30 +150,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.clipboardData && e.clipboardData.files.length > 0) handleFiles(e.clipboardData.files);
     });
 
+    // ==========================================
+    // 4. FILE HANDLING & UI RENDERING
+    // ==========================================
     function handleFiles(files) {
-        let addedCount = 0;
-        Array.from(files).forEach(file => {
-            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                // Prevent duplicate naming conflicts in array
-                if (!activeFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    activeFiles.push(file);
-                    addedCount++;
-                }
-            }
-        });
-
-        if (addedCount > 0 || activeFiles.length > 0) {
-            renderFileGrid();
-            const badge = document.getElementById('file-count-badge');
-            if (badge) badge.innerText = activeFiles.length;
-        } else {
-            alert('Please select valid PDF documents.');
+        const newFiles = Array.from(files).filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+        if (newFiles.length === 0) {
+            alert('Invalid format. Please select PDF documents only.');
+            return;
         }
+        pdfFiles = [...pdfFiles, ...newFiles];
+        renderFileList();
     }
 
-    function renderFileGrid() {
+    function renderFileList() {
         a4Grid.innerHTML = '';
-        if (activeFiles.length === 0) {
+        
+        if (pdfFiles.length === 0) {
             dropzone.classList.remove('has-files');
             defaultDropzoneElements.forEach(el => el.style.display = '');
             a4Grid.style.display = 'none';
@@ -161,11 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
         a4Grid.style.display = 'flex';
         actionContainer.style.display = 'flex';
 
-        activeFiles.forEach((file, index) => {
+        pdfFiles.forEach((file, index) => {
             const item = document.createElement('div');
             item.className = 'a4-card';
+            item.draggable = true;
+            item.dataset.index = index;
+
             item.innerHTML = `
-                <button class="a4-remove" onclick="removeFileAtIndex(event, ${index})" title="Remove File">
+                <button class="a4-remove" onclick="removeFile(event, ${index})" title="Remove File">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="a4-icon-wrapper">
@@ -173,42 +194,96 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="a4-name" title="${file.name}">${file.name}</div>
             `;
+
+            // Drag and Drop reordering events
+            item.addEventListener('dragstart', () => { 
+                draggedItemIndex = index; 
+                setTimeout(() => item.classList.add('dragging'), 0); 
+            });
+            item.addEventListener('dragend', () => item.classList.remove('dragging'));
+            
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingEl = document.querySelector('.dragging');
+                if (!draggingEl) return;
+                
+                const bounding = item.getBoundingClientRect();
+                if (e.clientX > bounding.left + bounding.width / 2) {
+                    item.parentNode.insertBefore(draggingEl, item.nextSibling);
+                } else {
+                    item.parentNode.insertBefore(draggingEl, item);
+                }
+            });
+            
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const newOrderNodes = [...a4Grid.querySelectorAll('.a4-card:not(.a4-add)')];
+                pdfFiles = newOrderNodes.map(node => pdfFiles[node.dataset.index]);
+                renderFileList(); 
+            });
+
             a4Grid.appendChild(item);
         });
+
+        // Add More Button inside dropzone grid
+        const addMoreCard = document.createElement('div');
+        addMoreCard.className = 'a4-card a4-add';
+        addMoreCard.onclick = (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        };
+        addMoreCard.innerHTML = `
+            <div class="a4-icon-wrapper">
+                <i class="fa-solid fa-plus a4-icon"></i>
+            </div>
+            <div class="a4-name">Add More</div>
+        `;
+        a4Grid.appendChild(addMoreCard);
     }
 
-    window.removeFileAtIndex = function(event, index) {
-        event.stopPropagation(); event.preventDefault();
-        activeFiles.splice(index, 1);
-        renderFileGrid();
-        const badge = document.getElementById('file-count-badge');
-        if (badge) badge.innerText = activeFiles.length;
+    window.removeFile = function(event, index) {
+        event.stopPropagation(); 
+        event.preventDefault();
+        pdfFiles.splice(index, 1);
+        renderFileList();
     };
 
-    window.resetTool = function() { window.location.reload(); };
+    window.resetTool = function() {
+        window.location.reload(); 
+    };
 
     // ==========================================
-    // 4. CLIENT-SIDE ZIP CREATION LOGIC
+    // 5. CLIENT-SIDE ZIP CREATION LOGIC
     // ==========================================
     async function executeZipArchiving() {
-        if (activeFiles.length === 0) return alert('Please upload at least one PDF file.');
-        if (!window.JSZip) return alert('Archiving engine is still loading. Please wait.');
+        if (pdfFiles.length === 0) {
+            alert('Please select at least one PDF file to zip.');
+            return;
+        }
+
+        if (!window.JSZip) {
+            alert('Archiving engine is still loading. Please wait a moment.');
+            return;
+        }
 
         const actionBtn = actionContainer.querySelector('.btn-action');
+        
+        let flowHtml = '';
+        if (pdfFiles.length <= 3) {
+            flowHtml = pdfFiles.map(f => `<span class="file-flow-name">${f.name}</span>`).join(' <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--theme-color);"></i> ');
+        } else {
+            flowHtml = `<span class="file-flow-name">${pdfFiles[0].name}</span> <i class="fa-solid fa-plus" style="font-size:0.7rem; color: var(--theme-color);"></i> <span class="file-flow-name">${pdfFiles.length - 1} other files</span>`;
+        }
 
         try {
             actionBtn.disabled = true;
             actionBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Building ZIP Archive...';
 
             const zip = new window.JSZip();
-
-            // Handle filename deduplication if files share identical names
             const nameTracker = {};
-            
-            for (let i = 0; i < activeFiles.length; i++) {
-                const file = activeFiles[i];
+
+            for (const file of pdfFiles) {
                 let fileName = file.name;
-                
                 if (nameTracker[fileName]) {
                     nameTracker[fileName]++;
                     const extIndex = fileName.lastIndexOf('.');
@@ -223,10 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 zip.file(fileName, buffer);
             }
 
-            // Generate compressed ZIP binary
             const content = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
             const url = URL.createObjectURL(content);
-            
             const finalFileName = `PDFase_Archive_${Date.now()}.zip`;
             
             setTimeout(() => {
@@ -238,12 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 actionContainer.innerHTML = `
                     <div class="success-message">
-                        <i class="fa-solid fa-circle-check"></i> ZIP Archive Created Successfully!
+                        <i class="fa-solid fa-circle-check"></i> ZIP Archive Created!
                     </div>
-                    <div class="file-flow">
-                        <span class="file-flow-name">${activeFiles.length} PDF files bundled</span>
-                        <i class="fa-solid fa-arrow-right" style="color: var(--theme-color, #ffbf00); margin: 0 10px;"></i>
-                        <span class="file-flow-final">${finalFileName}</span>
+                    <div class="file-flow" style="flex-direction: column; gap: 8px;">
+                        <div>${flowHtml}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Bundled into <span class="file-flow-final">${finalFileName}</span></div>
                     </div>
                     ${stealthAttribution}
                     <div class="button-group" style="margin-top: 15px;">
@@ -253,9 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="btn-secondary" onclick="resetTool()">
                             <i class="fa-solid fa-rotate-right"></i> Create Another
                         </button>
+                        <a href="/" class="btn-secondary">
+                            <i class="fa-solid fa-toolbox"></i> Other Tools
+                        </a>
                     </div>
                 `;
-            }, 600);
+            }, 800);
 
         } catch (error) {
             console.error('ZIP Creation Error:', error);
