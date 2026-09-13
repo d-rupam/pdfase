@@ -200,6 +200,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://pdfase.rupamdas.in/pdf-metadata-viewer/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://pdfase.rupamdas.in/edit-metadata-in-pdf/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
