@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimized Title & Meta Description -->
+    <title>PDF to Google Form Converter (Free & Private) | PDFase</title>
+    <meta name="description" content="Convert PDF question papers and quizzes into Google Forms locally in your browser. 100% free, no login required, and your exam files never leave your device.">
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <!-- Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF.js (Client-side PDF text extraction) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- Google Analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0KYK0PKV9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J0KYK0PKV9');
+    </script>
+
+    <!-- Schema.org JSON-LD (FAQ & HowTo for rich search snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "name": "Rupam Das",
+          "url": "https://rupamdas.in",
+          "jobTitle": "Undergraduate Microbiology Researcher",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Department of Microbiology, Dum Dum Motijheel College",
+            "url": "https://dumdummotijheelcollege.ac.in/"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Are my exam papers or PDFs uploaded to a server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. PDFase reads your PDF and extracts the questions 100% locally inside your web browser. Your question papers never leave your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need to sign in with my Google account on this website?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. You never have to grant this website access to your Google Drive. Instead, the tool generates a clean Google Apps Script that you run directly inside your own Google account."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why does Google show a permission warning when I run the script?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Google always displays an authorization prompt the first time you run a new Apps Script that creates a file in your Drive. Because you pasted and own the script yourself, you can safely click Advanced, proceed to the project, and allow it."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I edit the extracted questions before creating the Google Form?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. After uploading your PDF, PDFase opens a built-in editor where you can fix typos, add or delete questions, and switch between Multiple Choice and Short Answer formats."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this work with scanned PDFs or handwritten papers?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "This tool works best with typed, text-based PDFs (such as papers exported from MS Word or Google Docs). Scanned image-only PDFs do not contain selectable text."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Convert a PDF to a Google Form Locally",
+          "description": "A step-by-step guide for teachers and educators to turn PDF question papers into Google Forms without uploading files or signing in.",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "text": "Drag and drop your PDF question paper into the upload box, or click 'Select file' to choose it from your device."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Review and edit the detected questions, options, and form title in the local editor."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Click 'Copy Form Code' and then click 'Open Google Apps Script' to launch script.google.com."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Paste the code into the editor, click Run, and approve the one-time Google permission prompt to generate your Google Form instantly."
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --bg-card: #121215;
+            --bg-input: #1a1a1f;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --theme-color: #b829ff; /* Convert Category Color */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-input: rgba(255, 255, 255, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { background-color: var(--bg-header-footer); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .brand-highlight { color: var(--theme-color); }
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; padding: 3rem 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        /* --- TOOL HEADER & DROPZONE --- */
+        .tool-header { text-align: center; margin-bottom: 2.5rem; }
+        .tool-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-muted); }
+
+        .dropzone {
+            background-color: var(--bg-card);
+            border: 2px dashed rgba(184, 41, 255, 0.3);
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--theme-color);
+            background-color: rgba(184, 41, 255, 0.02);
+        }
+        .dropzone-icon { font-size: 4rem; color: var(--text-main); margin-bottom: 1.5rem; }
+        .dropzone-text { font-size: 1.25rem; font-weight: 500; margin-bottom: 1.5rem; color: #fff; }
+        .btn-upload {
+            background-color: var(--theme-color);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(184, 41, 255, 0.3); }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-input);
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-secondary:hover { border-color: var(--theme-color); color: #fff; background-color: rgba(184, 41, 255, 0.08); }
+
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 2rem;
+        }
+
+        /* --- WORKSPACE: QUESTION EDITOR & EXPORT PANEL (Hidden until PDF loads) --- */
+        .workspace {
+            display: none;
+            margin-bottom: 4rem;
+        }
+        .workspace.active {
+            display: block;
+        }
+        .workspace-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .form-meta-group {
+            flex: 1;
+            min-width: 240px;
+        }
+        .form-meta-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .text-input, .select-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-input);
+            color: #fff;
+            padding: 0.65rem 0.9rem;
+            border-radius: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .text-input:focus, .select-input:focus {
+            border-color: var(--theme-color);
+        }
+        .quiz-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        .quiz-toggle input {
+            accent-color: var(--theme-color);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Question Cards Container */
+        .questions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+        }
+        .question-card-top {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .question-card-top .text-input { flex: 1; min-width: 220px; }
+        .question-card-top .select-input { width: 170px; }
+        .btn-icon-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 6px;
+            padding: 0.6rem 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-icon-danger:hover { background: rgba(239, 68, 68, 0.2); color: #fff; }
+
+        .workspace-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Export / Apps Script Box */
+        .export-box {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(184, 41, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .export-box h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .export-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .code-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .code-toggle-btn:hover { color: var(--theme-color); }
+        .code-preview {
+            display: none;
+            margin-top: 1.25rem;
+            text-align: left;
+            background-color: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #c4b5fd;
+            max-height: 260px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .code-preview.open { display: block; }
+
+        /* --- VIDEO WALKTHROUGH SLOT --- */
+        .video-wrapper {
+            margin-top: 1.5rem;
+            background-color: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .video-wrapper video, .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+        }
+
+        /* --- INFO GRID (3 Features) --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .info-card { text-align: center; }
+        .info-card i { font-size: 1.8rem; color: var(--theme-color); margin-bottom: 1rem; }
+        .info-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem; font-weight: 600; }
+        .info-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+        /* --- LONG-FORM CONTENT SECTION (Beautiful Cards) --- */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+        .content-block {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .content-block:hover {
+            border-color: rgba(184, 41, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .content-block h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .content-block h2 i { color: var(--theme-color); font-size: 1.3rem; }
+        .content-block p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .content-block p:last-child { margin-bottom: 0; }
+        
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1.5rem;
+        }
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .step-list li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--theme-color);
+            font-size: 1.2rem;
+        }
+        .step-list strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-section { margin-bottom: 2rem; }
+        .faq-section h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; margin-bottom: 2rem; text-align: center; }
+        .faq-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .faq-item h3 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem; font-weight: 600; display: flex; gap: 10px; }
+        .faq-item h3 i { color: var(--theme-color); margin-top: 4px; }
+        .faq-item p { color: var(--text-muted); font-size: 0.9rem; padding-left: 1.8rem; }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.25rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+        .footer-links { display: flex; gap: 1.5rem; justify-content: flex-start; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+        .footer-text a { color: var(--theme-color); text-decoration: none; }
+        .footer-social { display: flex; justify-content: flex-end; }
+        .footer-social a { color: var(--text-muted); font-size: 1.3rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--theme-color); }
+
+        @media (max-width: 768px) {
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+            .footer-links, .footer-social { justify-content: center; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .dropzone { padding: 3rem 1.5rem; }
+            .content-block { padding: 1.5rem; }
+            .workspace-header { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        
+        <!-- TOOL HEADER -->
+        <div class="tool-header">
+            <h1><i class="fa-solid fa-clipboard-list" style="color: var(--theme-color);"></i> PDF to Google Form</h1>
+            <p>Turn question papers &amp; quizzes into Google Forms — no login required.</p>
+        </div>
+
+        <!-- UPLOAD DROPZONE -->
+        <div class="dropzone" id="pdf-dropzone">
+            <i class="fa-solid fa-file-pdf dropzone-icon"></i>
+            <div class="dropzone-text" id="dropzone-status">Drop your PDF question paper here (or paste using Ctrl+V)</div>
+            
+            <!-- Hidden file input linked to JS -->
+            <input type="file" id="file-input" accept=".pdf" style="display: none;">
+            <button class="btn-upload" id="select-files-btn">
+                <i class="fa-solid fa-folder-open"></i> Select file
+            </button>
+            
+            <br>
+            <div class="privacy-badge">
+                <i class="fa-solid fa-shield-halved"></i> Files are processed locally. No Google sign-in required.
+            </div>
+        </div>
+
+        <!-- WORKSPACE: EDITOR & EXPORT (Shown by script.js after PDF loads) -->
+        <section class="workspace" id="editor-workspace">
+            <div class="workspace-header">
+                <div class="form-meta-group">
+                    <label for="form-title-input">Google Form Title</label>
+                    <input type="text" id="form-title-input" class="text-input" placeholder="e.g., Class 10 Biology Unit Test">
+                </div>
+                <label class="quiz-toggle">
+                    <input type="checkbox" id="quiz-mode-checkbox" checked>
+                    Make it a Google Quiz
+                </label>
+            </div>
+
+            <!-- Extracted Questions Render Here -->
+            <div class="questions-list" id="questions-list"></div>
+
+            <div class="workspace-actions">
+                <button class="btn-secondary" id="add-question-btn">
+                    <i class="fa-solid fa-plus"></i> Add Question
+                </button>
+                <button class="btn-secondary" id="reset-tool-btn">
+                    <i class="fa-solid fa-rotate-left"></i> Upload Another PDF
+                </button>
+            </div>
+
+            <!-- Export Panel -->
+            <div class="export-box" id="export-panel">
+                <h3><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--theme-color);"></i> Ready to Create Your Google Form</h3>
+                <p>Copy the generated script below, open Google Apps Script, paste it, and click <strong>Run</strong>.</p>
+                
+                <div class="export-buttons">
+                    <button class="btn-upload" id="copy-script-btn">
+                        <i class="fa-regular fa-copy"></i> 1. Copy Form Code
+                    </button>
+                    <a href="https://script.google.com/create" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> 2. Open Google Apps Script
+                    </a>
+                </div>
+
+                <button class="code-toggle-btn" id="toggle-code-btn">View generated script</button>
+                <pre class="code-preview" id="script-preview"></pre>
+            </div>
+        </section>
+
+        <!-- INFORMATION GRID (Core Features) -->
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <h3>Built for Teachers</h3>
+                <p>Automatically detects numbered questions and multiple-choice options (A, B, C, D), with a quick editor to tweak anything before exporting.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-lock"></i>
+                <h3>Zero Sign-In &amp; Private</h3>
+                <p>Exam papers stay strictly on your device. You never have to sign in with Google or give a third-party website access to your Google Drive.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>100% Free &amp; Unlimited</h3>
+                <p>No monthly limits, no paywalls, and no server queues. Convert as many quizzes, tests, and worksheets as you need right in your browser.</p>
+            </div>
+        </div>
+
+        <!-- LONG-FORM CONTENT (Beautiful Cards for SEO & Guides) -->
+        <div class="content-section">
+            
+            <!-- STEP BY STEP GUIDE + VIDEO SLOT -->
+            <div class="content-block">
+                <h2><i class="fa-solid fa-list-check"></i> How to Convert a PDF to a Google Form (45-Second Guide)</h2>
+                <p>Because PDFase never asks for access to your Google account, it uses Google's own built-in Apps Script to build the form safely inside your Drive:</p>
+                <ul class="step-list">
+                    <li><strong>Upload your PDF:</strong> Drag and drop your typed question paper into the box above, or click <strong>Select file</strong>.</li>
+                    <li><strong>Review your questions:</strong> Check the extracted questions and options in the editor, fix any typos, and set your form title.</li>
+                    <li><strong>Copy &amp; Open Apps Script:</strong> Click <strong>1. Copy Form Code</strong>, then click <strong>2. Open Google Apps Script</strong>.</li>
+                    <li><strong>Paste &amp; Run:</strong> Select everything in the Google Apps Script editor, paste your code, and click the <strong>Run</strong> button at the top.</li>
+                    <li><strong>Approve once &amp; open your Form:</strong> On your first run, click <em>Review Permissions → Choose your account → Advanced → Go to Untitled project → Allow</em>. Your new Google Form will immediately appear in Google Drive!</li>
+                </ul>
+
+                <!-- Replace the placeholder below with your <video> or YouTube <iframe> once recorded -->
+                <div class="video-wrapper">
+                    <span><i class="fa-solid fa-circle-play" style="color: var(--theme-color); margin-right: 8px;"></i> Quick walkthrough video coming soon</span>
+                </div>
+            </div>
+            
+            <div class="content-block">
+                <h2><i class="fa-solid fa-microscope"></i> About the PDF to Google Form Tool</h2>
+                <p>Manually retyping exam papers, MCQs, and homework sheets into Google Forms takes teachers hours every week. The PDFase PDF to Google Form converter extracts text locally in your browser, structures your questions and choices, and builds a ready-to-run Google Apps Script in seconds.</p>
+                <p>Since all processing happens on your own computer or phone, confidential exam papers are never uploaded to external servers or cloud databases.</p>
+            </div>
+
+            <div class="content-block">
+                <h2><i class="fa-solid fa-dna"></i> Why Name it PDFase?</h2>
+                <p>In biology, an enzyme (which usually ends in "-ase") is a tiny, high-speed machine that attaches to raw materials to cut, build, or change them instantly. We applied this exact same idea to our digital tools. PDFase acts like a fast digital enzyme for your documents—modifying your files locally, instantly, and securely, without ever sending your private data over the internet.</p>
+            </div>
+
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Are my exam papers uploaded to a server?</h3>
+                <p>No. The PDF to Google Form tool processes your PDF locally inside your web browser. Your question papers never leave your device.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Why don't I have to sign in with Google on this site?</h3>
+                <p>To protect your privacy and keep the tool free without API limits, PDFase never connects to your Google Drive. Instead, it gives you a clean script that you run yourself inside Google's official Apps Script editor.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Why does Google show an "Unverified App" warning when I click Run?</h3>
+                <p>Google shows that screen whenever you run a brand-new script in your own account that creates a Google Form. Since you pasted the code yourself in your own Google account, click <strong>Advanced → Go to Untitled project → Allow</strong> to let it create your form.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Does it work with scanned or handwritten PDFs?</h3>
+                <p>It works best with typed, text-based PDFs (such as question papers exported from MS Word or Google Docs). Scanned image-only PDFs do not contain selectable text for the parser to read.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Can I edit the questions before creating the Google Form?</h3>
+                <p>Yes. After selecting your PDF, you can edit any question text, add or remove multiple-choice options, switch between Multiple Choice and Short Answer, or toggle Quiz Mode right on the page.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+            <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms &amp; Conditions</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
+            </div>
+            <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+                &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+    
+    <!-- EXTERNAL TOOL LOGIC -->
+    <script src="script.js"></script>
+
+</body>
+</html>
