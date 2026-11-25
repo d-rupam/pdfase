@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimized Title & Meta Description -->
+    <title>Text &amp; AI to Google Form Converter (ChatGPT, Gemini) — Free &amp; No Login | PDFase</title>
+    <meta name="description" content="Convert plain text, ChatGPT, Gemini, or Claude quizzes into auto-graded Google Forms in seconds. Auto-detects answer keys &amp; explanations. 100% free, unlimited, and no sign-in required.">
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <!-- Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0KYK0PKV9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J0KYK0PKV9');
+    </script>
+
+    <!-- Schema.org JSON-LD (FAQ & HowTo for rich search snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "name": "Rupam Das",
+          "url": "https://rupamdas.in",
+          "jobTitle": "Undergraduate Microbiology Researcher",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Department of Microbiology, Dum Dum Motijheel College",
+            "url": "https://dumdummotijheelcollege.ac.in/"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Can I paste quizzes directly from ChatGPT, Gemini, or Claude?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Just copy the raw AI response and paste it straight into the text box. PDFase automatically removes Markdown formatting, intro/outro fluff, and structures your questions cleanly."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does it automatically set the answer key and explanations in Google Forms?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Whether your text includes 'Answer: B' and 'Explanation: ...' under each question or a separate 'Answer Key' section at the bottom, PDFase automatically selects the correct option and attaches quiz feedback."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a question limit or Google sign-in required?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. PDFase is 100% free with unlimited questions and zero login. Everything runs locally in your browser and generates a clean Google Apps Script that you run inside your own Google account."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are my questions or exam papers sent to any server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Your text is parsed 100% client-side inside your web browser. Nothing is uploaded, stored, or shared with any external server."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why does Google show a permission prompt when I run the script?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Google always shows a one-time authorization screen when you run a new Apps Script that creates a Google Form in your Drive. Since you pasted the code yourself inside your own account, click Advanced, proceed to the project, and click Allow."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Convert Text, ChatGPT, or Gemini Quizzes to a Google Form",
+          "description": "Turn plain text or AI-generated MCQs with answer keys and explanations into an auto-graded Google Form locally without login or paid add-ons.",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "text": "Copy your quiz questions from ChatGPT, Gemini, Claude, Word, or Google Docs and paste them into the text box."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Click 'Extract Questions' to automatically parse questions, options, answer keys, and explanations."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Review or edit your quiz in the local editor, then click '1. Copy Form Code' and '2. Open Google Apps Script'."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Paste the script into script.google.com, press Ctrl+S to save, click Run, and approve the one-time Google prompt to generate your Google Form."
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-header-footer: #0B1121;
+            --bg-card: #121215;
+            --bg-input: #1a1a1f;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --theme-color: #b829ff; /* Convert Category Color */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-input: rgba(255, 255, 255, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { background-color: var(--bg-header-footer); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .brand-highlight { color: var(--theme-color); }
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-main); }
+
+        main { flex: 1; padding: 3rem 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        /* --- TOOL HEADER --- */
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-muted); }
+
+        /* --- MODE SWITCHER (PDF vs TEXT/AI LINK TABS) --- */
+        .mode-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-input);
+            border-radius: 10px;
+            padding: 0.4rem;
+            max-width: 580px;
+            margin: 0 auto 1.5rem;
+        }
+        .mode-tab {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.7rem 1rem;
+            border-radius: 7px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .mode-tab:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+        .mode-tab.active {
+            background-color: rgba(184, 41, 255, 0.16);
+            color: #fff;
+            border: 1px solid rgba(184, 41, 255, 0.45);
+        }
+        .mode-tab.active i {
+            color: var(--theme-color);
+        }
+        .tab-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: rgba(184, 41, 255, 0.18);
+            color: #d8b4fe;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        /* --- TEXT / AI PASTE BOX --- */
+        .paste-box {
+            background-color: var(--bg-card);
+            border: 2px dashed rgba(184, 41, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            margin-bottom: 3rem;
+        }
+        .paste-box:focus-within {
+            border-color: var(--theme-color);
+            background-color: rgba(184, 41, 255, 0.02);
+        }
+        .paste-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .paste-box-label {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .paste-box-helpers {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .btn-chip {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-input);
+            padding: 0.4rem 0.85rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-chip:hover {
+            border-color: var(--theme-color);
+            color: #fff;
+            background-color: rgba(184, 41, 255, 0.1);
+        }
+        .quiz-textarea {
+            width: 100%;
+            min-height: 240px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-input);
+            border-radius: 8px;
+            padding: 1rem 1.15rem;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            line-height: 1.65;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .quiz-textarea::placeholder {
+            color: #666670;
+        }
+        .quiz-textarea:focus {
+            border-color: var(--theme-color);
+        }
+        .paste-box-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1.25rem;
+            text-align: center;
+        }
+        .input-status {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            min-height: 1.4em;
+        }
+        .paste-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-upload {
+            background-color: var(--theme-color);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(184, 41, 255, 0.3); }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-input);
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-secondary:hover { border-color: var(--theme-color); color: #fff; background-color: rgba(184, 41, 255, 0.08); }
+
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 1.5rem;
+        }
+
+        /* --- WORKSPACE: QUESTION EDITOR & EXPORT PANEL (Hidden until text is parsed) --- */
+        .workspace {
+            display: none;
+            margin-bottom: 4rem;
+        }
+        .workspace.active {
+            display: block;
+        }
+        .workspace-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .form-meta-group {
+            flex: 1;
+            min-width: 240px;
+        }
+        .form-meta-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .text-input, .select-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-input);
+            color: #fff;
+            padding: 0.65rem 0.9rem;
+            border-radius: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .text-input:focus, .select-input:focus {
+            border-color: var(--theme-color);
+        }
+        .quiz-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        .quiz-toggle input {
+            accent-color: var(--theme-color);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Question Cards Container */
+        .questions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+        }
+        .question-card-top {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .question-card-top .text-input { flex: 1; min-width: 220px; }
+        .question-card-top .select-input { width: 170px; }
+        .btn-icon-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 6px;
+            padding: 0.6rem 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-icon-danger:hover { background: rgba(239, 68, 68, 0.2); color: #fff; }
+
+        .workspace-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Export / Apps Script Box */
+        .export-box {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(184, 41, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .export-box h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .export-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .code-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .code-toggle-btn:hover { color: var(--theme-color); }
+        .code-preview {
+            display: none;
+            margin-top: 1.25rem;
+            text-align: left;
+            background-color: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #c4b5fd;
+            max-height: 260px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .code-preview.open { display: block; }
+
+        /* --- VIDEO WALKTHROUGH SLOT --- */
+        .video-wrapper {
+            margin-top: 1.5rem;
+            background-color: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .video-wrapper video, .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+        }
+
+        /* --- INFO GRID (3 Features) --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .info-card { text-align: center; }
+        .info-card i { font-size: 1.8rem; color: var(--theme-color); margin-bottom: 1rem; }
+        .info-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem; font-weight: 600; }
+        .info-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+        /* --- LONG-FORM CONTENT SECTION --- */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+        .content-block {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .content-block:hover {
+            border-color: rgba(184, 41, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .content-block h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .content-block h2 i { color: var(--theme-color); font-size: 1.3rem; }
+        .content-block p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .content-block p:last-child { margin-bottom: 0; }
+        
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1.5rem;
+        }
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .step-list li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--theme-color);
+            font-size: 1.2rem;
+        }
+        .step-list strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-section { margin-bottom: 2rem; }
+        .faq-section h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; margin-bottom: 2rem; text-align: center; }
+        .faq-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .faq-item h3 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem; font-weight: 600; display: flex; gap: 10px; }
+        .faq-item h3 i { color: var(--theme-color); margin-top: 4px; }
+        .faq-item p { color: var(--text-muted); font-size: 0.9rem; padding-left: 1.8rem; }
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-header-footer); padding: 1.25rem 2rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+        .footer-links { display: flex; gap: 1.5rem; justify-content: flex-start; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-main); }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+        .footer-text a { color: var(--theme-color); text-decoration: none; }
+        .footer-social { display: flex; justify-content: flex-end; }
+        .footer-social a { color: var(--text-muted); font-size: 1.3rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--theme-color); }
+
+        @media (max-width: 768px) {
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+            .footer-links, .footer-social { justify-content: center; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .mode-switcher { flex-direction: column; }
+            .mode-tab { font-size: 0.9rem; padding: 0.65rem 0.75rem; }
+            .paste-box { padding: 1.25rem; }
+            .content-block { padding: 1.5rem; }
+            .workspace-header { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fa-solid fa-dna brand-highlight" style="margin-right: 8px;"></i>
+            <span>PDF<span class="brand-highlight">ase</span></span>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="/" style="margin-left: 0;">All Tools</a>
+            <a href="/about" style="margin-left: 0;">About</a>
+            <a href="https://github.com/d-rupam/pdfase" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" style="font-size: 1.2rem; margin-left: 0; display: inline-flex; align-items: center;">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        
+        <!-- TOOL HEADER -->
+        <div class="tool-header">
+            <h1><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--theme-color);"></i> Text / AI to Google Form</h1>
+            <p>Paste quizzes from ChatGPT, Gemini, Claude, or Docs — auto-graded with answer keys &amp; explanations.</p>
+        </div>
+
+        <!-- MODE SWITCHER: PDF vs TEXT / AI -->
+        <div class="mode-switcher" role="navigation" aria-label="Choose input method">
+            <a href="/pdf-to-google-form" class="mode-tab">
+                <i class="fa-solid fa-file-pdf"></i> From PDF
+            </a>
+            <a href="/text-to-google-form" class="mode-tab active" aria-current="page">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> From Text / AI
+                <span class="tab-tag">ChatGPT • Gemini</span>
+            </a>
+        </div>
+
+        <!-- TEXT / AI PASTE BOX -->
+        <div class="paste-box" id="text-input-box">
+            <div class="paste-box-header">
+                <label for="quiz-text-input" class="paste-box-label">
+                    <i class="fa-solid fa-paste" style="color: var(--theme-color);"></i> Paste your quiz text below
+                </label>
+                <div class="paste-box-helpers">
+                    <button type="button" class="btn-chip" id="copy-ai-prompt-btn" title="Copy a ready-to-use prompt for ChatGPT, Gemini, or Claude">
+                        <i class="fa-solid fa-robot"></i> Copy AI Prompt
+                    </button>
+                    <button type="button" class="btn-chip" id="load-sample-btn" title="Test the tool with a sample quiz">
+                        <i class="fa-solid fa-flask"></i> Load Sample
+                    </button>
+                </div>
+            </div>
+
+            <textarea
+                id="quiz-text-input"
+                class="quiz-textarea"
+                placeholder="Paste raw output from ChatGPT, Gemini, Claude, or plain text here...
+
+Example:
+1. Which organelle is known as the powerhouse of the cell?
+A) Ribosome
+B) Mitochondria
+C) Golgi apparatus
+D) Lysosome
+Answer: B
+Explanation: Mitochondria generate most of the cell's ATP through cellular respiration.
+
+(Separate 'Answer Key' sections at the bottom are also detected automatically!)"
+            ></textarea>
+
+            <div class="paste-box-footer">
+                <div class="input-status" id="input-status">Supports numbered MCQs, inline answers, explanations, and bottom Answer Keys.</div>
+                <div class="paste-actions">
+                    <button type="button" class="btn-upload" id="parse-text-btn">
+                        <i class="fa-solid fa-bolt"></i> Extract Questions
+                    </button>
+                    <button type="button" class="btn-secondary" id="clear-text-btn">
+                        <i class="fa-solid fa-eraser"></i> Clear
+                    </button>
+                </div>
+
+                <div class="privacy-badge">
+                    <i class="fa-solid fa-shield-halved"></i> Parsed 100% locally in your browser. No Google sign-in required.
+                </div>
+            </div>
+        </div>
+
+        <!-- WORKSPACE: EDITOR & EXPORT (Shown by script.js after parsing text) -->
+        <section class="workspace" id="editor-workspace">
+            <div class="workspace-header">
+                <div class="form-meta-group">
+                    <label for="form-title-input">Google Form Title</label>
+                    <input type="text" id="form-title-input" class="text-input" placeholder="e.g., Class 10 Biology Unit Test">
+                </div>
+                <label class="quiz-toggle">
+                    <input type="checkbox" id="quiz-mode-checkbox" checked>
+                    Make it a Google Quiz
+                </label>
+                <label class="quiz-toggle">
+                    <input type="checkbox" id="require-all-checkbox">
+                    Make all questions required
+                </label>
+                <label class="quiz-toggle">
+                    <input type="checkbox" id="add-numbers-checkbox">
+                    Add question numbers (1., 2., 3.)
+                </label>
+            </div>
+
+            <!-- Extracted Questions Render Here -->
+            <div class="questions-list" id="questions-list"></div>
+
+            <div class="workspace-actions">
+                <button class="btn-secondary" id="add-question-btn">
+                    <i class="fa-solid fa-plus"></i> Add Question
+                </button>
+                <button class="btn-secondary" id="reset-tool-btn">
+                    <i class="fa-solid fa-rotate-left"></i> Paste New Text
+                </button>
+            </div>
+
+            <!-- Export Panel -->
+            <div class="export-box" id="export-panel">
+                <h3><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--theme-color);"></i> Ready to Create Your Google Form</h3>
+                <p>Copy the generated script below, open Google Apps Script, paste it, press <strong>Ctrl+S</strong> to save, and click <strong>Run</strong>.</p>
+                
+                <div class="export-buttons">
+                    <button class="btn-upload" id="copy-script-btn">
+                        <i class="fa-regular fa-copy"></i> 1. Copy Form Code
+                    </button>
+                    <a href="https://script.google.com/create" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> 2. Open Google Apps Script
+                    </a>
+                </div>
+
+                <button class="code-toggle-btn" id="toggle-code-btn">View generated script</button>
+                <pre class="code-preview" id="script-preview"></pre>
+            </div>
+        </section>
+
+        <!-- INFORMATION GRID (Core Features) -->
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fa-solid fa-robot"></i>
+                <h3>Made for ChatGPT &amp; Gemini</h3>
+                <p>Paste raw AI output directly—bold markers, headings, and intro/outro fluff are automatically stripped out so your quiz stays clean.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <h3>Auto Answer Keys &amp; Feedback</h3>
+                <p>Detects both inline answers and separate bottom Answer Keys, automatically ticking the right option and attaching explanations as quiz feedback.</p>
+            </div>
+
+            <div class="info-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>100% Free, Private &amp; Unlimited</h3>
+                <p>No 10-question free limits, no Google login walls, and no server uploads. Convert 100+ questions at once right inside your browser.</p>
+            </div>
+        </div>
+
+        <!-- LONG-FORM CONTENT (SEO & Guides) -->
+        <div class="content-section">
+            
+            <!-- STEP BY STEP GUIDE + VIDEO SLOT -->
+            <div class="content-block">
+                <h2><i class="fa-solid fa-list-check"></i> How to Convert ChatGPT or Gemini Quizzes to Google Forms</h2>
+                <p>Skip manual copy-pasting and paid Google Workspace add-ons. Generate an auto-graded Google Form directly inside your own Google account in under a minute:</p>
+                <ul class="step-list">
+                    <li><strong>Generate or copy your quiz:</strong> Click <strong>Copy AI Prompt</strong> to ask ChatGPT, Gemini, or Claude for MCQs (or copy any existing quiz text from Word or Google Docs).</li>
+                    <li><strong>Paste &amp; Extract:</strong> Paste the text into the box above and click <strong>Extract Questions</strong>. PDFase automatically detects options, marks correct answers, and loads explanations.</li>
+                    <li><strong>Quick Review:</strong> Set your form title, tweak any question or feedback, and toggle Quiz Mode, Required, or Question Numbers as needed.</li>
+                    <li><strong>Copy &amp; Open Apps Script:</strong> Click <strong>1. Copy Form Code</strong>, then click <strong>2. Open Google Apps Script</strong>.</li>
+                    <li><strong>Paste, Save &amp; Run:</strong> Replace the default code in Google Apps Script with your copied script, press <strong>Ctrl+S</strong> to save, and click <strong>Run</strong>. On your first run, approve Google's permission prompt (<em>Review Permissions → Choose account → Advanced → Go to Untitled project → Allow</em>) and open the form links shown in the Execution Log.</li>
+                </ul>
+
+                <!-- Replace the placeholder below with your <video> or YouTube <iframe> once recorded -->
+                <div class="video-wrapper">
+                    <span><i class="fa-solid fa-circle-play" style="color: var(--theme-color); margin-right: 8px;"></i> Quick walkthrough video coming soon</span>
+                </div>
+            </div>
+            
+            <div class="content-block">
+                <h2><i class="fa-solid fa-microscope"></i> About the Text &amp; AI to Google Form Tool</h2>
+                <p>Teachers and educators increasingly use AI assistants like ChatGPT, Gemini, and Claude to draft practice tests, chapter quizzes, and homework MCQs—but moving 50 questions and answer keys into Google Forms one by one still wastes hours.</p>
+                <p>PDFase bridges that gap locally in your browser. It strips AI formatting noise, matches your answer keys and explanations automatically, and writes a transparent Google Apps Script you control completely. Have a PDF question paper instead? Switch to our <a href="/pdf-to-google-form" style="color: var(--theme-color); text-decoration: none; font-weight: 600;">PDF to Google Form Converter</a>.</p>
+            </div>
+
+            <div class="content-block">
+                <h2><i class="fa-solid fa-dna"></i> Why Name it PDFase?</h2>
+                <p>In biology, an enzyme (which usually ends in "-ase") is a tiny, high-speed machine that attaches to raw materials to cut, build, or change them instantly. We applied this exact same idea to our digital tools. PDFase acts like a fast digital enzyme for your documents and quizzes—processing everything locally, instantly, and securely without ever sending your private data over the internet.</p>
+            </div>
+
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Can I paste directly from ChatGPT, Gemini, or Claude without cleaning the text?</h3>
+                <p>Yes. Just hit the copy button on your AI response and paste it straight in. PDFase automatically ignores intro lines (like "Sure! Here are 20 MCQs..."), strips bold Markdown stars, and removes sign-off fluff at the end.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> How does automatic Answer Key and Explanation detection work?</h3>
+                <p>If your text has lines like <code>Answer: B</code> and <code>Explanation: ...</code> under each question—or a separate <strong>Answer Key / Solutions</strong> section at the bottom—PDFase matches them to the right question, marks the green answer tick, and adds the explanation as Google Forms quiz feedback.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Why don't I have to sign in with Google on this site?</h3>
+                <p>To protect your privacy and avoid API limits or paid add-on paywalls, PDFase never connects to your Google Drive. Instead, it generates a clean Google Apps Script that you run yourself inside Google's official Apps Script editor.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Why does Google show an "Unverified App" warning when I click Run?</h3>
+                <p>Google displays that screen whenever you run a new Apps Script in your own account that creates a Google Form. Because you pasted the script yourself inside your own Google account, click <strong>Advanced → Go to Untitled project → Allow</strong> to let it create your form.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3><i class="fa-solid fa-circle-question"></i> Is there any limit on the number of questions?</h3>
+                <p>No. Unlike paid extensions that stop after 5 or 10 questions, PDFase lets you convert 50, 100, or more questions at once—completely free and unlimited.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+            <div class="footer-links" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms &amp; Conditions</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
+            </div>
+            <div class="footer-text" style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
+                &copy; 2026 PDFase | Engineered by <a href="https://rupamdas.in/" target="_blank">Rupam Das</a>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+    
+    <!-- EXTERNAL TOOL LOGIC -->
+    <script src="script.js"></script>
+
+</body>
+</html>
