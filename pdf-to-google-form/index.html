@@ -164,6 +164,57 @@
         .tool-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
         .tool-header p { font-size: 1.1rem; color: var(--text-muted); }
 
+        /* --- MODE SWITCHER (PDF vs TEXT/AI LINK TABS) --- */
+        .mode-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-input);
+            border-radius: 10px;
+            padding: 0.4rem;
+            max-width: 580px;
+            margin: 0 auto 1.5rem;
+        }
+        .mode-tab {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.7rem 1rem;
+            border-radius: 7px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .mode-tab:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+        .mode-tab.active {
+            background-color: rgba(184, 41, 255, 0.16);
+            color: #fff;
+            border: 1px solid rgba(184, 41, 255, 0.45);
+        }
+        .mode-tab.active i {
+            color: var(--theme-color);
+        }
+        .tab-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: rgba(184, 41, 255, 0.18);
+            color: #d8b4fe;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            letter-spacing: 0.02em;
+        }
+        
         .dropzone {
             background-color: var(--bg-card);
             border: 2px dashed rgba(184, 41, 255, 0.3);
@@ -519,6 +570,8 @@
             .dropzone { padding: 3rem 1.5rem; }
             .content-block { padding: 1.5rem; }
             .workspace-header { padding: 1.25rem; }
+            .mode-switcher { flex-direction: column; }
+            .mode-tab { font-size: 0.9rem; padding: 0.65rem 0.75rem; }
         }
     </style>
 </head>
@@ -547,6 +600,17 @@
             <p>Turn question papers &amp; quizzes into Google Forms - no login required.</p>
         </div>
 
+      <!-- MODE SWITCHER: PDF vs TEXT / AI -->
+        <div class="mode-switcher" role="navigation" aria-label="Choose input method">
+            <a href="/pdf-to-google-form" class="mode-tab active" aria-current="page">
+                <i class="fa-solid fa-file-pdf"></i> From PDF
+            </a>
+            <a href="/text-to-google-form" class="mode-tab">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> From Text / AI
+                <span class="tab-tag">ChatGPT • Gemini</span>
+            </a>
+        </div>
+        
         <!-- UPLOAD DROPZONE -->
         <div class="dropzone" id="pdf-dropzone">
             <i class="fa-solid fa-file-pdf dropzone-icon"></i>
