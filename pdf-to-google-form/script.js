@@ -151,61 +151,178 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 3. PARSE QUESTIONS & OPTIONS ---
+// Helper: Clean Markdown symbols (**, __, ###, bullet dashes) from AI or PDF text
+    function cleanLine(raw) {
+        return raw
+            .replace(/\*\*|__/g, '')         // Remove bold markers
+            .replace(/^#+\s*/, '')           // Remove ### headings
+            .replace(/^[\*•\-]\s+/, '')      // Remove bullet points (keeps negative numbers like -5 safe)
+            .trim();
+    }
+
+    // Helper: Mark option A-E as the green-tick correct answer
+    function markAnswerByLetter(question, letter) {
+        if (!question || !letter) return;
+        const idx = letter.toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2...
+        if (idx >= 0 && idx < question.options.length) {
+            question.options.forEach((opt, i) => {
+                opt.isCorrect = i === idx;
+            });
+        }
+    }
+
+    // --- 3. PARSE QUESTIONS, ANSWER KEYS & EXPLANATIONS ---
     function parseQuestionsFromLines(lines) {
         const parsed = [];
         let currentQ = null;
+        let inAnswerKeySection = false;
+        let lastKeyQuestion = null;
 
-        // Matches: "1. What is...", "Q1) What is...", "Q. 2 - What is..."
         const questionStartRegex = /^(?:Q(?:uestion)?\.?\s*)?(\d{1,3})[\.\)\:\-]\s+(.+)/i;
-        // Matches single option line: "(a) Option", "A) Option", "a. Option"
         const singleOptionRegex = /^(?:\(?([A-Ea-e])\)?[\.\)\:\-])\s+(.+)/;
-        // Matches multiple inline options on one line: "(a) Foo (b) Bar (c) Baz (d) Qux"
         const inlineOptionsRegex = /(?:^|\s)\(?([A-Ea-e])\)?[\.\)\:]\s+([^\(\)]+?)(?=\s+\(?[A-Ea-e]\)?[\.\)\:]|$)/g;
 
+        // Matches: "Answer: B", "Correct Answer: (c)", "Ans - A"
+        const inlineAnswerRegex = /^(?:correct\s*)?ans(?:wer)?\s*[:\-\.]\s*\(?([A-Ea-e])\)?(?:\b[\.\)\:\-]?\s*(.*))?$/i;
+        // Matches: "Explanation: ...", "Solution: ...", "Reason: ..."
+        const explanationRegex = /^(?:explanation|rationale|reason|solution|hint|feedback)\s*[:\-]\s*(.+)/i;
+        // Matches bottom section header: "Answer Key", "Solutions:", "Answers"
+        const answerSectionHeaderRegex = /^(?:answer\s*key|answers|solutions|correct\s*answers)\s*:?$/i;
+        // Matches single line in Answer Key: "1. B", "Q2) (c) - Explanation..."
+        const keyEntryRegex = /^(?:Q\.?\s*)?(\d{1,3})[\.\)\:\-\s]+\(?([A-Ea-e])\)?(?:\s*[\.\)\:\-\u2013\u2014]\s*(.*))?$/i;
+        // Matches compact Answer Key on one line: "1. A, 2. B, 3. C" or "1-A 2-B 3-C"
+        const compactKeyRegex = /(?:Q\.?\s*)?(\d{1,3})\s*[\.\)\:\-]\s*\(?([A-Ea-e])\)?/gi;
+        // Matches AI sign-off / divider fluff
+        const outroFluffRegex = /^(?:---+|___+|\*\*\*+|hope this helps|let me know if|feel free to|good luck|would you like)/i;
+
         for (const rawLine of lines) {
-            const line = rawLine.trim();
+            const line = cleanLine(rawLine);
             if (!line) continue;
 
-            // Skip common exam headers/footers
+            // Stop capturing continuation text on AI outro fluff or dividers
+            if (outroFluffRegex.test(line)) {
+                if (currentQ) {
+                    parsed.push(finalizeQuestion(currentQ));
+                    currentQ = null;
+                }
+                continue;
+            }
+
+            // Skip common exam header/footer noise
             if (/^(page\s+\d+|time\s*:|max\.?\s*marks|total\s*marks|section\s+[a-z0-9]+)$/i.test(line)) {
                 continue;
             }
 
-            // 1. Check for inline multiple options on the same line (e.g., A) x  B) y  C) z  D) w)
+            // Detect separate "Answer Key" or "Solutions" section at the bottom
+            if (answerSectionHeaderRegex.test(line)) {
+                if (currentQ) {
+                    parsed.push(finalizeQuestion(currentQ));
+                    currentQ = null;
+                }
+                inAnswerKeySection = true;
+                continue;
+            }
+
+            // MODE A: Matching a separate Answer Key / Solutions section at the bottom
+            if (inAnswerKeySection) {
+                const compactMatches = [...line.matchAll(compactKeyRegex)];
+                if (compactMatches.length >= 2) {
+                    for (const m of compactMatches) {
+                        const qNum = parseInt(m[1], 10);
+                        const targetQ = parsed.find((q) => q.originalNum === qNum) || parsed[qNum - 1];
+                        markAnswerByLetter(targetQ, m[2]);
+                    }
+                    lastKeyQuestion = null;
+                    continue;
+                }
+
+                const keyMatch = line.match(keyEntryRegex);
+                if (keyMatch) {
+                    const qNum = parseInt(keyMatch[1], 10);
+                    const targetQ = parsed.find((q) => q.originalNum === qNum) || parsed[qNum - 1];
+                    if (targetQ) {
+                        markAnswerByLetter(targetQ, keyMatch[2]);
+                        const extraText = (keyMatch[3] || '').trim();
+                        // Attach extra text as explanation if it isn't just repeating the option text
+                        const matchedOpt = targetQ.options[keyMatch[2].toUpperCase().charCodeAt(0) - 65];
+                        if (extraText && (!matchedOpt || extraText.toLowerCase() !== matchedOpt.text.toLowerCase())) {
+                            targetQ.explanation = extraText.replace(/^(?:explanation|reason)\s*[:\-]\s*/i, '').trim();
+                        }
+                        lastKeyQuestion = targetQ;
+                    }
+                    continue;
+                }
+
+                // Catch "Explanation: ..." or continuation line under a bottom solution entry
+                if (lastKeyQuestion) {
+                    const expMatch = line.match(explanationRegex);
+                    const addText = expMatch ? expMatch[1].trim() : line;
+                    lastKeyQuestion.explanation = lastKeyQuestion.explanation
+                        ? `${lastKeyQuestion.explanation} ${addText}`
+                        : addText;
+                }
+                continue;
+            }
+
+            // MODE B: Normal question parsing
+            // 1. Inline Explanation right below a question
+            const expMatch = line.match(explanationRegex);
+            if (currentQ && expMatch) {
+                currentQ.explanation = expMatch[1].trim();
+                currentQ._inExplanation = true;
+                continue;
+            }
+
+            // 2. Inline Answer right below a question (e.g., "Answer: B")
+            const ansMatch = line.match(inlineAnswerRegex);
+            if (currentQ && ansMatch && currentQ.options.length > 0) {
+                markAnswerByLetter(currentQ, ansMatch[1]);
+                currentQ._inExplanation = false;
+                continue;
+            }
+
+            // 3. Inline multiple options on the same line (e.g., A) x  B) y  C) z  D) w)
             const inlineMatches = [...line.matchAll(inlineOptionsRegex)];
             if (currentQ && inlineMatches.length >= 2) {
                 for (const match of inlineMatches) {
                     currentQ.options.push({ text: match[2].trim(), isCorrect: false });
                 }
                 currentQ.type = 'MULTIPLE_CHOICE';
+                currentQ._inExplanation = false;
                 continue;
             }
 
-            // 2. Check for a single option line
+            // 4. Single option line
             const optMatch = line.match(singleOptionRegex);
             if (currentQ && optMatch) {
                 currentQ.options.push({ text: optMatch[2].trim(), isCorrect: false });
                 currentQ.type = 'MULTIPLE_CHOICE';
+                currentQ._inExplanation = false;
                 continue;
             }
 
-            // 3. Check for a new numbered question
+            // 5. New numbered question (anything before Q1 is automatically ignored as intro fluff!)
             const qMatch = line.match(questionStartRegex);
             if (qMatch) {
                 if (currentQ) parsed.push(finalizeQuestion(currentQ));
                 currentQ = {
                     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+                    originalNum: parseInt(qMatch[1], 10),
                     prompt: qMatch[2].trim(),
                     type: 'SHORT_ANSWER',
                     options: [],
-                    required: requireAllCheckbox.checked
+                    explanation: '',
+                    required: requireAllCheckbox.checked,
+                    _inExplanation: false
                 };
                 continue;
             }
 
-            // 4. Continuation line for the current question or last option
+            // 6. Continuation line
             if (currentQ) {
-                if (currentQ.options.length > 0) {
+                if (currentQ._inExplanation) {
+                    currentQ.explanation += ' ' + line;
+                } else if (currentQ.options.length > 0) {
                     const lastOpt = currentQ.options[currentQ.options.length - 1];
                     lastOpt.text += ' ' + line;
                 } else {
@@ -216,15 +333,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentQ) parsed.push(finalizeQuestion(currentQ));
 
-        // Fallback if no numbered questions were found at all: treat substantive lines as Short Answer
+        // Fallback if no numbered questions were found at all
         if (parsed.length === 0) {
-            for (const line of lines) {
-                if (line.length > 8) {
+            for (const rawLine of lines) {
+                const line = cleanLine(rawLine);
+                if (line.length > 8 && !outroFluffRegex.test(line)) {
                     parsed.push({
                         id: String(Date.now() + Math.random()),
                         prompt: line,
                         type: 'SHORT_ANSWER',
                         options: [],
+                        explanation: '',
                         required: requireAllCheckbox.checked
                     });
                 }
@@ -234,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return parsed;
     }
 
+    
     function finalizeQuestion(q) {
         if (q.options.length >= 2) {
             q.type = 'MULTIPLE_CHOICE';
@@ -244,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return q;
     }
 
-    function createEmptyQuestion() {
+   function createEmptyQuestion() {
         return {
             id: String(Date.now() + Math.random()),
             prompt: '',
@@ -253,10 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: 'Option 1', isCorrect: false },
                 { text: 'Option 2', isCorrect: false }
             ],
+            explanation: '',
             required: requireAllCheckbox.checked
         };
     }
-
+    
     // --- 4. RENDER INTERACTIVE QUESTION EDITOR ---
     function renderQuestions() {
         questionsList.innerHTML = '';
@@ -410,6 +531,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.appendChild(optionsContainer);
             }
 
+           // Answer Explanation / Feedback input (visible in Quiz Mode)
+            if (isQuiz) {
+                const expWrapper = document.createElement('div');
+                expWrapper.style.cssText = 'padding-left: 2.6rem; margin-bottom: 0.85rem;';
+
+                const expInput = document.createElement('input');
+                expInput.type = 'text';
+                expInput.className = 'text-input';
+                expInput.style.cssText =
+                    'padding: 0.45rem 0.75rem; font-size: 0.85rem; border-style: dashed;';
+                expInput.placeholder = 'Answer explanation / feedback (optional — shown after submission)';
+                expInput.value = q.explanation || '';
+                expInput.addEventListener('input', (e) => {
+                    q.explanation = e.target.value;
+                    updateGeneratedScript();
+                });
+
+                expWrapper.appendChild(expInput);
+                card.appendChild(expWrapper);
+            }
+            
+            
             // Bottom bar: Required toggle + Answer key hint
             const footerRow = document.createElement('div');
             footerRow.style.cssText =
@@ -464,6 +607,7 @@ if (addNumbers) {
     prompt = `${idx + 1}. ${prompt}`;
 }
             const varName = `q${idx + 1}`;
+            const explanation = (q.explanation || '').trim();
 
             if (q.type === 'MULTIPLE_CHOICE' || q.type === 'CHECKBOX') {
                 const validOptions = q.options.filter((o) => o.text.trim().length > 0);
@@ -492,20 +636,40 @@ if (addNumbers) {
                     }
                 });
                 lines.push('  ]);');
+if (isQuiz && explanation) {
+                    lines.push(
+                        `  var ${varName}Feedback = FormApp.createFeedback().setText(${JSON.stringify(explanation)}).build();`
+                    );
+                    lines.push(`  ${varName}.setFeedbackForCorrect(${varName}Feedback);`);
+                    lines.push(`  ${varName}.setFeedbackForIncorrect(${varName}Feedback);`);
+                }
+
+                
                 lines.push(`  ${varName}.setRequired(${Boolean(q.required)});`);
                 lines.push('');
-            } else if (q.type === 'PARAGRAPH') {
+                
+} else if (q.type === 'PARAGRAPH') {
                 lines.push(`  var ${varName} = form.addParagraphTextItem();`);
                 lines.push(`  ${varName}.setTitle(${JSON.stringify(prompt)});`);
+                if (isQuiz && explanation) {
+                    lines.push(
+                        `  ${varName}.setGeneralFeedback(FormApp.createFeedback().setText(${JSON.stringify(explanation)}).build());`
+                    );
+                }
                 lines.push(`  ${varName}.setRequired(${Boolean(q.required)});`);
                 lines.push('');
             } else {
                 lines.push(`  var ${varName} = form.addTextItem();`);
                 lines.push(`  ${varName}.setTitle(${JSON.stringify(prompt)});`);
+                if (isQuiz && explanation) {
+                    lines.push(
+                        `  ${varName}.setGeneralFeedback(FormApp.createFeedback().setText(${JSON.stringify(explanation)}).build());`
+                    );
+                }
                 lines.push(`  ${varName}.setRequired(${Boolean(q.required)});`);
                 lines.push('');
             }
-        });
+            });
 
         lines.push('  Logger.log("SUCCESS! Your Google Form is ready.");');
         lines.push('  Logger.log("Edit Form (Teacher Link): " + form.getEditUrl());');
@@ -525,13 +689,14 @@ if (addNumbers) {
 
 requireAllCheckbox.addEventListener('change', () => {
         const isRequired = requireAllCheckbox.checked;
-    addNumbersCheckbox.addEventListener('change', updateGeneratedScript);
         questions.forEach((q) => {
             q.required = isRequired;
         });
         renderQuestions();
         updateGeneratedScript();
     });
+
+    addNumbersCheckbox.addEventListener('change', updateGeneratedScript);
     
     addQuestionBtn.addEventListener('click', () => {
         questions.push(createEmptyQuestion());
